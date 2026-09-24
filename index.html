@@ -2,128 +2,537 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Éditeur PDF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plume · Éditeur PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
 <style>
-  body { margin: 0; font: 14px system-ui, sans-serif; background: #555; height: 100vh; display: flex; flex-direction: column; }
-  #bar { background: #222; color: #eee; padding: 8px 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  #bar .open { padding: 4px 10px; background: #2a7; color: #fff; border-radius: 3px; cursor: pointer; }
-  main { flex: 1; display: flex; min-height: 0; }
-  #pages { flex: 1; overflow: auto; padding: 0 16px; }
-  aside { width: 190px; overflow: auto; background: #333; color: #eee; padding: 10px; }
-  aside button { width: 100%; padding: 6px; cursor: pointer; }
-  aside small { display: block; opacity: .7; margin: 8px 0; }
-  .thumb { position: relative; background: #fff; margin-top: 10px; padding: 6px; border-radius: 4px; }
-  .thumb img { display: block; width: 100%; height: 60px; object-fit: contain; cursor: grab; }
-  .thumb button { position: absolute; top: 2px; right: 2px; width: auto; padding: 0 6px; }
-  .page .sig { position: absolute; resize: horizontal; overflow: hidden; outline: 1px dashed #08f8; cursor: move; min-width: 20px; }
-  .page .sig:hover { outline-color: #08f; }
-  .page .sig img { display: block; width: 100%; height: 100%; pointer-events: none; }
-  dialog canvas { display: block; width: 500px; height: 200px; border: 1px solid #999; background: #fff; touch-action: none; cursor: crosshair; }
-  dialog div { margin-top: 10px; text-align: right; }
-  #bar button { padding: 4px 10px; cursor: pointer; }
-  #bar button.on { background: #2a7; color: #fff; border-color: #2a7; }
-  #bar small { opacity: .7; }
-  .page { position: relative; margin: 16px auto; background: #fff; box-shadow: 0 2px 10px #0009; cursor: crosshair; }
-  .page canvas { display: block; width: 100%; }
+  :root {
+    --desk: #ebe5d9; --glow: #ffffff80;
+    --panel: #fbf8f2; --panel-2: #f2ede3;
+    --ink: #1d2331; --ink-2: #4a4f5c; --muted: #8a8578;
+    --line: #e0d8c8; --line-2: #cdc2ad;
+    --accent: #d4472b; --accent-2: #b63a21; --accent-soft: #d4472b1f;
+    --sel: #2f62e0; --sel-soft: #2f62e022;
+    --shadow: 0 1px 2px #3a2f1a14, 0 10px 28px -10px #3a2f1a40;
+    --paper-shadow: 0 1px 1px #0000000d, 0 12px 30px -12px #3a2f1a59, 0 40px 70px -40px #3a2f1a4d;
+    --display: 'Fraunces', Georgia, serif;
+    --ui: 'Bricolage Grotesque', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --desk: #161513; --glow: #ffffff0a;
+      --panel: #211f1b; --panel-2: #2b2823;
+      --ink: #efe8da; --ink-2: #c5bdae; --muted: #8e877a;
+      --line: #35312b; --line-2: #4a443c;
+      --accent: #f06a47; --accent-2: #ff8563; --accent-soft: #f06a4726;
+      --sel: #7097ff; --sel-soft: #7097ff2a;
+      --shadow: 0 1px 2px #0007, 0 10px 28px -10px #000c;
+      --paper-shadow: 0 12px 40px -12px #000d, 0 40px 70px -40px #000;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+         font: 14px/1.4 var(--ui); color: var(--ink); background: var(--desk); }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--sel); outline-offset: 2px; }
+  svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  [hidden] { display: none !important; }
+
+  /* ---------- En-tête ---------- */
+  header { display: flex; align-items: center; gap: 18px; height: 62px; padding: 0 18px; background: var(--panel);
+           border-bottom: 1px solid var(--line); position: relative; z-index: 6; animation: drop .5s both; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 28px; height: 28px; color: var(--accent); stroke-width: 1.6; }
+  .brand b { font: italic 600 25px/1 var(--display); letter-spacing: -.01em; }
+  .brand small { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+                 border-left: 1px solid var(--line-2); padding-left: 10px; }
+  .doc { flex: 1; display: flex; justify-content: center; align-items: center; gap: 10px; min-width: 0; }
+  #fname { max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 6px 14px;
+           border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13px; color: var(--ink-2); }
+  .actions { display: flex; gap: 8px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 38px; padding: 0 15px;
+         border-radius: 11px; border: 1px solid var(--line-2); background: var(--panel); font-weight: 500; cursor: pointer;
+         transition: background .15s, border-color .15s, transform .15s, box-shadow .15s; white-space: nowrap; }
+  .btn:hover { background: var(--panel-2); transform: translateY(-1px); }
+  .btn:active { transform: none; }
+  .btn.icon { width: 38px; padding: 0; }
+  .btn.primary { background: var(--accent); border-color: transparent; color: #fff; box-shadow: 0 6px 16px -6px var(--accent); }
+  .btn.primary:hover { background: var(--accent-2); }
+  .btn .spin { display: none; width: 16px; height: 16px; border: 2px solid #fff6; border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+  .btn.busy { pointer-events: none; opacity: .9; }
+  .btn.busy .spin { display: block; }
+  .btn.busy svg { display: none; }
+
+  /* ---------- Bureau ---------- */
+  main { display: grid; grid-template-columns: 1fr 268px; min-height: 0; }
+  #desk { position: relative; overflow: hidden;
+          background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E"),
+                      radial-gradient(ellipse 80% 60% at 50% 0%, var(--glow), transparent 70%), var(--desk); }
+  #pages { position: absolute; inset: 0; overflow: auto; padding: 86px 40px 120px 108px; }
+  .page { position: relative; margin: 0 auto 64px; background: #fff; border-radius: 2px; box-shadow: var(--paper-shadow);
+          animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  .page::after { content: attr(data-n); position: absolute; top: calc(100% + 16px); left: 0; right: 0; text-align: center;
+                 font-size: 12px; letter-spacing: .14em; color: var(--muted); pointer-events: none; }
+  .page canvas { display: block; width: 100%; border-radius: 2px; }
   .page svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .page .box { position: absolute; padding: 4px; border: 1px dashed #08f8; cursor: move; }
-  .page .box:hover { border-color: #08f; }
-  .page input { display: block; border: 0; padding: 0; margin: 0; background: transparent; line-height: 1;
-                font-family: Helvetica, Arial, sans-serif; outline: none; cursor: text; }
-  body.move .page, body.move .page input, body.move .page svg * { cursor: move; }
-  .page .tl { position: absolute; display: none; cursor: text; }
-  body.edit .page .tl { display: block; }
-  body.edit .page .tl:hover { outline: 1px solid #f80; background: #f802; }
+  body[data-tool=text] .page { cursor: text; }
+  body[data-tool=rect] .page, body[data-tool=ellipse] .page, body[data-tool=line] .page { cursor: crosshair; }
+  body[data-tool=move] .page :is(input, svg *) { cursor: move; }
+
+  /* éléments posés sur la page */
+  .page .box { position: absolute; padding: 4px; border: 1px dashed color-mix(in srgb, var(--sel) 55%, transparent);
+               border-radius: 4px; cursor: move; transition: border-color .15s, box-shadow .15s; }
+  .page .box:hover, .page .box.sel { border: 1px solid var(--sel); box-shadow: 0 0 0 3px var(--sel-soft); }
+  .page input { display: block; border: 0; padding: 0; margin: 0; background: transparent; line-height: 1; outline: none; cursor: text; }
+  .page .sig { position: absolute; resize: horizontal; overflow: hidden; min-width: 20px; cursor: move; border-radius: 3px;
+               outline: 1px dashed color-mix(in srgb, var(--sel) 55%, transparent); transition: outline-color .15s, box-shadow .15s; }
+  .page .sig:hover, .page .sig.sel { outline: 1px solid var(--sel); box-shadow: 0 0 0 3px var(--sel-soft); }
+  .page .sig img { display: block; width: 100%; height: 100%; pointer-events: none; }
+  .page svg .sel { filter: drop-shadow(0 0 3px var(--sel)); }
+  .page .tl { position: absolute; display: none; cursor: text; border-radius: 2px; transition: background .12s; }
+  body[data-tool=edit] .page .tl { display: block; }
+  body[data-tool=edit] .page .tl:hover { background: var(--accent-soft); outline: 1.5px solid var(--accent); }
+
+  /* ---------- Barre d'outils (rail) ---------- */
+  .float { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); z-index: 4;
+           transition: opacity .3s, transform .3s; }
+  #tools { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column;
+           gap: 3px; padding: 6px; border-radius: 17px; }
+  #tools hr { border: 0; height: 1px; background: var(--line); margin: 4px 8px; }
+  #tools button { position: relative; width: 46px; height: 46px; border: 0; border-radius: 12px; background: transparent;
+                  color: var(--ink-2); display: grid; place-items: center; cursor: pointer; transition: background .15s, color .15s; }
+  #tools button:hover { background: var(--panel-2); color: var(--ink); }
+  #tools button.on { background: var(--ink); color: var(--panel); }
+  #tools button.on::before { content: ''; position: absolute; left: -7px; top: 50%; width: 3px; height: 20px;
+                             transform: translateY(-50%); border-radius: 3px; background: var(--accent); }
+  #tools button::after { content: attr(data-tip); position: absolute; left: calc(100% + 14px); top: 50%;
+                         transform: translate(-4px, -50%); white-space: nowrap; padding: 6px 10px; border-radius: 8px;
+                         background: var(--ink); color: var(--panel); font-size: 12px; font-weight: 500;
+                         opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; }
+  #tools button:hover::after { opacity: 1; transform: translate(0, -50%); }
+
+  /* ---------- Options contextuelles ---------- */
+  #props { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
+           gap: 14px; padding: 7px 12px 7px 16px; border-radius: 15px; white-space: nowrap; }
+  .prop { display: flex; align-items: center; gap: 9px; }
+  .prop + .prop { border-left: 1px solid var(--line); padding-left: 14px; }
+  .prop > span { font-size: 12px; color: var(--muted); }
+  .prop.info { font-size: 12.5px; color: var(--ink-2); }
+  .sw { position: relative; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--panel); padding: 0;
+        background: var(--c); box-shadow: 0 0 0 1px var(--line-2); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .sw:hover { transform: scale(1.14); }
+  .sw.on { box-shadow: 0 0 0 2px var(--ink); }
+  .sw.custom { background: conic-gradient(#e74c3c, #f1c40f, #2ecc71, #3498db, #9b59b6, #e74c3c); overflow: hidden; }
+  .sw.custom input { position: absolute; inset: -6px; opacity: 0; cursor: pointer; }
+  .stepper { display: flex; align-items: center; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+  .stepper button { width: 27px; height: 29px; border: 0; background: transparent; color: var(--ink-2); font-size: 16px; cursor: pointer; }
+  .stepper button:hover { background: var(--panel-2); color: var(--ink); }
+  .stepper input { width: 40px; height: 29px; border: 0; border-inline: 1px solid var(--line); background: transparent;
+                   text-align: center; font: 500 13px var(--ui); color: var(--ink); -moz-appearance: textfield; }
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* ---------- Aide en bas ---------- */
+  #hint { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); padding: 8px 16px; border-radius: 999px;
+          font-size: 13px; color: var(--ink-2); white-space: nowrap;
+          background: color-mix(in srgb, var(--panel) 86%, transparent); backdrop-filter: blur(8px); }
+  #hint i { display: inline-block; width: 1px; height: 12px; background: var(--line-2); margin: 0 10px; vertical-align: -1px; }
+  kbd { font: 600 11px var(--ui); padding: 1px 6px; border-radius: 5px; background: var(--panel-2); border: 1px solid var(--line-2);
+        border-bottom-width: 2px; color: var(--ink); }
+  body:not(.loaded) .float { opacity: 0; pointer-events: none; }
+  body:not(.loaded) #tools { transform: translate(-12px, -50%); }
+
+  /* ---------- Accueil ---------- */
+  #empty { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; z-index: 3; transition: opacity .3s, visibility .3s; }
+  body.loaded #empty { opacity: 0; visibility: hidden; }
+  .drop { width: min(580px, 100%); padding: 44px 40px 34px; text-align: center; border: 2px dashed var(--line-2); border-radius: 26px;
+          background: color-mix(in srgb, var(--panel) 65%, transparent); cursor: pointer; animation: rise .7s .1s both;
+          transition: border-color .2s, background .2s, transform .2s; }
+  .drop:hover, #desk.over .drop { border-color: var(--accent); background: var(--accent-soft); transform: scale(1.01); }
+  .art { position: relative; width: 130px; height: 120px; margin: 0 auto 24px; }
+  .art i { position: absolute; inset: 6px 24px; border-radius: 4px; box-shadow: var(--paper-shadow);
+           background: #fff repeating-linear-gradient(#0000 0 13px, #e8e1d3 13px 14px) content-box; padding: 18px 12px; }
+  .art i:first-child { transform: rotate(-9deg) translate(-12px, 4px); }
+  .art i:nth-child(2) { transform: rotate(4deg) translate(8px, -2px); }
+  .art svg { position: absolute; right: -10px; bottom: -8px; width: 60px; height: 60px; color: var(--accent);
+             transform: rotate(-24deg); stroke-width: 1.4; filter: drop-shadow(0 6px 8px #3a2f1a33); }
+  .drop h1 { font: 500 36px/1.1 var(--display); letter-spacing: -.02em; margin: 0 0 10px; }
+  .drop h1 em { color: var(--accent); }
+  .drop p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  .drop u { color: var(--accent); text-decoration-style: wavy; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+  .drop ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 0; margin: 26px 0 0; list-style: none; }
+  .drop li { padding: 6px 13px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-size: 13px;
+             animation: rise .5s both; animation-delay: calc(.35s + var(--i) * .07s); }
+  .drop small { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 22px; color: var(--muted); font-size: 12.5px; }
+  .drop small svg { width: 15px; height: 15px; }
+
+  /* ---------- Signatures ---------- */
+  aside { display: flex; flex-direction: column; gap: 14px; padding: 22px 18px; overflow: auto; background: var(--panel);
+          border-left: 1px solid var(--line); animation: slide .5s .1s both; }
+  aside h2 { font: 600 21px/1.1 var(--display); margin: 0; }
+  aside h2 + p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+  #signew { height: 46px; border: 1.5px dashed var(--line-2); background: transparent; }
+  #signew:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  #siglist { display: flex; flex-direction: column; gap: 10px; }
+  .thumb { position: relative; padding: 10px; border-radius: 13px; background: #fff; border: 1px solid var(--line); cursor: grab;
+           transition: transform .18s, box-shadow .18s; animation: rise .35s both; }
+  .thumb:hover { transform: translateY(-2px) rotate(-.6deg); box-shadow: var(--shadow); }
+  .thumb:active { cursor: grabbing; }
+  .thumb img { display: block; width: 100%; height: 62px; object-fit: contain; pointer-events: none; }
+  .thumb .del { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; display: grid; place-items: center; border: 0;
+                border-radius: 9px; background: #f2eee6; color: #7a7466; opacity: 0; cursor: pointer; transition: opacity .15s, background .15s; }
+  .thumb .del svg { width: 15px; height: 15px; }
+  .thumb:hover .del, .thumb .del:focus-visible { opacity: 1; }
+  .thumb .del:hover { background: var(--accent); color: #fff; }
+  #sigempty { text-align: center; padding: 18px 8px; color: var(--muted); font-size: 13px; }
+  #sigempty svg { width: 64px; height: 32px; color: var(--line-2); display: block; margin: 0 auto 6px; stroke-width: 1.5; }
+  aside .tip { margin-top: auto; font-size: 12px; color: var(--muted); padding: 12px; border-radius: 12px; background: var(--panel-2); }
+
+  /* ---------- Fenêtre de signature ---------- */
+  dialog { border: 0; padding: 0; width: min(580px, calc(100vw - 32px)); border-radius: 22px; background: var(--panel);
+           color: var(--ink); box-shadow: 0 40px 90px -20px #000b; }
+  dialog[open] { animation: pop .28s cubic-bezier(.2,.8,.2,1.15); }
+  dialog::backdrop { background: #1d23318f; backdrop-filter: blur(3px); }
+  .dlg-head { padding: 24px 26px 4px; }
+  .dlg-head h3 { font: 600 24px/1.1 var(--display); margin: 0 0 4px; }
+  .dlg-head p { margin: 0; color: var(--muted); font-size: 13px; }
+  .padwrap { position: relative; margin: 16px 26px 8px; border-radius: 15px; background: #fff; border: 1px solid var(--line); overflow: hidden; }
+  .padwrap::before { content: '×'; position: absolute; left: 18px; bottom: 50px; font: 22px var(--display); color: #c9bfa9; pointer-events: none; }
+  .padwrap::after { content: ''; position: absolute; left: 40px; right: 28px; bottom: 56px; border-bottom: 1.5px dashed #ddd4c2; pointer-events: none; }
+  #sigpad { display: block; width: 100%; height: 210px; touch-action: none; cursor: crosshair; position: relative; z-index: 1; }
+  .dlg-ink { display: flex; align-items: center; gap: 8px; padding: 0 26px; font-size: 12px; color: var(--muted); }
+  #sigmsg { min-height: 20px; padding: 6px 26px 0; color: var(--accent); font-size: 13px; }
+  .dlg-foot { display: flex; justify-content: space-between; gap: 8px; padding: 8px 26px 24px; }
+  .dlg-foot div { display: flex; gap: 8px; }
+
+  /* ---------- Notifications ---------- */
+  #toasts { position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
+            align-items: center; gap: 8px; z-index: 50; pointer-events: none; }
+  .toast { pointer-events: auto; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 13px;
+           background: var(--ink); color: var(--panel); font-size: 14px; box-shadow: 0 14px 34px -12px #000a;
+           animation: toast .32s cubic-bezier(.2,.8,.2,1.2); transition: opacity .3s, transform .3s; }
+  .toast.error { background: var(--accent); color: #fff; }
+  .toast button { border: 0; padding: 5px 11px; border-radius: 8px; background: #ffffff2e; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .toast.out { opacity: 0; transform: translateY(8px); }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+  @keyframes drop { from { opacity: 0; transform: translateY(-8px); } }
+  @keyframes slide { from { opacity: 0; transform: translateX(12px); } }
+  @keyframes pop { from { opacity: 0; transform: scale(.94) translateY(10px); } }
+  @keyframes toast { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; }
+    aside, .brand small, #hint { display: none; }
+    #pages { padding: 80px 16px 40px 84px; }
+    #props { left: 84px; right: 12px; transform: none; overflow-x: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
-<body>
-<div id="bar">
-  <label class="open">Ouvrir un PDF<input type="file" id="file" accept="application/pdf" hidden></label>
-  <span id="fname">Aucun fichier ouvert</span>
-  <span id="tools">
-    <button data-t="text" class="on">Texte</button>
-    <button data-t="edit">Modifier texte</button>
-    <button data-t="rect">Rectangle</button>
-    <button data-t="ellipse">Cercle</button>
-    <button data-t="line">Trait</button>
-    <button data-t="move">Déplacer</button>
-  </span>
-  <label>Couleur <input type="color" id="color" value="#000000"></label>
-  <label>Taille <input type="number" id="size" value="11" min="4" max="72" style="width:4em"></label>
-  <label>Épaisseur <input type="number" id="width" value="1.5" min="0.5" max="10" step="0.5" style="width:4em"></label>
-  <button id="undo">Annuler</button>
-  <button id="save">Enregistrer</button>
-  <small>Clic droit sur un élément = supprimer</small>
-</div>
+<body data-tool="text">
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="nib" viewBox="0 0 24 24"><path d="M12 2.5 18.5 9 15 19.5H9L5.5 9z"/><path d="M12 9v5.2"/><circle cx="12" cy="15.6" r="1.3"/><path d="M8.5 22h7"/></symbol>
+</svg>
+
+<header>
+  <div class="brand"><svg class="i"><use href="#nib"/></svg><b>Plume</b><small>éditeur PDF</small></div>
+  <div class="doc">
+    <label class="btn" title="Ouvrir un PDF (Ctrl+O)">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>
+      Ouvrir<input type="file" id="file" accept="application/pdf,.pdf" hidden>
+    </label>
+    <span id="fname">Aucun fichier</span>
+  </div>
+  <div class="actions">
+    <button id="undo" class="btn icon" title="Annuler le dernier ajout (Ctrl+Z)">
+      <svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+    </button>
+    <button id="save" class="btn primary" title="Télécharger le PDF modifié (Ctrl+S)">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="spin"></span>Télécharger
+    </button>
+  </div>
+</header>
+
 <main>
-  <div id="pages"></div>
+  <section id="desk">
+    <div id="empty">
+      <label class="drop" for="file">
+        <div class="art"><i></i><i></i><svg class="i"><use href="#nib"/></svg></div>
+        <h1>Glisse ton <em>PDF</em> ici</h1>
+        <p>ou <u>choisis un fichier</u> sur ton ordinateur</p>
+        <ul>
+          <li style="--i:0">✎ Remplir un formulaire</li>
+          <li style="--i:1">✍ Signer</li>
+          <li style="--i:2">Aa Corriger le texte</li>
+          <li style="--i:3">▭ Ajouter des formes</li>
+        </ul>
+        <small>
+          <svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          Tes fichiers restent sur ton appareil : rien n'est envoyé sur Internet.
+        </small>
+      </label>
+    </div>
+
+    <div id="pages"></div>
+
+    <nav id="tools" class="float" aria-label="Outils">
+      <button data-t="text" class="on" data-tip="Ajouter du texte · T" aria-label="Ajouter du texte">
+        <svg class="i" viewBox="0 0 24 24"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg></button>
+      <button data-t="edit" data-tip="Corriger le texte du PDF · E" aria-label="Corriger le texte du PDF">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 7V5h10v2M8 5v12M6 17h4"/><path d="M14 20.5l.8-3.3 5.3-5.3 2.5 2.5-5.3 5.3z"/></svg></button>
+      <hr>
+      <button data-t="rect" data-tip="Rectangle · R" aria-label="Rectangle">
+        <svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></button>
+      <button data-t="ellipse" data-tip="Cercle · C" aria-label="Cercle">
+        <svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="7"/></svg></button>
+      <button data-t="line" data-tip="Trait · L" aria-label="Trait">
+        <svg class="i" viewBox="0 0 24 24"><path d="M5 19 19 5"/></svg></button>
+      <hr>
+      <button data-t="move" data-tip="Déplacer · V" aria-label="Déplacer">
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg></button>
+    </nav>
+
+    <div id="props" class="float">
+      <div class="prop" data-for="text edit rect ellipse line">
+        <div id="swatches" style="display:flex;gap:7px">
+          <button class="sw on" style="--c:#000000" data-c="#000000" title="Noir"></button>
+          <button class="sw" style="--c:#1d3fbf" data-c="#1d3fbf" title="Bleu stylo"></button>
+          <button class="sw" style="--c:#c62828" data-c="#c62828" title="Rouge"></button>
+          <button class="sw" style="--c:#2e7d32" data-c="#2e7d32" title="Vert"></button>
+          <label class="sw custom" title="Autre couleur"><input type="color" id="color" value="#000000"></label>
+        </div>
+      </div>
+      <div class="prop" data-for="text edit">
+        <span>Taille</span>
+        <div class="stepper"><button data-target="size" data-step="-1" aria-label="Plus petit">−</button><input id="size" type="number" value="11" min="4" max="72" step="0.5"><button data-target="size" data-step="1" aria-label="Plus grand">+</button></div>
+      </div>
+      <div class="prop" data-for="rect ellipse line">
+        <span>Épaisseur</span>
+        <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Plus fin">−</button><input id="width" type="number" value="1.5" min="0.5" max="10" step="0.5"><button data-target="width" data-step="0.5" aria-label="Plus épais">+</button></div>
+      </div>
+      <div class="prop info" data-for="edit">Police et couleur d'origine reprises automatiquement</div>
+    </div>
+
+    <div id="hint" class="float"></div>
+  </section>
+
   <aside>
-    <button id="signew">+ Nouvelle signature</button>
-    <small>Glisse une signature sur le PDF. Coin bas-droit = redimensionner.</small>
+    <div>
+      <h2>Mes signatures</h2>
+      <p>Enregistrées dans ce navigateur</p>
+    </div>
+    <button id="signew" class="btn">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nouvelle signature
+    </button>
+    <div id="sigempty">
+      <svg class="i" viewBox="0 0 64 32"><path d="M4 24c6-2 8-16 13-16s1 16 7 16 6-10 10-10 3 8 8 8 6-6 9-6 4 3 9 3"/></svg>
+      Aucune signature pour l'instant.
+    </div>
     <div id="siglist"></div>
+    <p class="tip">Glisse une signature sur la page, ou clique dessus pour la poser sur la page affichée. Tire le coin bas-droit pour l'agrandir.</p>
   </aside>
 </main>
+
 <dialog id="sigdlg">
-  <p>Signe dans le cadre (souris, pavé tactile ou stylet)</p>
-  <canvas id="sigpad"></canvas>
-  <div><button id="sigclear">Effacer</button> <button id="sigcancel">Annuler</button> <button id="sigok">Enregistrer</button></div>
+  <div class="dlg-head">
+    <h3>Nouvelle signature</h3>
+    <p>Signe sur la ligne, à la souris, au pavé tactile ou au stylet.</p>
+  </div>
+  <div class="padwrap"><canvas id="sigpad"></canvas></div>
+  <div class="dlg-ink">Encre
+    <button class="sw on" style="--c:#000000" data-ink="#000000" title="Noir"></button>
+    <button class="sw" style="--c:#1d3fbf" data-ink="#1d3fbf" title="Bleu stylo"></button>
+  </div>
+  <div id="sigmsg"></div>
+  <div class="dlg-foot">
+    <button id="sigclear" class="btn">Effacer</button>
+    <div><button id="sigcancel" class="btn">Annuler</button><button id="sigok" class="btn primary">Enregistrer</button></div>
+  </div>
 </dialog>
+
+<div id="toasts" aria-live="polite"></div>
+
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const S = 1.5, $ = id => document.getElementById(id), measure = document.createElement('canvas').getContext('2d');
-let bytes, fileName, viewports = [], pdfPages = [], items = [], tool = 'text';
+let bytes, fileName, viewports = [], pdfPages = [], items = [], tool = 'text', current = null;
 
-$('tools').onclick = e => {
-  if (!e.target.dataset.t) return;
-  tool = e.target.dataset.t;
-  for (const b of $('tools').children) b.classList.toggle('on', b === e.target);
-  document.body.classList.toggle('move', tool === 'move');
-  document.body.classList.toggle('edit', tool === 'edit');
+// ---------- Interface ----------
+function toast(msg, kind = '', action) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind;
+  t.append(msg);
+  if (action) {
+    const b = document.createElement('button');
+    b.textContent = action.label;
+    b.onclick = () => { action.fn(); t.remove(); };
+    t.append(b);
+  }
+  $('toasts').append(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, action ? 6000 : 3500);
+}
+
+const HINTS = {
+  text: 'Clique sur la page pour écrire',
+  edit: 'Clique sur un texte du PDF pour le corriger · vide-le pour le supprimer',
+  rect: 'Clique et fais glisser pour tracer un rectangle',
+  ellipse: 'Clique et fais glisser pour tracer un cercle',
+  line: 'Clique et fais glisser pour tracer un trait',
+  move: 'Fais glisser un élément pour le déplacer',
 };
-$('file').onchange = async e => {
-  const f = e.target.files[0];
+const KEYS = { t: 'text', e: 'edit', r: 'rect', c: 'ellipse', l: 'line', v: 'move' };
+function setTool(t) {
+  tool = t;
+  document.body.dataset.tool = t;
+  document.querySelectorAll('#tools button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  let any = false;
+  document.querySelectorAll('.prop').forEach(p => any = !(p.hidden = !p.dataset.for.split(' ').includes(t)) || any);
+  $('props').hidden = !any;
+  $('hint').innerHTML = `${HINTS[t]}<i></i><kbd>Suppr</kbd> efface la sélection<i></i><kbd>Ctrl</kbd> <kbd>Z</kbd> annule`;
+}
+$('tools').onclick = e => { const b = e.target.closest('button'); if (b) setTool(b.dataset.t); };
+setTool('text');
+
+// Sélection : l'élément actif reçoit les changements de couleur / taille / épaisseur et la touche Suppr
+function select(it) {
+  current?.el.classList.remove('sel');
+  current = it;
+  if (!it) return;
+  it.el.classList.add('sel');
+  if (it.type === 'sig') return;
+  setColor(it.color, false);
+  if (it.type === 'text') $('size').value = Math.round(it.size * 2) / 2; else $('width').value = it.w;
+}
+function applyProps() {
+  if (!current || current.type === 'sig') return;
+  current.color = $('color').value;
+  if (current.type === 'text') current.size = +$('size').value; else current.w = +$('width').value;
+  draw(current);
+}
+function setColor(c, apply = true) {
+  $('color').value = c;
+  let preset = false;
+  document.querySelectorAll('#swatches .sw[data-c]').forEach(s => preset = s.classList.toggle('on', s.dataset.c === c) || preset);
+  document.querySelector('#swatches .custom').classList.toggle('on', !preset);
+  if (apply) applyProps();
+}
+$('swatches').onpointerdown = e => { if (e.target.dataset.c) e.preventDefault(); }; // garde le curseur dans le texte en cours
+$('swatches').onclick = e => { if (e.target.dataset.c) setColor(e.target.dataset.c); };
+$('color').oninput = e => setColor(e.target.value);
+document.querySelectorAll('.stepper button').forEach(b => {
+  b.onpointerdown = e => e.preventDefault();
+  b.onclick = () => {
+    const i = $(b.dataset.target);
+    i.value = Math.min(+i.max, Math.max(+i.min, Math.round((+i.value + +b.dataset.step) * 10) / 10));
+    applyProps();
+  };
+});
+$('size').onchange = $('width').onchange = applyProps;
+
+// Ouverture : bouton, Ctrl+O ou glisser-déposer du fichier
+async function openFile(f) {
   if (!f) return;
+  if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') return toast("Ce fichier n'est pas un PDF.", 'error');
   $('fname').textContent = f.name;
-  load(new Uint8Array(await f.arrayBuffer()), f.name)
-    .catch(() => alert("Impossible d'ouvrir ce fichier : ce n'est pas un PDF valide, ou il est protégé par un mot de passe."));
+  document.body.classList.add('loaded');
+  try {
+    await load(new Uint8Array(await f.arrayBuffer()), f.name);
+  } catch {
+    bytes = null;
+    document.body.classList.remove('loaded');
+    $('fname').textContent = 'Aucun fichier';
+    toast("Impossible d'ouvrir ce fichier : PDF invalide ou protégé par un mot de passe.", 'error');
+  }
+}
+$('file').onchange = e => { openFile(e.target.files[0]); e.target.value = ''; };
+const desk = $('desk');
+desk.ondragover = e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); desk.classList.add('over'); } };
+desk.ondragleave = e => { if (!desk.contains(e.relatedTarget)) desk.classList.remove('over'); };
+desk.ondrop = e => {
+  desk.classList.remove('over');
+  if (e.dataTransfer.files.length) { e.preventDefault(); openFile(e.dataTransfer.files[0]); }
 };
-$('undo').onclick = () => items.length && remove(items.at(-1));
+addEventListener('dragover', e => e.preventDefault()); // évite que le navigateur ouvre le PDF à la place de l'outil
+addEventListener('drop', e => e.preventDefault());
 
-// --- Signatures : mémorisées dans ce navigateur (localStorage) ---
+$('undo').onclick = () => items.length ? remove(items.at(-1)) : toast('Rien à annuler.');
+
+addEventListener('keydown', e => {
+  if ($('sigdlg').open) return;
+  const k = e.key.toLowerCase(), ctrl = e.ctrlKey || e.metaKey, a = document.activeElement;
+  if (ctrl && k === 's') { e.preventDefault(); return $('save').click(); }
+  if (ctrl && k === 'o') { e.preventDefault(); return $('file').click(); }
+  if (a.tagName === 'INPUT' && a.type !== 'color') { if (k === 'escape' || k === 'enter') a.blur(); return; }
+  if (ctrl && k === 'z') { e.preventDefault(); return $('undo').click(); }
+  if ((k === 'delete' || k === 'backspace') && current) { e.preventDefault(); return remove(current); }
+  if (!ctrl && !e.altKey && KEYS[k]) setTool(KEYS[k]);
+});
+
+// ---------- Signatures : mémorisées dans ce navigateur (localStorage) ----------
 let sigs = [];
 try { sigs = JSON.parse(localStorage.signatures || '[]'); } catch {}
 const saveSigs = () => {
-  try { localStorage.signatures = JSON.stringify(sigs); } catch { alert('Ce navigateur refuse de mémoriser les signatures.'); }
+  try { localStorage.signatures = JSON.stringify(sigs); } catch { toast('Ce navigateur refuse de mémoriser les signatures.', 'error'); }
 };
 function renderSigs() {
   $('siglist').innerHTML = '';
+  $('sigempty').hidden = sigs.length > 0;
   sigs.forEach((s, i) => {
     const d = document.createElement('div');
     d.className = 'thumb';
-    d.innerHTML = `<img src="${s.src}" draggable="true"><button title="Supprimer">✕</button>`;
-    d.querySelector('img').ondragstart = e => e.dataTransfer.setData('text/plain', 'sig:' + i);
-    d.querySelector('button').onclick = () => {
-      if (!confirm('Supprimer cette signature ?')) return;
-      sigs.splice(i, 1); saveSigs(); renderSigs();
+    d.draggable = true;
+    d.title = 'Glisse-moi sur le document';
+    d.innerHTML = `<img src="${s.src}" alt="Signature ${i + 1}"><button class="del" title="Supprimer"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+    d.ondragstart = e => e.dataTransfer.setData('text/plain', 'sig:' + i);
+    d.onclick = e => {
+      if (e.target.closest('.del')) {
+        const [gone] = sigs.splice(i, 1);
+        saveSigs(); renderSigs();
+        return toast('Signature supprimée', '', { label: 'Annuler', fn: () => { sigs.splice(i, 0, gone); saveSigs(); renderSigs(); } });
+      }
+      // clic simple : pose la signature au centre de la page affichée
+      const pages = [...document.querySelectorAll('.page')], box = $('pages').getBoundingClientRect(), mid = box.top + box.height / 2;
+      const w = pages.find(pg => pg.getBoundingClientRect().bottom > mid) || pages.at(-1);
+      if (!w) return toast("Ouvre d'abord un PDF.", 'error');
+      const r = w.getBoundingClientRect();
+      placeSig(s, w, pages.indexOf(w), r.left + r.width / 2, Math.min(Math.max(mid, r.top + 60), r.bottom - 60));
     };
     $('siglist').append(d);
   });
 }
 renderSigs();
 
+function placeSig(s, wrap, p, cx, cy) {
+  const r = wrap.getBoundingClientRect(), width = 150; // 150 px écran ≈ 3,5 cm sur le PDF
+  add({ type: 'sig', p, src: s.src, ratio: s.ratio, width, x: cx - r.left - width / 2, y: cy - r.top - width / s.ratio / 2 }, wrap);
+}
+
 const pad = $('sigpad'), pctx = pad.getContext('2d');
+let ink = '#000000';
 $('signew').onclick = () => {
-  const dpr = devicePixelRatio || 1;
-  pad.width = 500 * dpr; pad.height = 200 * dpr; // réinitialise aussi le contexte
-  pctx.scale(dpr, dpr);
-  Object.assign(pctx, { lineWidth: 2.5, lineCap: 'round', lineJoin: 'round', strokeStyle: $('color').value });
+  $('sigmsg').textContent = '';
   $('sigdlg').showModal();
+  const dpr = devicePixelRatio || 1;
+  pad.width = pad.clientWidth * dpr; pad.height = pad.clientHeight * dpr; // réinitialise aussi le contexte
+  pctx.scale(dpr, dpr);
+  Object.assign(pctx, { lineWidth: 2.6, lineCap: 'round', lineJoin: 'round', strokeStyle: ink });
+};
+document.querySelector('.dlg-ink').onclick = e => {
+  if (!e.target.dataset.ink) return;
+  ink = pctx.strokeStyle = e.target.dataset.ink;
+  document.querySelectorAll('.dlg-ink .sw').forEach(s => s.classList.toggle('on', s === e.target));
 };
 pad.onpointerdown = e => {
   pad.setPointerCapture(e.pointerId);
+  $('sigmsg').textContent = '';
   let [lx, ly] = [e.offsetX, e.offsetY];
   pad.onpointermove = ev => {
     pctx.beginPath(); pctx.moveTo(lx, ly); pctx.lineTo(ev.offsetX, ev.offsetY); pctx.stroke();
@@ -131,7 +540,7 @@ pad.onpointerdown = e => {
   };
 };
 pad.onpointerup = () => pad.onpointermove = null;
-$('sigclear').onclick = () => pctx.clearRect(0, 0, 500, 200);
+$('sigclear').onclick = () => pctx.clearRect(0, 0, pad.width, pad.height);
 $('sigcancel').onclick = () => $('sigdlg').close();
 $('sigok').onclick = () => {
   // recadre sur le tracé pour ne pas garder de marge vide
@@ -140,24 +549,25 @@ $('sigok').onclick = () => {
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3]) {
     x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
   }
-  if (x1 < 0) return alert('Le cadre est vide.');
+  if (x1 < 0) return $('sigmsg').textContent = "Signe d'abord dans le cadre ✍";
   const c = document.createElement('canvas');
   c.width = x1 - x0 + 1; c.height = y1 - y0 + 1;
   c.getContext('2d').drawImage(pad, x0, y0, c.width, c.height, 0, 0, c.width, c.height);
   sigs.push({ src: c.toDataURL('image/png'), ratio: c.width / c.height });
   saveSigs(); renderSigs(); $('sigdlg').close();
+  toast('Signature enregistrée : glisse-la sur le document');
 };
-addEventListener('keydown', e => {
-  if (e.ctrlKey && e.key === 'z' && document.activeElement.type !== 'text') { e.preventDefault(); $('undo').click(); }
-});
 
+// ---------- Moteur ----------
 async function load(data, name) {
+  select(null);
   bytes = data; fileName = name; items = []; viewports = []; pdfPages = []; $('pages').innerHTML = '';
   const doc = await pdfjsLib.getDocument({ data: data.slice() }).promise; // pdf.js détache le buffer qu'on lui donne
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n), vp = page.getViewport({ scale: S }), dpr = devicePixelRatio || 1;
     const wrap = document.createElement('div'), canvas = document.createElement('canvas');
     wrap.className = 'page';
+    wrap.dataset.n = `PAGE ${n} / ${doc.numPages}`;
     wrap.style.width = vp.width + 'px'; wrap.style.height = vp.height + 'px';
     wrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
     canvas.width = vp.width * dpr; canvas.height = vp.height * dpr;
@@ -170,13 +580,10 @@ async function load(data, name) {
     wrap.ondrop = e => {
       e.preventDefault();
       const s = sigs[e.dataTransfer.getData('text/plain').replace('sig:', '')];
-      if (!s) return;
-      const r = wrap.getBoundingClientRect(), width = 150; // 150 px écran ≈ 3,5 cm sur le PDF
-      add({ type: 'sig', p: n - 1, src: s.src, ratio: s.ratio, width,
-            x: e.clientX - r.left - width / 2, y: e.clientY - r.top - width / s.ratio / 2 }, wrap);
+      if (s) placeSig(s, wrap, n - 1, e.clientX, e.clientY);
     };
     await page.render({ canvasContext: canvas.getContext('2d', { willReadFrequently: true }), viewport: vp, transform: [dpr, 0, 0, dpr, 0, 0] }).promise;
-    // zones cliquables sur chaque morceau de texte du PDF (outil « Modifier texte »)
+    // zones cliquables sur chaque morceau de texte du PDF (outil « Corriger le texte »)
     const tc = await page.getTextContent();
     for (const t of tc.items) {
       if (!t.str.trim()) continue;
@@ -228,6 +635,7 @@ function down(e, wrap, p) {
   const drag = tool === 'move' || cl.contains('box') || cl.contains('sig'); // cadres de texte et signatures se déplacent avec tous les outils
   if (drag) {
     it = e.target.item;
+    select(it || null);
     if (!it) return;
     onMove = ev => {
       const [x, y] = pos(ev);
@@ -237,7 +645,7 @@ function down(e, wrap, p) {
       draw(it);
     };
   } else if (tool === 'edit') {
-    if (cl.contains('tl')) editRun(e.target, wrap, p);
+    if (cl.contains('tl')) editRun(e.target, wrap, p); else select(null);
     e.preventDefault();
     return;
   } else if (tool === 'text') {
@@ -266,6 +674,7 @@ function add(it, wrap) {
     it.input.item = it;
     it.input.value = it.text;
     it.input.oninput = () => { it.text = it.input.value; draw(it); };
+    it.input.onfocus = () => select(it);
     it.input.onblur = () => { if (!it.text.trim() && !it.orig) remove(it); }; // texte d'origine vidé = supprimé du PDF
     it.el.append(it.input);
     wrap.append(it.el);
@@ -284,12 +693,14 @@ function add(it, wrap) {
   it.el.oncontextmenu = e => { e.preventDefault(); remove(it); };
   items.push(it);
   draw(it);
+  select(it);
   return it;
 }
 
 function remove(it) {
   const i = items.indexOf(it);
   if (i < 0) return;
+  if (current === it) select(null);
   items.splice(i, 1);
   if (it.span) it.el.after(it.span); // annule la modification : le texte d'origine redevient cliquable
   it.el.remove();
@@ -376,7 +787,9 @@ async function build(localFonts = []) {
 }
 
 $('save').onclick = async () => {
-  if (!bytes) return alert("Ouvre d'abord un PDF.");
+  if (!bytes) return toast("Ouvre d'abord un PDF.", 'error');
+  const btn = $('save');
+  btn.classList.add('busy');
   try {
     // demandé tout de suite, pendant le clic : le navigateur n'autorise l'accès aux polices du PC que sur une action de l'utilisateur
     const localFonts = window.queryLocalFonts && items.some(it => it.font) ? await queryLocalFonts().catch(() => []) : [];
@@ -384,11 +797,14 @@ $('save').onclick = async () => {
     a.href = URL.createObjectURL(new Blob([await build(localFonts)], { type: 'application/pdf' }));
     a.download = fileName.replace(/\.pdf$/i, '') + ' - rempli.pdf';
     a.click();
+    toast('PDF téléchargé ✓');
   } catch (err) {
-    alert(/WinAnsi|cannot encode/i.test(err.message)
-      ? "Un texte contient un caractère que la police ne sait pas écrire (émoji, alphabet non latin…). Retire-le puis réessaie."
+    toast(/WinAnsi|cannot encode/i.test(err.message)
+      ? 'Un texte contient un caractère que la police ne sait pas écrire (émoji, alphabet non latin…).'
       : /encrypt|password/i.test(err.message) ? 'Ce PDF est protégé par un mot de passe : impossible de le modifier.'
-      : "Erreur lors de l'enregistrement : " + err.message);
+      : "Erreur lors de l'enregistrement : " + err.message, 'error');
+  } finally {
+    btn.classList.remove('busy');
   }
 };
 </script>

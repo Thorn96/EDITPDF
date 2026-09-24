@@ -1,4 +1,4 @@
-# Éditeur PDF
+# Plume · Éditeur PDF
 
 Outil gratuit pour remplir et modifier des PDF directement dans le navigateur : ajout de texte, formes, signatures manuscrites, et modification du texte existant (l'ancien texte est réellement supprimé du fichier).
 
