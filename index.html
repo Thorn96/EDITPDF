@@ -9,6 +9,7 @@
 <style>
   body { margin: 0; font: 14px system-ui, sans-serif; background: #555; height: 100vh; display: flex; flex-direction: column; }
   #bar { background: #222; color: #eee; padding: 8px 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  #bar .open { padding: 4px 10px; background: #2a7; color: #fff; border-radius: 3px; cursor: pointer; }
   main { flex: 1; display: flex; min-height: 0; }
   #pages { flex: 1; overflow: auto; padding: 0 16px; }
   aside { width: 190px; overflow: auto; background: #333; color: #eee; padding: 10px; }
@@ -40,7 +41,8 @@
 </head>
 <body>
 <div id="bar">
-  <input type="file" id="file" accept="application/pdf">
+  <label class="open">Ouvrir un PDF<input type="file" id="file" accept="application/pdf" hidden></label>
+  <span id="fname">Aucun fichier ouvert</span>
   <span id="tools">
     <button data-t="text" class="on">Texte</button>
     <button data-t="edit">Modifier texte</button>
@@ -83,7 +85,10 @@ $('tools').onclick = e => {
 };
 $('file').onchange = async e => {
   const f = e.target.files[0];
-  if (f) load(new Uint8Array(await f.arrayBuffer()), f.name);
+  if (!f) return;
+  $('fname').textContent = f.name;
+  load(new Uint8Array(await f.arrayBuffer()), f.name)
+    .catch(() => alert("Impossible d'ouvrir ce fichier : ce n'est pas un PDF valide, ou il est protégé par un mot de passe."));
 };
 $('undo').onclick = () => items.length && remove(items.at(-1));
 
@@ -380,7 +385,10 @@ $('save').onclick = async () => {
     a.download = fileName.replace(/\.pdf$/i, '') + ' - rempli.pdf';
     a.click();
   } catch (err) {
-    alert('Erreur : ' + err.message); // ex. caractère hors alphabet latin (emoji…)
+    alert(/WinAnsi|cannot encode/i.test(err.message)
+      ? "Un texte contient un caractère que la police ne sait pas écrire (émoji, alphabet non latin…). Retire-le puis réessaie."
+      : /encrypt|password/i.test(err.message) ? 'Ce PDF est protégé par un mot de passe : impossible de le modifier.'
+      : "Erreur lors de l'enregistrement : " + err.message);
   }
 };
 </script>
