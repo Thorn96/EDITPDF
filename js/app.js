@@ -142,6 +142,7 @@ function planEdit(it) {
   const laid = it.text.trim() ? layoutLines(it) : [], last = s => s.split(' ').at(-1);
   const same = olines.every(l => l.str != null) && o.y0 != null && Math.abs(it.x - o.x) < .01 && Math.abs(it.y - o.y0) < .01 && Math.abs(it.size - o.h) < .01
     && f.local && !f.touched && it.color === o.color && !it.rot && (it.op ?? 1) === 1 && !it.pg.rot && !it.pg.pdfPage.rotate;
+  if (it.rich) return olines.map(line => ({ line, keep: same && JSON.stringify(it.segs) === o.segs, p: 0 })); // ligne mixte : intacte, ou réécrite entière
   return olines.map((l, i) => {
     const t = laid[i]?.t.trimEnd(), s = l.str.trimEnd();
     if (!same || t == null) return { line: l, p: 0 };
@@ -192,7 +193,7 @@ async function redactSource(src, its, plans) {
   const passes = [
     [its.filter(i => i.orig && !i.orig.scan), bands,
      [false, R.REDACT_IMAGE_NONE, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
-    [its.filter(i => i.orig?.scan), ({ orig: { box: b } }) => [[b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1]],
+    [its.filter(i => i.orig?.scan), coverRects,
      [false, R.REDACT_IMAGE_PIXELS, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
     [its.filter(i => i.type === 'redact'), i => [[i.x, i.y, i.x2, i.y2]],
      [true, R.REDACT_IMAGE_PIXELS, R.REDACT_LINE_ART_REMOVE_IF_COVERED, R.REDACT_TEXT_REMOVE]],
@@ -313,10 +314,11 @@ async function build(list, localFonts = []) {
     // Texte d'origine corrigé : écrit avec la police intégrée au PDF quand elle a les lettres voulues (rendu identique au reste,
     // ligatures comprises), sinon avec son équivalent, lettre par lettre ; même serrage et espacement des mots que la ligne d'origine
     const fontKeys = new Map();
-    const writeOrig = async (str, x, y, it, color, opacity, c, deg, wsLine) => {
-      const L_ = PDFLib, size = it.size, ls = it.ls || 0, ws = wsLine ?? it.ws ?? 0, f0 = normFont(it.font);
-      const cands = f0.local && !f0.touched ? (it.orig.fonts || []).flatMap(n => (fams ??= fontsByFamily(pdf)).get(famKey(n)) || []) : [];
-      const main = await font(it.font), chars = [...str], glyphs = [];
+    // (fo : police d'un morceau de ligne mixte ; renvoie la longueur écrite, pour enchaîner le morceau suivant)
+    const writeOrig = async (str, x, y, it, color, opacity, c, deg, wsLine, fo) => {
+      const L_ = PDFLib, size = it.size, ls = it.ls || 0, ws = wsLine ?? it.ws ?? 0, f0 = normFont(fo || it.font);
+      const cands = f0.local && !f0.touched ? (fo ? [fo.ps] : it.orig.fonts || []).flatMap(n => (fams ??= fontsByFamily(pdf)).get(famKey(n)) || []) : [];
+      const main = await font(fo || it.font), chars = [...str], glyphs = [];
       let fb;
       for (let i = 0; i < chars.length;) {
         let g = null;
@@ -352,6 +354,7 @@ async function build(list, localFonts = []) {
         ops.push(L_.setFontAndSize(key, size), L_.PDFOperator.of(L_.PDFOperatorNames.ShowTextAdjusted, [pdf.context.obj(arr)]));
       }
       page.pushOperators(...ops, L_.endText(), L_.popGraphicsState());
+      return glyphs.reduce((t, g) => t + (g.f ? g.f.width(g.code) * size : g.pf.widthOfTextAtSize(g.s, size)) + ls * g.n + (g.space ? ws : 0), 0);
     };
     if (p.ocr) { // scan reconnu : texte invisible pour pouvoir sélectionner et chercher dans le PDF
       const f = await font(null);
@@ -368,10 +371,8 @@ async function build(list, localFonts = []) {
         const h = it.width / it.ratio, c = [it.x + it.width / 2, it.y + h / 2], [x, y] = P(...rotPt(it.x, it.y + h, c, deg)); // coin bas-gauche à l'écran
         page.drawImage(img, { x, y, width: it.width, height: h, rotate: degrees(pageRot - deg), opacity });
       } else if (it.type === 'text') {
-        if (it.orig?.scan) { // ligne scannée : ses pixels ont été retirés, on repeint le fond
-          const b = it.orig.box;
-          page.drawRectangle({ ...box(b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1), color: hexRgb(it.bg) });
-        }
+        if (it.orig?.scan) // lignes scannées : leurs pixels ont été retirés, on repeint le fond
+          for (const [x0, y0, x1, y1] of coverRects(it)) page.drawRectangle({ ...box(x0, y0, x1, y1), color: hexRgb(it.bg) });
         if (!it.text.trim()) continue;
         // lignes coupées comme à l'écran (sinon, hors page affichée, par nos propres mesures)
         const main = await font(it.font), lh = it.lh || L;
@@ -388,6 +389,15 @@ async function build(list, localFonts = []) {
           if (it.frame === 'double') outline([r(x0 + 3, y0 + 3), r(x1 - 3, y0 + 3), r(x1 - 3, y1 - 3), r(x0 + 3, y1 - 3)], o);
         }
         const plan = plans.get(it) || [];
+        if (it.rich) { // ligne mixte : chaque morceau dans sa police, à la suite ; laissée intacte si rien n'a changé
+          if (plan.every(pl => pl.keep)) continue;
+          let x = it.x, row = 0;
+          for (const s of it.segs) for (const [k, part] of s.t.split('\n').entries()) {
+            if (k) { row++; x = it.x; }
+            if (part) x += await writeOrig(part, x, it.y + (row * lh + lh / 2 + BASE) * it.size, it, color, opacity, c, deg, undefined, s.f);
+          }
+          continue;
+        }
         for (const [i, { t, soft }] of lines.entries()) if (t.trim()) {
           const pl = plan[i];
           if (pl?.keep) continue; // ligne inchangée : laissée telle quelle dans le PDF

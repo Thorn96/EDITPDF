@@ -27,7 +27,16 @@ async function addSource(bytes, name) {
   const src = { name, bytes, doc, fields: {}, fields0: {} }, list = [];
   for (let i = 0; i < doc.numPages; i++) list.push({ src, index: i, rot: 0, pdfPage: await doc.getPage(i + 1) });
   sources.push(src);
+  if (bytes.length > BIG_PDF) setTimeout(() => repairLater(src), 1500);
   return list;
+}
+// Gros fichier : ligatures réparées après l'ouverture ; si besoin, le texte cliquable est relu depuis le PDF corrigé
+async function repairLater(src) {
+  const fixed = await repairText(src.bytes, true);
+  if (fixed === src.bytes || !sources.includes(src)) return;
+  src.bytes = fixed; // l'enregistrement et le copier-coller en profitent
+  src.doc = await pdfjsLib.getDocument({ data: fixed.slice() }).promise;
+  for (const pg of pages.filter(p => p.src === src)) { pg.pdfPage = await src.doc.getPage(pg.index + 1); await rebuildPage(pg); }
 }
 
 // Photos → PDF : une page A4 par image (dans le sens de l'image)
@@ -253,6 +262,7 @@ async function rebuildPage(pg) {
   mount();
   await buildPage(pg);
   its.forEach(i => { pg.layer.append(i.host); draw(i); }); // ponytail: recadrage refusé si des textes d'origine sont corrigés (voir cropPage)
+  claimSpans(pg); // lignes déjà corrigées : pas de nouvelle zone cliquable par-dessus
 }
 
 // ---------- Rendu à la demande ----------

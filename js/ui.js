@@ -79,8 +79,20 @@ function reflect() {
   updateProps();
 }
 const snap = it => ({ color: it.color, size: it.size, w: it.w, kind: it.kind, fill: it.fill, rot: it.rot, op: it.op,
-                      fkind: it.fkind, name: it.name, opts: it.opts && [...it.opts], font: it.font && { ...it.font } });
-function restoreProps(it, s) { Object.assign(it, s, { font: s.font && { ...s.font } }); draw(it); if (it === current) reflect(); }
+                      fkind: it.fkind, name: it.name, opts: it.opts && [...it.opts], font: it.font && { ...it.font }, segs: it.segs && structuredClone(it.segs) });
+function restoreProps(it, s) {
+  const { segs, ...rest } = s;
+  Object.assign(it, rest, { font: s.font && { ...s.font } });
+  if (segs) setText(it, segs); else draw(it);
+  if (it === current) reflect();
+}
+// Police d'une ligne mixte : gras / italique sur la partie sélectionnée (ou toute la ligne) ; autre police : toute la ligne
+function richFont(it) {
+  const nf = readFont(it.font), bold = $('bold').classList.contains('on'), italic = $('italic').classList.contains('on');
+  if ($('font').value !== 'orig') styleRich(it, () => nf);
+  else styleRich(it, f => f.local ? { ...f, bold, italic, touched: f.touched || bold !== !!f.bold || italic !== !!f.italic } : { ...f, bold, italic });
+  it.font = it.segs[0].f;
+}
 const PROP_OK = {
   color: it => !['img', 'redact', 'field'].includes(it.type),
   size: it => it.type === 'text' || it.type === 'mark',
@@ -98,7 +110,7 @@ function applyProps(kind) {
     if (kind === 'color') it.color = $('color').value;
     if (kind === 'size') it.size = +$('size').value;
     if (kind === 'width') it.w = +$('width').value;
-    if (kind === 'font') it.font = readFont(it.font);
+    if (kind === 'font') { if (it.rich) richFont(it); else it.font = readFont(it.font); }
     if (kind === 'kind') it.kind = stampKind;
     if (kind === 'fill') it.fill = $('fill').classList.contains('on');
     if (kind === 'rot') it.rot = ((+$('rot').value % 360) + 540) % 360 - 180;

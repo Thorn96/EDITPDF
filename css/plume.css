@@ -140,7 +140,8 @@ body[data-tool=move] svg.shape > * { cursor: move; }
 .box.note { padding: 8px; background: #fff3a8; border-radius: 2px; outline-color: #d9bf3f;
             box-shadow: 0 2px 5px #0002, 0 10px 18px -10px #0005; }
 .box.note.sel, .box.note:hover { box-shadow: 0 0 0 calc(3px / var(--z)) var(--sel-soft), 0 10px 18px -10px #0005; }
-.box textarea { position: relative; display: block; border: 0; padding: 0; margin: 0; background: transparent; outline: none; resize: none;
+.box .rich { outline: none; cursor: text; }
+.box textarea, .box .rich { position: relative; display: block; border: 0; padding: 0; margin: 0; background: transparent; outline: none; resize: none;
                 overflow: hidden; cursor: text; white-space: pre;
                 font-kerning: none; font-variant-ligatures: none; } /* comme dans le PDF enregistré : largeurs identiques */
 .box .cover { position: absolute; pointer-events: none; }

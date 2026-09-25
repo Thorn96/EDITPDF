@@ -102,16 +102,55 @@ function parseToUnicode(txt) {
     }
   return map;
 }
+// Table WinAnsi (celle des polices simples les plus courantes) : code → caractère et nom de glyphe → caractère
+let winAnsi;
+function winAnsiTables() {
+  if (winAnsi) return winAnsi;
+  const byCode = new Map(), byName = new Map();
+  for (const [cp, [code, name]] of Object.entries(PDFLib.StandardFontEmbedder.for(PDFLib.StandardFonts.Helvetica).encoding.unicodeMappings)) {
+    const ch = String.fromCodePoint(+cp);
+    byCode.set(code, ch);
+    byName.set(name, ch);
+  }
+  return winAnsi = { byCode, byName };
+}
+// Police simple sans table ToUnicode (anciens PDF, polices standard) : texte déduit de son encodage et de ses « différences »
+function encodingMap(ctx, dict, get) {
+  const L = PDFLib, { byCode, byName } = winAnsiTables(), enc = get(dict, 'Encoding'), map = new Map();
+  const base = enc instanceof L.PDFName ? enc.toString() : get(enc, 'BaseEncoding')?.toString();
+  if (base && !/WinAnsi|Standard|MacRoman/.test(base)) return null;
+  const flags = get(get(dict, 'FontDescriptor'), 'Flags')?.asNumber?.() ?? 0;
+  if (!enc && flags & 4) return null; // police symbolique à encodage propre : illisible
+  for (const [c, ch] of byCode) if (!base || /WinAnsi/.test(base) || c < 0x7F) map.set(c, ch); // StandardEncoding, MacRoman : partie ASCII seulement
+  if (enc instanceof L.PDFDict) {
+    let c = 0;
+    for (const x of get(enc, 'Differences')?.asArray() || []) {
+      const o = ctx.lookup(x);
+      if (o instanceof L.PDFNumber) { c = o.asNumber(); continue; }
+      const n = o.toString().slice(1), ch = byName.get(n) || (/^uni([0-9A-F]{4})$/.exec(n) ? String.fromCharCode(parseInt(n.slice(3), 16)) : n.length === 1 ? n : null);
+      if (ch) map.set(c, ch); else map.delete(c);
+      c++;
+    }
+  }
+  return map;
+}
 // Ce qu'on sait d'une police du PDF : codes → texte, largeurs, et son dessin (fontkit) pour comparer des glyphes.
-// ponytail: polices Type0 en Identity-H et polices simples avec ToUnicode seulement (la quasi-totalité des PDF actuels)
+// ponytail: polices Type0 en Identity-H, polices simples avec ToUnicode ou à encodage standard ; pas les Type3 ni les CMap exotiques
 function pdfFontInfo(ctx, dict) {
   const L = PDFLib, get = (d, k) => d && ctx.lookup(d.get(L.PDFName.of(k))), num = o => o?.asNumber?.();
   const sub = get(dict, 'Subtype')?.toString(), tu = get(dict, 'ToUnicode');
-  if (!(tu instanceof L.PDFRawStream) || !/^\/(Type0|TrueType|Type1)$/.test(sub)) return null;
-  let text;
-  try { text = new TextDecoder('latin1').decode(L.decodePDFRawStream(tu).decode()); } catch { return null; }
+  if (!/^\/(Type0|TrueType|Type1|MMType1)$/.test(sub)) return null;
   const name = (get(dict, 'BaseFont')?.toString() || '').slice(1).replace(/#([0-9a-f]{2})/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
-  const f = { dict, text, name, family: name.replace(/^[A-Z]{6}\+/, ''), bytes: 1, map: parseToUnicode(text), w: new Map(), dw: 0 };
+  let text = '', map;
+  if (tu instanceof L.PDFRawStream) {
+    try { text = new TextDecoder('latin1').decode(L.decodePDFRawStream(tu).decode()); map = parseToUnicode(text); } catch { return null; }
+  } else { // sans table : seulement une police simple non intégrée (standard) ou TrueType, dont on peut vérifier les glyphes
+    const fd = get(dict, 'FontDescriptor');
+    if (sub === '/Type0' || get(fd, 'FontFile') || get(fd, 'FontFile3')) return null;
+    map = encodingMap(ctx, dict, get);
+    if (!map) return null;
+  }
+  const f = { dict, text, name, family: name.replace(/^[A-Z]{6}\+/, ''), bytes: 1, map, w: new Map(), dw: 0, guess: !text };
   let desc = dict;
   if (sub === '/Type0') {
     if (get(dict, 'Encoding')?.toString() !== '/Identity-H') return null;
@@ -128,9 +167,14 @@ function pdfFontInfo(ctx, dict) {
     if (m instanceof L.PDFRawStream) try { const b = L.decodePDFRawStream(m).decode(); f.gid = c => b[2 * c] << 8 | b[2 * c + 1]; } catch {}
     f.gid ??= c => c;
   } else {
-    const first = num(get(dict, 'FirstChar')) ?? 0;
-    get(dict, 'Widths')?.asArray().forEach((x, k) => f.w.set(first + k, num(ctx.lookup(x)) / 1000));
+    const first = num(get(dict, 'FirstChar')) ?? 0, widths = get(dict, 'Widths');
+    widths?.asArray().forEach((x, k) => f.w.set(first + k, num(ctx.lookup(x)) / 1000));
     f.dw = (num(get(get(dict, 'FontDescriptor'), 'MissingWidth')) ?? 0) / 1000;
+    const std = f.family.replace(/,/g, '-');
+    if (!widths && PDFLib.isStandardFont(std)) { // police standard non intégrée : largeurs connues de pdf-lib
+      const e = PDFLib.StandardFontEmbedder.for(std);
+      for (const [c, ch] of f.map) try { f.w.set(c, e.widthOfTextAtSize(ch, 1)); } catch {}
+    }
   }
   f.width = c => f.w.get(c) ?? f.dw;
   // dessin des glyphes : chargé seulement si on en a besoin
@@ -174,6 +218,7 @@ function fontsByFamily(pdf) {
     for (const [c, s] of f.map) {
       const k = PRESENTATION.test(s) ? s.normalize('NFKC') : s, prev = f.rev.get(k);
       if (!k || k === '�' || !(f.width(c) > 0)) continue;
+      if (f.guess && f.program() && !f.glyph(c)) continue; // police intégrée sans table : la lettre doit exister dans son sous-ensemble
       if (prev == null || f.width(c) < f.width(prev)) f.rev.set(k, c); // en double : le glyphe normal plutôt qu'une ligature mal déclarée
     }
     const k = famKey(f.name);
@@ -212,10 +257,10 @@ function repairLigatures(fonts) {
   // par famille (Calibri, Calibri-Bold…) : largeur normale et glyphe de chaque lettre, et ligatures déjà présentes
   const fam = new Map();
   for (const f of fonts) {
-    const F = fam.get(f.family) ?? fam.set(f.family, { w: new Map(), src: new Map(), has: new Set() }).get(f.family);
+    const F = fam.get(f.family) ?? fam.set(f.family, { w: new Map(), src: new Map() }).get(f.family);
     for (const [c, s] of f.map) {
       const w = f.width(c);
-      F.has.add(s.normalize('NFKC'));
+      (f.has ??= new Set()).add(s.normalize('NFKC')); // ligatures déjà présentes : par police (une même famille peut être intégrée plusieurs fois)
       if ([...s].length === 1 && w > 0 && !(F.w.get(s) <= w)) { F.w.set(s, w); F.src.set(s, [f, c]); }
     }
   }
@@ -226,7 +271,7 @@ function repairLigatures(fonts) {
       const w = f.width(c), unknown = !s || s === '�';
       if (!(w > 0) || !(unknown || ([...s].length === 1 && F.w.get(s) && w > F.w.get(s) * 1.35 + .05))) continue;
       const cands = LIGATURES.map((l, i) => ({ l, i, lw: [...l].reduce((t, ch) => t + (F.w.get(ch) ?? NaN), 0) }))
-        .filter(o => (unknown || o.l.startsWith(s)) && !F.has.has(o.l) && Math.abs(o.lw - w) / w < .12);
+        .filter(o => (unknown || o.l.startsWith(s)) && !f.has?.has(o.l) && Math.abs(o.lw - w) / w < .12);
       if (!cands.length) continue;
       const g = f.glyph(c);
       if (g) { // comparaison des dessins : les lettres côte à côte, espacées pour occuper la largeur de la ligature
@@ -245,7 +290,7 @@ function repairLigatures(fonts) {
         if (Math.abs(cands[0].lw - w) / w > .06) continue;
       }
       f.map.set(c, cands[0].l);
-      F.has.add(cands[0].l);
+      (f.has ??= new Set()).add(cands[0].l);
       f.fixed = (f.fixed || 0) + 1;
       fixed++;
     }
@@ -271,16 +316,17 @@ function patchToUnicode(pdf, f) {
   f.dict.set(PDFLib.PDFName.of('ToUnicode'), pdf.context.register(pdf.context.flateStream(text)));
 }
 // À l'ouverture : PDF corrigé si des ligatures étaient illisibles, sinon le PDF tel quel
-async function repairText(bytes) {
-  // ponytail: lecture complète du fichier par pdf-lib (≈ 40 ms par Mo) ; au-delà de 12 Mo (surtout des images), on s'en passe
-  if (bytes.length > 12e6) return bytes;
+// Lecture complète du fichier par pdf-lib (≈ 40 ms par Mo) : au-delà de 12 Mo, faite en arrière-plan (background) sans bloquer la page
+const BIG_PDF = 12e6;
+async function repairText(bytes, background = false) {
+  if (bytes.length > BIG_PDF && !background) return bytes;
   try {
-    const pdf = await PDFLib.PDFDocument.load(bytes, { updateMetadata: false, ignoreEncryption: true, parseSpeed: PDFLib.ParseSpeeds.Fastest });
-    const fonts = pdfFonts(pdf);
+    const pdf = await PDFLib.PDFDocument.load(bytes, { updateMetadata: false, ignoreEncryption: true, parseSpeed: background ? PDFLib.ParseSpeeds.Medium : PDFLib.ParseSpeeds.Fastest });
+    const fonts = pdfFonts(pdf).filter(f => !f.guess);
     fonts.forEach(f => f.orig = new Map(f.map));
     if (!repairLigatures(fonts)) return bytes;
     fonts.filter(f => f.fixed).forEach(f => patchToUnicode(pdf, f));
-    return await pdf.save({ useObjectStreams: false, objectsPerTick: Infinity });
+    return await pdf.save({ useObjectStreams: false, objectsPerTick: background ? 200 : Infinity });
   } catch (e) { console.warn('Réparation du texte impossible', e); return bytes; }
 }
 

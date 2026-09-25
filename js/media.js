@@ -18,7 +18,7 @@ async function insertImageFile(file) {
   placeImage({ src: im.canvas.toDataURL(im.type, .9), ratio: im.w / im.h }, null, null, null, 180);
 }
 $('imgfile').onchange = e => { if (e.target.files[0]) insertImageFile(e.target.files[0]); e.target.value = ''; };
-const typing = () => { const a = document.activeElement; return /^(TEXTAREA|SELECT)$/.test(a.tagName) || (a.tagName === 'INPUT' && !/^(color|checkbox|radio|file|range)$/.test(a.type)); };
+const typing = () => { const a = document.activeElement; return /^(TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable || (a.tagName === 'INPUT' && !/^(color|checkbox|radio|file|range)$/.test(a.type)); };
 // Copier / couper / coller : éléments de Plume, ou image venant d'ailleurs
 addEventListener('copy', e => {
   if (typing() || !selection.length) return;
