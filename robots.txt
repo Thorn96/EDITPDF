@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://editpdf-tau.vercel.app/sitemap.xml

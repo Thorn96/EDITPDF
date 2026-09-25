@@ -1,7 +1,7 @@
 // Plume : fonctionne hors ligne une fois ouvert en ligne. Tout est hébergé sur le site.
 // Page et scripts de Plume : réseau d'abord (les mises à jour arrivent tout de suite), cache si hors ligne.
 // Bibliothèques et polices (versions figées) : cache d'abord.
-const V = 'plume-v3';
+const V = 'plume-v4';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png',
   './css/plume.css', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',

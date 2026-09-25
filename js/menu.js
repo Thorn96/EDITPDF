@@ -153,10 +153,10 @@ function commands() {
     { head: 'Fichier' }, { label: 'Ouvrir un fichier…', key: 'Ctrl O', fn: () => $('file').click() },
     pages.length && { label: 'Télécharger le PDF…', key: 'Ctrl S', fn: () => openExport() },
     pages.length && { label: 'Ouvrir un PDF dans un nouvel onglet…', fn: () => { openInNewTab = true; $('file').click(); } },
-    { head: 'Édition' }, past.length && { label: 'Annuler', key: 'Ctrl Z', fn: undo }, future.length && { label: 'Rétablir', key: 'Ctrl Y', fn: redo },
+    { head: 'Édition' }, past.length && { label: 'Annuler la dernière modification', key: 'Ctrl Z', fn: undo }, future.length && { label: 'Rétablir', key: 'Ctrl Y', fn: redo },
     { label: 'Historique des modifications', fn: openHistory },
     pages.length && { head: 'Affichage' }, pages.length && { label: 'Ajuster à la largeur', key: 'Ctrl 0', fn: () => fitWidth() },
-    pages.length && { label: 'Zoomer', key: 'Ctrl +', fn: () => zoomBy(1.2) }, pages.length && { label: 'Dézoomer', key: 'Ctrl −', fn: () => zoomBy(1 / 1.2) },
+    pages.length && { label: 'Agrandir (zoom)', key: 'Ctrl +', fn: () => zoomBy(1.2) }, pages.length && { label: 'Réduire (zoom)', key: 'Ctrl −', fn: () => zoomBy(1 / 1.2) },
     ...pages.map((p, i) => ({ label: tr('Aller à la page {n}', { n: i + 1 }), fn: () => p.wrap.scrollIntoView({ block: 'start' }) })),
   ], 'Fichier');
   add(toolsEntries(), 'Outils');

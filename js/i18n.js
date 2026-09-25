@@ -156,12 +156,69 @@ Object.assign(EN, {
   "Plus d'outils : vue en grille, découpage, filigrane, extraction du texte, comparaison, traitement par lot.": 'More tools: grid view, splitting, watermark, text extraction, comparison, batch processing.',
   'Langue, thème clair ou sombre, et cette visite si tu veux la revoir.': 'Language, light or dark theme, and this tour if you want to see it again.',
   "Quand c'est prêt : télécharge, partage, compresse ou protège ton PDF par mot de passe.": "When it's ready: download, share, compress or password-protect your PDF.",
+  // Page, référencement
+  'Plume · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF': 'Plume · Free online PDF editor: fill in, sign, edit a PDF',
+  // Avant / après, signature électronique
+  'Avant / après': 'Before / after', 'Avant': 'Before', 'Après': 'After', 'Retour': 'Back', 'Aucune page modifiée.': 'No page changed.',
+  "Chaque page modifiée, telle qu'elle est et telle qu'elle sera téléchargée.": 'Each changed page, as it is now and as it will be downloaded.',
+  'Ce PDF est signé électroniquement : le fichier modifié ne portera plus de signature valable.': 'This PDF is digitally signed: the edited file will no longer carry a valid signature.',
+  '« {name} » est signé électroniquement : le modifier annulera sa signature.': '“{name}” is digitally signed: editing it will void its signature.',
+  // Profil et remplissage
+  'Mon profil': 'My profile', 'Mon profil (remplissage)…': 'My profile (form filling)…', 'Profil enregistré': 'Profile saved',
+  "Gardé seulement dans ce navigateur. Sert à remplir les formulaires d'un clic.": 'Kept only in this browser. Used to fill in forms in one click.',
+  'Remplir': 'Fill in', 'Remplir avec mon profil': 'Fill in with my profile', 'Remplir avec mon profil…': 'Fill in with my profile…', 'Modifier mon profil': 'Edit my profile',
+  'Civilité': 'Title', 'Prénom': 'First name', 'Nom de naissance': 'Birth name', 'Nom': 'Last name', 'Date de naissance': 'Date of birth', 'Lieu de naissance': 'Place of birth',
+  'Nationalité': 'Nationality', 'Profession': 'Occupation', 'Adresse': 'Address', 'Code postal': 'Postcode', 'Ville': 'City', 'Téléphone': 'Phone', 'E-mail': 'Email',
+  '{n} zone(s) reconnue(s). Vérifie avant de remplir.': '{n} field(s) recognised. Check before filling in.',
+  "Aucune zone reconnue : ajoute tes informations avec l'outil Texte, ou complète ton profil.": 'Nothing recognised: add your details with the Text tool, or complete your profile.',
+  'champ': 'field', 'page {n}': 'page {n}', '{n} zone remplie': '{n} field filled in', '{n} zones remplies': '{n} fields filled in', 'Remplissage avec mon profil': 'Filled in with my profile',
+  // Modèles
+  'Mes modèles': 'My templates', 'Mes modèles…': 'My templates…', 'Des documents prêts à resservir, gardés dans ce navigateur.': 'Documents ready to reuse, kept in this browser.',
+  'Enregistrer le document comme modèle': 'Save the document as a template', 'Enregistrer comme modèle': 'Save as template', 'Nom du modèle :': 'Template name:',
+  'Ouvrir le modèle': 'Open template', "Le document ouvert sera remplacé (il reste dans la sauvegarde automatique jusqu'à la prochaine modification).": 'The open document will be replaced (it stays in the autosave until the next change).',
+  'Modèle « {name} » ouvert': 'Template “{name}” opened', "Aucun modèle pour l'instant.": 'No templates yet.', 'Modèle enregistré': 'Template saved',
+  "Impossible d'enregistrer le modèle (espace du navigateur plein ?)": 'Could not save the template (browser storage full?)',
+  // Caviardage automatique
+  'Caviarder automatiquement': 'Automatic redaction', 'Caviarder automatiquement…': 'Automatic redaction…', 'Caviardage automatique': 'Automatic redaction',
+  'Les informations trouvées dans le texte du document seront masquées, puis vraiment effacées au téléchargement.': 'Information found in the document text will be masked, then truly erased on download.',
+  'Adresses e-mail': 'Email addresses', 'Numéros de téléphone': 'Phone numbers', 'Numéros de sécurité sociale': 'Social security numbers', 'Numéros de carte bancaire': 'Bank card numbers', 'Dates': 'Dates',
+  'aucun trouvé': 'none found', "{n} page(s) scannée(s) pas encore reconnue(s) : lance d'abord la reconnaissance du texte pour les inclure.": '{n} scanned page(s) not recognised yet: run text recognition first to include them.',
+  '{n} zone caviardée : effacée pour de bon au téléchargement': '{n} area redacted: erased for good on download', '{n} zones caviardées : effacées pour de bon au téléchargement': '{n} areas redacted: erased for good on download',
+  // Liens et signets
+  'Lien': 'Link', 'Lien cliquable · K': 'Clickable link · K', 'Ajouter un lien': 'Add a link', 'Destination du lien': 'Link target', 'https://… ou n° de page': 'https://… or page no.',
+  'Adresse web, e-mail ou numéro de page :': 'Web address, email or page number:', 'Valider': 'OK',
+  'Trace la zone cliquable, puis indique une adresse web ou un numéro de page': 'Draw the clickable area, then give a web address or a page number',
+  'Signets': 'Bookmarks', 'Signets (table des matières)…': 'Bookmarks (table of contents)…', 'La table des matières affichée à côté du PDF dans les lecteurs.': 'The table of contents shown next to the PDF in readers.',
+  "Proposer d'après les titres": 'Suggest from headings', 'Ajouter': 'Add', 'Aucun signet.': 'No bookmarks.', 'Aucun titre repéré.': 'No headings found.', 'Page': 'Page',
+  // Conversion Word
+  'Convertir': 'Convert', 'Exporter en Word (.docx)': 'Export to Word (.docx)', 'Ouvrir un document Word (.docx)…': 'Open a Word document (.docx)…', 'Préparation du fichier Word…': 'Preparing the Word file…',
+  'Conversion impossible : {m}': 'Conversion failed: {m}', '« {name} » : document Word illisible.': '“{name}”: unreadable Word document.',
+  "Ce fichier n'est ni un PDF, ni un document Word, ni une image.": 'This file is not a PDF, a Word document or an image.',
+  // Onglets
+  'Nouvel onglet': 'New tab', "Fermer l'onglet": 'Close tab', 'Ouvrir un PDF dans un nouvel onglet': 'Open a PDF in a new tab', 'Ouvrir un PDF dans un nouvel onglet…': 'Open a PDF in a new tab…',
+  "Les modifications de « {name} » seront perdues si tu ne l'as pas téléchargé.": 'Changes to “{name}” will be lost if you have not downloaded it.', 'Fermer': 'Close',
+  // Historique
+  'Historique des modifications': 'Change history', 'Historique': 'History', "Aucune modification pour l'instant": 'No changes yet', "Revenir au document d'origine": 'Back to the original document',
+  "à l'instant": 'just now', 'il y a {n} min': '{n} min ago', 'Modification': 'Change', 'Modification · {x}': 'Change · {x}', '{x} (×{n})': '{x} (×{n})',
+  'Ajout · {x}': 'Added · {x}', 'Suppression · {x}': 'Deleted · {x}', 'Déplacement · {x}': 'Moved · {x}', '{p} · {x}': '{p} · {x}',
+  'Correction du texte': 'Text correction', 'Texte modifié': 'Text changed', 'Verrouillage': 'Locked', 'Déverrouillage': 'Unlocked', 'Mise en page': 'Layout', 'Remplacement': 'Replace',
+  'Pages ajoutées': 'Pages added', 'Page ajoutée': 'Page added', 'Pages supprimées': 'Pages deleted', 'Pages réorganisées': 'Pages reordered', 'Page pivotée': 'Page rotated', 'Page recadrée': 'Page cropped',
+  'Couleur': 'Colour', 'Taille': 'Size', 'Épaisseur': 'Thickness', 'Police': 'Font', 'Symbole': 'Symbol', 'Remplissage': 'Fill', 'Rotation': 'Rotation', 'Opacité': 'Opacity', 'Champ': 'Field', 'Réglage': 'Setting',
+  'texte': 'text', 'texte corrigé': 'corrected text', 'note': 'note', 'tampon': 'stamp', 'symbole': 'symbol', 'dessin': 'drawing', 'rectangle': 'rectangle', 'cercle': 'circle', 'trait': 'line',
+  'flèche': 'arrow', 'surlignage': 'highlight', 'caviardage': 'redaction', 'image': 'image', 'lien': 'link', 'élément': 'item',
+  // Palette de commandes
+  'Palette de commandes': 'Command palette', 'Palette de commandes : toutes les actions': 'Command palette: every action', 'Que veux-tu faire ? (outil, action, page…)': 'What do you want to do? (tool, action, page…)',
+  'Aucune action ne correspond.': 'No matching action.', 'Outil': 'Tool', 'Outils': 'Tools', 'Fichier': 'File', 'Édition': 'Edit', 'Affichage': 'View', 'Document': 'Document',
+  'Ouvrir un fichier…': 'Open a file…', 'Télécharger le PDF…': 'Download the PDF…', 'Rétablir': 'Redo', 'Annuler la dernière modification': 'Undo the last change', 'Agrandir (zoom)': 'Zoom in', 'Réduire (zoom)': 'Zoom out', 'Aller à la page {n}': 'Go to page {n}',
+  'Rectangle · Cercle · Trait · Flèche · Lien': 'Rectangle · Circle · Line · Arrow · Link', 'R · C · L · A · K': 'R · C · L · A · K',
+  ' - rempli': ' - filled',
 });
 
 // Traduit l'interface fixe (textes et infobulles de la page), en gardant l'original pour revenir au français
 const I18N_SKIP = '#pages, #thumbs, #siglist, #stamplist, #gridcards, #toasts, #menu, #cmpout, #fname, #resumeinfo, textarea, script, style, svg';
 const i18nOrig = new WeakMap();
 const I18N_ATTRS = ['title', 'placeholder', 'aria-label', 'data-tip', 'alt'];
+const TITLE0 = document.title; // titre de la page (référencement), traduit en anglais si besoin
 function translateDOM(root = document) {
   const swap = s => { const t = s.trim(); if (!t) return s; const v = tr(t); return v === t ? s : s.replace(t, v); };
   const walker = document.createTreeWalker(root.body || root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
@@ -177,5 +234,5 @@ function translateDOM(root = document) {
       for (const a in o) n.setAttribute(a, swap(o[a]));
     }
   }
-  document.title = tr('Plume · Éditeur PDF');
+  document.title = tr(TITLE0);
 }
