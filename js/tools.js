@@ -117,6 +117,7 @@ $('batchfiles').onchange = e => {
 $('batchpw').onchange = () => $('batchpwbox').hidden = !$('batchpw').checked;
 $('batchcancel').onclick = () => $('batchdlg').close();
 $('batchgo').onclick = async () => {
+  await libsReady();
   const msg = t => $('batchmsg').textContent = t;
   if (!batchFiles.length) return msg(tr('Choisis d\'abord les PDF à traiter.'));
   const pw = $('batchpw').checked ? $('batchpass').value : '', compress = $('batchcompress').checked, a4 = $('batcha4').checked;

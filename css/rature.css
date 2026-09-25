@@ -608,3 +608,4 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .guides { margin: 0; font-size: 13.5px; color: var(--muted); }
 .guides a { color: var(--ink-2); }
 html[lang=en] .guides { display: none; } /* guides en français seulement pour l'instant */
+.en-wait header, .en-wait #empty { visibility: hidden; } /* visiteur anglophone : rien n'apparaît avant la traduction (voir index.html) */

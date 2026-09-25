@@ -1,7 +1,14 @@
 // Rature · Base : utilitaires, traduction, fenêtres, historique
 // Tout est hébergé sur le site (lib/, fonts/) : rien n'est demandé à un autre serveur
 const here = p => new URL(p, document.baseURI).href;
-pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js');
+// Bibliothèques PDF (1,6 Mo) : chargées 1 s après l'affichage de la page, ou dès qu'on ouvre un fichier si c'est plus tôt.
+// Tout ce qui lit ou fabrique un PDF commence par « await libsReady() ».
+const LIBS = ['lib/pdfjs/pdf.min.js', 'lib/pdf-lib/pdf-lib.min.js', 'lib/pdf-lib/fontkit.umd.min.js'];
+let libsP;
+const libsReady = () => libsP ||= Promise.all(LIBS.map(src => new Promise((ok, ko) =>
+  document.head.append(Object.assign(document.createElement('script'), { src, async: false, onload: ok, onerror: ko })))))
+  .then(() => { pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js'); }, e => { libsP = null; throw e; }); // échec (hors ligne) : on réessaiera
+addEventListener('load', () => setTimeout(libsReady, 1000));
 const $ = id => document.getElementById(id), measure = document.createElement('canvas').getContext('2d');
 measure.fontKerning = 'none'; // mesures sans crénage, comme le texte écrit dans le PDF
 // Largeur exacte d'un texte tel que le navigateur le met en page dans nos zones de texte (sans ligatures ni crénage) :

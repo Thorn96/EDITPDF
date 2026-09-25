@@ -610,6 +610,7 @@ async function autosave() {
   } catch (e) { console.warn('Sauvegarde automatique impossible', e); }
 }
 async function restore(s) {
+  await libsReady();
   restoring = true;
   try { await restoreInner(s); } finally { restoring = false; changed(); }
 }

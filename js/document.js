@@ -57,6 +57,7 @@ async function imagesToPdf(files) {
 }
 
 async function openFiles(files, mode) {
+  await libsReady();
   files = [...files];
   const pdfs = files.filter(f => isPdf(f) || isDocx(f)), imgs = files.filter(isImg);
   if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word, ni une image.", 'error');

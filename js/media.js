@@ -229,6 +229,7 @@ function filterScan(o, w, h, mode) {
   }
 }
 $('scanok').onclick = async () => {
+  await libsReady();
   const btn = $('scanok');
   btn.classList.add('busy');
   try {

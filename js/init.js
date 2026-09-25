@@ -1,6 +1,7 @@
 // Rature · démarrage (chargé en dernier)
 applyPrefs();
 translateDOM();
+document.documentElement.classList.remove('en-wait');
 renderSigs();
 renderStamps();
 mount();
