@@ -110,7 +110,7 @@ $('fillgo').onclick = () => {
     const room = p.end != null && p.end < r.str.length ? r.x + textW(r.str.slice(0, p.end)) * k - x : Infinity, w = textW(v, segCss(font, r.px));
     const size = w > room ? Math.max(r.px * .7, r.px * room / w) : r.px;
     recAdd(add({ type: 'text', pg: p.pg, x, y: r.base - (L / 2 + BASE) * size - (r.px - size) * .2, size, text: v, font, color: penColor }, false));
-  }));
+  }), tr('Remplissage avec mon profil'));
   $('filldlg').close();
   select(null);
   toast(plural(rows.length, '{n} zone remplie', '{n} zones remplies'));
@@ -199,7 +199,7 @@ function openAutoRedact() {
       const [x, y, w, hh] = hitRect(h);
       recAdd(add({ type: 'redact', pg: h.pg, x: x - 1, y: y - 1, x2: x + w + 1, y2: y + hh + 1 }, false));
       n++;
-    } });
+    } }, tr('Caviardage automatique'));
     select(null);
     $('redactdlg').close();
     toast(plural(n, '{n} zone caviardée : effacée pour de bon au téléchargement', '{n} zones caviardées : effacées pour de bon au téléchargement'));

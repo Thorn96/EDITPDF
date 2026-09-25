@@ -37,12 +37,12 @@ addEventListener('keydown', e => {
 function showHelp() {
   const rows = [
     ['T · E · S · N', 'Texte · Corriger le texte · Cocher, mentions · Note'], ['H · D · F', 'Surligner · Dessiner · Champ de formulaire'],
-    ['R · C · L · A', 'Rectangle · Cercle · Trait · Flèche'], ['X · I · V', 'Caviarder · Image · Sélectionner'],
+    ['R · C · L · A · K', 'Rectangle · Cercle · Trait · Flèche · Lien'], ['X · I · V', 'Caviarder · Image · Sélectionner'],
     ['G', 'Vue en grille des pages'], ['Ctrl Z · Ctrl Y', 'Annuler · Rétablir'], ['Suppr · Ctrl D', 'Effacer · Dupliquer la sélection'],
     ['Maj+clic · Ctrl A', 'Sélection multiple · Tout sélectionner sur la page'], ['Ctrl C · Ctrl X · Ctrl V', 'Copier · Couper · Coller (aussi une image)'],
     ['Clic droit', 'Menu de l\'élément ou de la page'], ['Flèches', 'Ajuster la position (Maj : ×10)'], ['Alt', 'Déplacer sans aimantation'],
     ['Ctrl F · Ctrl H', 'Rechercher · Remplacer'], ['Ctrl molette · Ctrl + / −', 'Zoomer'], ['Ctrl 0', 'Ajuster à la largeur'],
-    ['Ctrl S · Ctrl O', 'Télécharger · Ouvrir'], ['Échap', 'Terminer la saisie · désélectionner'],
+    ['Ctrl S · Ctrl O', 'Télécharger · Ouvrir'], ['Ctrl K', 'Palette de commandes : toutes les actions'], ['Échap', 'Terminer la saisie · désélectionner'],
   ];
   ask({ title: 'Raccourcis clavier', html: `<dl class="keys">${rows.map(([k, v]) => `<dt>${k.split(' ').map(x => x === '·' ? ' ' : `<kbd>${esc(tr(x))}</kbd>`).join(' ')}</dt><dd>${esc(tr(v))}</dd>`).join('')}</dl>`,
         buttons: [{ label: 'Compris', value: 1, primary: true }] });

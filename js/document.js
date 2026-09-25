@@ -67,9 +67,10 @@ async function openFiles(files, mode) {
       if (mode === 'place') return imgs.forEach(insertImageFile);
     } else mode = await ask({
       title: 'Un document est déjà ouvert', text: tr('Que faire de « {names} » ?', { names: files.map(f => f.name).join(', ') }),
-      buttons: [{ label: 'Annuler', value: null }, { label: 'Remplacer', value: 'replace' }, { label: 'Ajouter à la suite', value: 'append', primary: true }] });
+      buttons: [{ label: 'Annuler', value: null }, { label: 'Remplacer', value: 'replace' }, { label: 'Nouvel onglet', value: 'tab' }, { label: 'Ajouter à la suite', value: 'append', primary: true }] });
     if (!mode) return;
   }
+  if (mode === 'tab') { if (pages.length) newTab(); mode = 'replace'; } // document ouvert dans un nouvel onglet
   const list = [];
   try {
     for (const f of pdfs) {
@@ -94,7 +95,7 @@ async function openSources(list, mode, quiet, at) {
     await showEntries(all, at);
     if (!first) {
       let stash = [];
-      record(() => { stash = all.map(p => removePage(p).its); }, () => { pages.splice(at, 0, ...all); mount(); stash.flat().forEach(it => attach(it)); });
+      record(() => { stash = all.map(p => removePage(p).its); }, () => { pages.splice(at, 0, ...all); mount(); stash.flat().forEach(it => attach(it)); }, tr('Pages ajoutées'));
       if (!quiet) toast(plural(all.length, '{n} page ajoutée', '{n} pages ajoutées'));
     }
     changed();
@@ -106,7 +107,7 @@ async function openSources(list, mode, quiet, at) {
     if (!pages.length) resetDoc();
   }
 }
-$('file').onchange = e => { openFiles(e.target.files); e.target.value = ''; };
+$('file').onchange = e => { openFiles(e.target.files, openInNewTab ? 'tab' : undefined); openInNewTab = false; e.target.value = ''; };
 $('addfile').onchange = e => { openFiles(e.target.files, 'append'); e.target.value = ''; };
 const desk = $('desk');
 desk.ondragover = e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); desk.classList.add('over'); } };
@@ -380,7 +381,7 @@ $('thumbs').ondrop = e => {
   const from = +d.slice(5);
   let to = pages.findIndex(p => p.thumb === t) + (after ? 1 : 0);
   if (from < to) to--;
-  if (to !== from) { movePage(from, to); record(() => movePage(to, from), () => movePage(from, to)); }
+  if (to !== from) { movePage(from, to); record(() => movePage(to, from), () => movePage(from, to), tr('Pages réorganisées')); }
 };
 
 function mount() {
@@ -392,6 +393,7 @@ function mount() {
   $('fname').textContent = [...new Set(pages.map(p => p.src.name))].join(' + ') || tr('Aucun fichier');
   curPage();
   if (!$('grid').hidden) renderGrid();
+  renderTabs();
 }
 function removePage(pg) {
   const i = pages.indexOf(pg), its = items.filter(it => it.pg === pg);
@@ -403,7 +405,7 @@ function removePage(pg) {
 function userDeletePage(pg) {
   if (pages.length === 1) return toast('Un document doit garder au moins une page.', 'error');
   const { i, its } = removePage(pg);
-  record(() => { pages.splice(i, 0, pg); mount(); its.forEach(it => attach(it)); }, () => removePage(pg));
+  record(() => { pages.splice(i, 0, pg); mount(); its.forEach(it => attach(it)); }, () => removePage(pg), tr('Page {n} supprimée', { n: i + 1 }));
   toast(tr('Page {n} supprimée', { n: i + 1 }), '', { label: 'Annuler', fn: undo });
 }
 function movePage(from, to) { const [pg] = pages.splice(from, 1); pages.splice(to, 0, pg); mount(); }
@@ -416,7 +418,7 @@ function userRotate(pg, d) {
   // ponytail: pivoter une page qui porte des éléments demanderait de les faire tourner aussi
   if (items.some(it => it.pg === pg)) return toast("Pivote la page avant d'y ajouter des éléments (ou retire-les).", 'error');
   rotatePage(pg, d);
-  record(() => rotatePage(pg, -d), () => rotatePage(pg, d));
+  record(() => rotatePage(pg, -d), () => rotatePage(pg, d), tr('Page pivotée'));
 }
 function visiblePage() {
   const box = $('pages').getBoundingClientRect(), mid = box.top + box.height / 2;
@@ -460,6 +462,27 @@ function fitWidth(first) {
   setZoom(first ? Math.min(avail / maxW, 2) : avail / maxW);
 }
 const zoomBy = k => { autoFit = false; setZoom(Z * k); };
+// Tablette : zoom à deux doigts (le geste en cours sur la page est abandonné) ; stylet prioritaire sur la paume posée
+const touches = new Map();
+let pinch = null, lastPen = 0, cancelGesture = null;
+for (const t of ['pointerdown', 'pointermove']) addEventListener(t, e => { if (e.pointerType === 'pen') lastPen = Date.now(); }, true);
+$('pages').addEventListener('pointerdown', e => {
+  if (e.pointerType !== 'touch') return;
+  touches.set(e.pointerId, [e.clientX, e.clientY]);
+  if (touches.size !== 2) return;
+  const [a, b] = [...touches.values()];
+  pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, z: Z };
+  cancelGesture?.();
+}, true);
+$('pages').addEventListener('pointermove', e => {
+  if (!touches.has(e.pointerId)) return;
+  touches.set(e.pointerId, [e.clientX, e.clientY]);
+  if (!pinch || touches.size !== 2) return;
+  const [a, b] = [...touches.values()];
+  autoFit = false;
+  setZoom(pinch.z * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d);
+}, true);
+for (const t of ['pointerup', 'pointercancel']) $('pages').addEventListener(t, e => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; }, true);
 $('zin').onclick = () => zoomBy(1.2);
 $('zout').onclick = () => zoomBy(1 / 1.2);
 $('zoomval').onclick = () => fitWidth();

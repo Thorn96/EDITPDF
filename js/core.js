@@ -159,21 +159,26 @@ function makeZip(files) {
 
 // ---------- Historique (annuler / rétablir) ----------
 let batch = null;
-function record(undoFn, redoFn) {
-  if (batch) return batch.push({ undo: undoFn, redo: redoFn });
-  past.push({ undo: undoFn, redo: redoFn, t: Date.now() });
+// (label : ce que l'étape a fait, montré dans l'historique ; sinon déduit de l'élément sélectionné)
+function record(undoFn, redoFn, label) {
+  if (batch) return batch.push({ undo: undoFn, redo: redoFn, label });
+  past.push({ undo: undoFn, redo: redoFn, t: Date.now(), label: label || (current ? tr('Modification · {x}', { x: tr(itemName(current)) }) : tr('Modification')) });
   if (past.length > 300) past.shift();
   future = [];
   changed();
 }
+const ITEM_NAMES = { text: 'texte', mark: 'symbole', ink: 'dessin', rect: 'rectangle', ellipse: 'cercle', line: 'trait', arrow: 'flèche', hl: 'surlignage',
+                     redact: 'caviardage', img: 'image', field: 'champ', link: 'lien' };
+const itemName = it => it.orig ? 'texte corrigé' : it.note ? 'note' : it.frame ? 'tampon' : ITEM_NAMES[it.type] || 'élément';
 // Plusieurs actions d'un coup (tout remplacer, toutes les pages…) = une seule étape d'annulation
-function group(fn) {
+function group(fn, label) {
   const outer = batch;
   batch = [];
   try { return fn(); } finally {
     const list = batch;
     batch = outer;
-    if (list.length) record(() => [...list].reverse().forEach(x => x.undo()), () => list.forEach(x => x.redo()));
+    if (list.length) record(() => [...list].reverse().forEach(x => x.undo()), () => list.forEach(x => x.redo()),
+                            label || (list.length === 1 ? list[0].label : list[0].label && tr('{x} (×{n})', { x: list[0].label, n: list.length })));
   }
 }
 function undo() { const a = past.pop(); if (!a) return toast('Rien à annuler.'); a.undo(); future.push(a); changed(); }

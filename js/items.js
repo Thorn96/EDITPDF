@@ -81,11 +81,11 @@ function add(it, focus = true) {
   if (it.type === 'text' && focus) it.input.focus(); // tout de suite : les premières touches ne doivent pas se perdre
   return it;
 }
-const recAdd = it => record(() => detach(it), () => attach(it));
+const recAdd = it => record(() => detach(it), () => attach(it), tr('Ajout · {x}', { x: tr(itemName(it)) }));
 function del(it) {
   if (it.lock) return toast('Élément verrouillé : déverrouille-le d\'abord (clic droit).', 'error');
   const i = detach(it);
-  if (!it.fresh) record(() => attach(it, i), () => detach(it));
+  if (!it.fresh) record(() => attach(it, i), () => detach(it), tr('Suppression · {x}', { x: tr(itemName(it)) }));
 }
 const delMany = list => group(() => [...list].filter(i => !i.lock).forEach(del));
 function endEdit(it) {
@@ -96,7 +96,7 @@ function endEdit(it) {
     return recAdd(it);
   }
   const a = snapText(it), b = it.before;
-  if (JSON.stringify(a) !== JSON.stringify(b)) record(() => setText(it, b), () => setText(it, a));
+  if (JSON.stringify(a) !== JSON.stringify(b)) record(() => setText(it, b), () => setText(it, a), tr(it.orig ? 'Correction du texte' : 'Texte modifié'));
 }
 // Texte d'un élément pour l'annulation : la chaîne, ou les morceaux stylés d'une ligne mixte
 const snapText = it => it.rich ? structuredClone(it.segs) : it.text;
@@ -193,7 +193,7 @@ function nudge(list, dx, dy) { // flèches : les appuis rapprochés comptent pou
   list.forEach(i => moveBy(i, dx, dy));
   const last = past.at(-1), same = last?.nudge?.length === list.length && last.nudge.every((x, i) => x === list[i]);
   if (same && Date.now() - last.t < 1000) { last.dx += dx; last.dy += dy; last.t = Date.now(); return changed(); }
-  const e = { nudge: [...list], dx, dy, t: Date.now() };
+  const e = { nudge: [...list], dx, dy, t: Date.now(), label: tr('Déplacement · {x}', { x: tr(itemName(list[0])) }) };
   e.undo = () => e.nudge.forEach(i => moveBy(i, -e.dx, -e.dy));
   e.redo = () => e.nudge.forEach(i => moveBy(i, e.dx, e.dy));
   past.push(e); future = []; changed();
@@ -208,12 +208,12 @@ function userReorder(list, front) {
   const before = new Map(list.map(it => [it, items.indexOf(it)]));
   const apply = () => list.forEach(it => moveInStack(it, front ? items.length - 1 : 0));
   apply();
-  record(() => [...before].sort((a, b) => a[1] - b[1]).forEach(([it, i]) => moveInStack(it, i)), apply);
+  record(() => [...before].sort((a, b) => a[1] - b[1]).forEach(([it, i]) => moveInStack(it, i)), apply, tr(front ? 'Premier plan' : 'Arrière-plan'));
 }
 function setLock(list, v) {
   const set = w => list.forEach(it => { it.lock = w; draw(it); });
   set(v);
-  record(() => set(!v), () => set(v));
+  record(() => set(!v), () => set(v), tr(v ? 'Verrouillage' : 'Déverrouillage'));
   toast(v ? 'Verrouillé : il ne bougera plus' : 'Déverrouillé');
 }
 // Copie d'un élément (sur la même page ou une autre : position proportionnelle à la taille de la page)
@@ -417,13 +417,14 @@ function guides(pg, gx, gy) {
 
 // ---------- Souris sur la page ----------
 function down(e, pg) {
-  if (e.button !== 0) return;
+  if (e.button !== 0 || pinch) return;
+  if (e.pointerType === 'touch' && Date.now() - lastPen < 1500) return; // paume posée pendant qu'on écrit au stylet
   closeMenu();
   const t = e.target, cl = t.classList;
   if (cl.contains('field') || ((t.tagName === 'TEXTAREA' || t.closest?.('.rich')) && tool !== 'move' && !(t.item || t.closest('.rich')?.item)?.lock)) return; // champ ou texte en cours d'écriture
   const pos = ev => toBase(pg, ev);
   const [sx, sy] = pos(e);
-  let it, onMove, onUp;
+  let it, onMove, onUp, creating = false; // creating : élément en train d'être tracé (abandonné si le geste l'est)
   if (t.item?.lock) { select(t.item, e.shiftKey); e.preventDefault(); return; } // verrouillé : se sélectionne mais ne bouge pas
   if (cl.contains('grip')) { // largeur du paragraphe
     it = t.item;
@@ -456,7 +457,7 @@ function down(e, pg) {
     onUp = () => {
       guides(pg);
       const dx = ax, dy = ay;
-      if (dx || dy) record(() => moving.forEach(i => moveBy(i, -dx, -dy)), () => moving.forEach(i => moveBy(i, dx, dy)));
+      if (dx || dy) record(() => moving.forEach(i => moveBy(i, -dx, -dy)), () => moving.forEach(i => moveBy(i, dx, dy)), tr('Déplacement · {x}', { x: tr(itemName(it)) }));
     };
   } else if (tool === 'move' || tool === 'crop') { // sélection au cadre, ou zone à garder (recadrage)
     if (tool === 'move' && !e.shiftKey) select(null);
@@ -495,6 +496,7 @@ function down(e, pg) {
     return;
   } else if (tool === 'draw') {
     it = add({ type: 'ink', pg, x: sx, y: sy, pts: [[0, 0]] });
+    creating = true;
     onMove = ev => {
       const [x, y] = pos(ev), p = it.pts.at(-1);
       if (Math.hypot(x - it.x - p[0], y - it.y - p[1]) > .8) { it.pts.push([x - it.x, y - it.y]); draw(it); }
@@ -505,6 +507,7 @@ function down(e, pg) {
     it = add({ type: tool === 'highlight' ? 'hl' : tool, pg, x: sx, y: sy, x2: sx, y2: sy,
                ...((tool === 'rect' || tool === 'ellipse') && { fill: $('fill').classList.contains('on') }),
                ...(f && { ...f, name: nextFieldName(f.name) }) });
+    creating = true;
     onMove = ev => { [it.x2, it.y2] = pos(ev); draw(it); };
     onUp = async () => {
       if (it.type === 'link') { // lien : un cadre, puis sa destination
@@ -526,7 +529,9 @@ function down(e, pg) {
   e.preventDefault();
   pg.layer.setPointerCapture(e.pointerId);
   pg.layer.onpointermove = onMove;
-  pg.layer.onpointerup = ev => { pg.layer.onpointermove = pg.layer.onpointerup = null; onUp?.(ev); };
+  pg.layer.onpointerup = ev => { pg.layer.onpointermove = pg.layer.onpointerup = null; cancelGesture = null; onUp?.(ev); };
+  // deuxième doigt posé (zoom) : le tracé commencé est abandonné
+  cancelGesture = () => { pg.layer.onpointermove = pg.layer.onpointerup = null; cancelGesture = null; if (creating) detach(it); };
 }
 
 // Police d'origine d'un morceau de texte : "ABCDEF+TimesNewRomanPS-BoldMT" → Times New Roman, gras

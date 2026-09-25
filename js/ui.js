@@ -95,6 +95,7 @@ function richFont(it) {
   else styleRich(it, f => f.local ? { ...f, bold, italic, touched: f.touched || bold !== !!f.bold || italic !== !!f.italic } : { ...f, bold, italic });
   it.font = it.segs[0].f;
 }
+const PROP_NAMES = { color: 'Couleur', size: 'Taille', width: 'Épaisseur', font: 'Police', kind: 'Symbole', fill: 'Remplissage', rot: 'Rotation', op: 'Opacité', field: 'Champ' };
 const PROP_OK = {
   color: it => !['img', 'redact', 'field', 'link'].includes(it.type),
   size: it => it.type === 'text' || it.type === 'mark',
@@ -120,7 +121,7 @@ function applyProps(kind) {
     if (kind === 'field') Object.assign(it, readField());
     draw(it);
     const a = snap(it);
-    if (!it.fresh) record(() => restoreProps(it, b), () => restoreProps(it, a));
+    if (!it.fresh) record(() => restoreProps(it, b), () => restoreProps(it, a), tr('{p} · {x}', { p: tr(PROP_NAMES[kind] || 'Réglage'), x: tr(itemName(it)) }));
   }));
   prefsChanged();
 }

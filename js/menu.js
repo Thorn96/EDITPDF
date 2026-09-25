@@ -11,6 +11,7 @@ function openMenu(x, y, entries) {
     b.innerHTML = `<span>${esc(tr(e.label))}</span>${e.key ? `<kbd>${esc(tr(e.key))}</kbd>` : ''}`;
     b.classList.toggle('danger', !!e.danger);
     b.classList.toggle('on', !!e.on);
+    b.classList.toggle('undone', !!e.undone);
     b.disabled = !!e.disabled;
     b.onclick = () => { closeMenu(); e.fn(); };
     m.append(b);
@@ -21,7 +22,7 @@ function openMenu(x, y, entries) {
   m.style.top = clamp(y, 8, innerHeight - r.height - 8) + 'px';
 }
 function closeMenu() { if ($('menu').hidden) return false; $('menu').hidden = true; return true; }
-addEventListener('pointerdown', e => { if (!e.target.closest('#menu, #toolsbtn, #settingsbtn')) closeMenu(); }, true);
+addEventListener('pointerdown', e => { if (!e.target.closest('#menu, #toolsbtn, #settingsbtn, #histbtn')) closeMenu(); }, true);
 addEventListener('resize', () => closeMenu());
 $('pages').addEventListener('scroll', () => closeMenu());
 const menuAt = btn => { const r = btn.getBoundingClientRect(); return [r.right - 250, r.bottom + 6]; };
@@ -76,10 +77,9 @@ function openPageMenu(e, pg) {
   ]);
 }
 
-$('toolsbtn').onclick = () => {
-  if (closeMenu()) return;
+function toolsEntries() {
   const none = !pages.length, pg = visiblePage();
-  openMenu(...menuAt($('toolsbtn')), [
+  return [
     { head: 'Pages' },
     { label: 'Vue en grille des pages', key: 'G', fn: openGrid, disabled: none },
     { label: 'Insérer une page blanche', fn: () => insertBlank(pg), disabled: none },
@@ -101,11 +101,10 @@ $('toolsbtn').onclick = () => {
     { label: 'Ouvrir un document Word (.docx)…', fn: () => $('file').click() },
     { head: 'Plusieurs fichiers' },
     { label: 'Traitement par lot…', fn: openBatch },
-  ]);
-};
-$('settingsbtn').onclick = () => {
-  if (closeMenu()) return;
-  openMenu(...menuAt($('settingsbtn')), [
+  ];
+}
+function settingsEntries() {
+  return [
     { head: 'Langue' },
     { label: 'Français', on: lang === 'fr', fn: () => setLang('fr') },
     { label: 'English', on: lang === 'en', fn: () => setLang('en') },
@@ -119,5 +118,82 @@ $('settingsbtn').onclick = () => {
     { label: 'Raccourcis clavier', key: '?', fn: showHelp },
     REPORT_KEY && { label: 'Signaler un problème…', fn: openReport },
     { label: 'Réinitialiser mes préférences', fn: resetPrefs },
+  ];
+}
+$('toolsbtn').onclick = () => { if (!closeMenu()) openMenu(...menuAt($('toolsbtn')), toolsEntries()); };
+$('settingsbtn').onclick = () => { if (!closeMenu()) openMenu(...menuAt($('settingsbtn')), settingsEntries()); };
+
+// ---------- Historique : chaque étape, du plus récent au plus ancien ; un clic y revient ----------
+const ago = t => { const m = Math.round((Date.now() - t) / 60000); return !t ? '' : m < 1 ? tr("à l'instant") : m < 60 ? tr('il y a {n} min', { n: m }) : new Date(t).toLocaleTimeString(lang === 'en' ? 'en-GB' : 'fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+function goToStep(n) { // n : nombre d'étapes à garder faites
+  while (past.length > n && past.length) undo();
+  while (past.length < n && future.length) redo();
+}
+function openHistory() {
+  if (closeMenu()) return;
+  const steps = [...past.map((a, i) => ({ a, n: i + 1, done: true })), ...[...future].reverse().map((a, i) => ({ a, n: past.length + i + 1, done: false }))];
+  openMenu(...menuAt($('histbtn')), [
+    { head: steps.length ? 'Historique' : "Aucune modification pour l'instant" },
+    ...steps.slice(-40).reverse().map(({ a, n, done }) => ({ label: a.label || tr('Modification'), key: ago(a.t), on: n === past.length, undone: !done, fn: () => goToStep(n) })),
+    steps.length && '-',
+    steps.length && { label: "Revenir au document d'origine", fn: () => goToStep(0), disabled: !past.length },
   ]);
+}
+$('histbtn').onclick = openHistory;
+
+// ---------- Palette de commandes (Ctrl K) : n'importe quelle action en tapant quelques lettres ----------
+function commands() {
+  const out = [], put = (label, fn, key, group) => out.push({ label: tr(label), fn, key: key ? tr(key) : '', group: tr(group), find: plainText(`${label} ${tr(label)} ${group} ${tr(group)}`) }); // cherché dans les deux langues
+  for (const b of document.querySelectorAll('#tools button[data-tip], #tools .flyout button[data-tip]')) {
+    const [label, key] = b.dataset.tip.split(' · ');
+    put(label, () => b.dataset.t ? setTool(b.dataset.t) : b.click(), key, 'Outil');
+  }
+  const add = (list, group) => { let g = group; for (const e of list) { if (!e || e === '-') continue; if (e.head) { g = e.head; continue; } if (!e.disabled) put(e.label, e.fn, e.key, g); } };
+  add([
+    { head: 'Fichier' }, { label: 'Ouvrir un fichier…', key: 'Ctrl O', fn: () => $('file').click() },
+    pages.length && { label: 'Télécharger le PDF…', key: 'Ctrl S', fn: () => openExport() },
+    pages.length && { label: 'Ouvrir un PDF dans un nouvel onglet…', fn: () => { openInNewTab = true; $('file').click(); } },
+    { head: 'Édition' }, past.length && { label: 'Annuler', key: 'Ctrl Z', fn: undo }, future.length && { label: 'Rétablir', key: 'Ctrl Y', fn: redo },
+    { label: 'Historique des modifications', fn: openHistory },
+    pages.length && { head: 'Affichage' }, pages.length && { label: 'Ajuster à la largeur', key: 'Ctrl 0', fn: () => fitWidth() },
+    pages.length && { label: 'Zoomer', key: 'Ctrl +', fn: () => zoomBy(1.2) }, pages.length && { label: 'Dézoomer', key: 'Ctrl −', fn: () => zoomBy(1 / 1.2) },
+    ...pages.map((p, i) => ({ label: tr('Aller à la page {n}', { n: i + 1 }), fn: () => p.wrap.scrollIntoView({ block: 'start' }) })),
+  ], 'Fichier');
+  add(toolsEntries(), 'Outils');
+  add(settingsEntries(), 'Réglages');
+  return out;
+}
+let palCmds = [], palAt = 0;
+function openPalette() {
+  closeMenu();
+  palCmds = commands();
+  $('palette').hidden = false;
+  $('palq').value = '';
+  renderPalette();
+  $('palq').focus();
+}
+const closePalette = () => { $('palette').hidden = true; };
+function renderPalette() {
+  const words = plainText($('palq').value).split(/\s+/).filter(Boolean);
+  const list = palCmds.filter(c => words.every(w => c.find.includes(w))).slice(0, 60);
+  palAt = clamp(palAt, 0, Math.max(0, list.length - 1));
+  $('pallist').replaceChildren(...(list.length ? list.map((c, i) => {
+    const b = document.createElement('button');
+    b.innerHTML = `<span></span><small></small>`;
+    b.firstChild.textContent = c.label;
+    b.lastChild.textContent = c.key || c.group;
+    b.classList.toggle('on', i === palAt);
+    b.onclick = () => { closePalette(); c.fn(); };
+    return b;
+  }) : [Object.assign(document.createElement('div'), { className: 'none', textContent: tr('Aucune action ne correspond.') })]));
+  $('pallist').children[palAt]?.scrollIntoView?.({ block: 'nearest' });
+}
+$('palq').oninput = () => { palAt = 0; renderPalette(); };
+$('palq').onkeydown = e => {
+  const n = $('pallist').querySelectorAll('button').length;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); palAt = (palAt + (e.key === 'ArrowDown' ? 1 : -1) + n) % Math.max(1, n); renderPalette(); }
+  if (e.key === 'Enter') { e.preventDefault(); $('pallist').querySelectorAll('button')[palAt]?.click(); }
+  if (e.key === 'Escape') { e.stopPropagation(); closePalette(); }
 };
+$('palette').onpointerdown = e => { if (e.target === $('palette')) closePalette(); };
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('palette').hidden ? openPalette() : closePalette(); } }, true);

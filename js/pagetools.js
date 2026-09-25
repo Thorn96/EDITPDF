@@ -42,7 +42,7 @@ function renderGrid() {
       const from = +d.slice(6);
       let to = pages.indexOf(pg) + (after ? 1 : 0);
       if (from < to) to--;
-      if (to !== from) { movePage(from, to); record(() => movePage(to, from), () => movePage(from, to)); }
+      if (to !== from) { movePage(from, to); record(() => movePage(to, from), () => movePage(from, to), tr('Pages réorganisées')); }
     };
     gridIO.observe(c);
     return c;
@@ -69,7 +69,7 @@ document.querySelector('.gridacts').onclick = async e => {
     if (list.length >= pages.length) return toast('Un document doit garder au moins une page.', 'error');
     const removed = list.map(p => ({ p, ...removePage(p) })); // chaque index est relevé après les suppressions précédentes
     record(() => { for (const r of [...removed].reverse()) pages.splice(r.i, 0, r.p); mount(); removed.forEach(r => r.its.forEach(it => attach(it))); },
-           () => removed.forEach(r => removePage(r.p)));
+           () => removed.forEach(r => removePage(r.p)), tr('Pages supprimées'));
     gridSel.clear();
     toast(plural(list.length, '{n} page supprimée', '{n} pages supprimées'), '', { label: 'Annuler', fn: undo });
   }
@@ -100,7 +100,7 @@ async function duplicatePage(pg) {
   const at = pages.indexOf(pg) + 1;
   await showEntries([np], at);
   group(() => {
-    record(() => removePage(np), () => { pages.splice(at, 0, np); mount(); });
+    record(() => removePage(np), () => { pages.splice(at, 0, np); mount(); }, tr('Page ajoutée'));
     if (!baked) items.filter(i => i.pg === pg).forEach(i => recAdd(add(cloneItem(i, np), false)));
   });
   select(null);
@@ -127,7 +127,7 @@ function userCrop(pg, crop) {
   if (items.some(i => i.pg === pg && i.orig)) return toast('Recadre la page avant de corriger son texte.', 'error');
   const before = pg.crop || null;
   applyCrop(pg, crop);
-  record(() => applyCrop(pg, before), () => applyCrop(pg, crop));
+  record(() => applyCrop(pg, before), () => applyCrop(pg, crop), tr('Page recadrée'));
 }
 // Le recadrage ne fait que décaler l'origine : éléments et texte reconnu sont décalés d'autant
 async function applyCrop(pg, crop) {

@@ -67,7 +67,7 @@ function replaceHits(list) {
       setText(it, a);
       record(() => setText(it, b), () => setText(it, a));
     }
-  });
+  }, tr('Remplacement'));
   return list.length;
 }
 $('findbtn').onclick = () => $('find').hidden ? openFind() : closeFind();
@@ -120,7 +120,7 @@ $('decook').onclick = () => {
               num: $('dnum').value, numPos: $('dnumpos').value, header: $('dhead').value.trim(), footer: $('dfoot').value.trim() };
   const b = deco;
   setDeco(a);
-  record(() => setDeco(b), () => setDeco(a));
+  record(() => setDeco(b), () => setDeco(a), tr('Mise en page'));
   $('decodlg').close();
 };
 
