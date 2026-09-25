@@ -63,6 +63,7 @@ function openExport(only) {
   document.querySelector(`input[name=exppages][value=${only ? 'some' : 'all'}]`).checked = true;
   $('exprange').value = only ? only.map(p => pages.indexOf(p) + 1).join(', ') : '';
   $('expmsg').textContent = '';
+  $('expsigned').hidden = !sources.some(s => s.signed);
   $('expdlg').showModal();
 }
 $('save').onclick = () => openExport();
@@ -88,26 +89,36 @@ function parseRange(s, n) {
 const askLocalFonts = () => window.queryLocalFonts && items.some(it => it.font?.local)
   ? Promise.race([queryLocalFonts(), new Promise(r => setTimeout(r, 30000, []))]).catch(() => []) : Promise.resolve([]);
 
-async function exportDoc(share) {
-  const msg = t => $('expmsg').textContent = tr(t);
+// Réglages de la fenêtre de téléchargement (null, avec un message, s'ils sont incomplets)
+function exportOptions() {
+  const msg = t => { $('expmsg').textContent = tr(t); return null; };
   let list = pages;
   if (document.querySelector('input[name=exppages]:checked').value === 'some') {
     const idx = parseRange($('exprange').value, pages.length);
-    if (!idx?.length) return $('expmsg').textContent = tr('Indique des pages entre 1 et {n}, par exemple 1-3, 5.', { n: pages.length });
+    if (!idx?.length) { $('expmsg').textContent = tr('Indique des pages entre 1 et {n}, par exemple 1-3, 5.', { n: pages.length }); return null; }
     list = idx.map(i => pages[i]);
   }
   const pw = $('exppw').checked ? $('exppass').value : '';
   if ($('exppw').checked && !pw) return msg('Choisis un mot de passe.');
   if (pw.includes(',')) return msg('Le mot de passe ne peut pas contenir de virgule.');
-  const compress = $('expcompress').checked, a4 = $('expa4').checked, name = ($('expname').value.trim() || 'document').replace(/\.pdf$/i, '') + '.pdf';
+  return { list, pw, compress: $('expcompress').checked, a4: $('expa4').checked, name: ($('expname').value.trim() || 'document').replace(/\.pdf$/i, '') + '.pdf' };
+}
+async function makePdf(o) {
+  let out = await build(o.list, await askLocalFonts());
+  if (o.a4) out = await toA4(out);
+  if (o.pw || o.compress) out = await finish(out, o);
+  return out;
+}
+async function exportDoc(share, ready) {
+  const o = ready?.o || exportOptions();
+  if (!o) return;
+  const { name } = o;
   $('expdlg').close();
+  $('prevdlg').close();
   const btn = $('save');
   btn.classList.add('busy');
   try {
-    const localFonts = await askLocalFonts();
-    let out = await build(list, localFonts);
-    if (a4) out = await toA4(out);
-    if (pw || compress) out = await finish(out, { pw, compress });
+    const out = ready?.out || await makePdf(o);
     if (!share) { download(new Blob([out], { type: 'application/pdf' }), name); return toast(tr('{name} téléchargé ✓', { name })); }
     const file = new File([out], name, { type: 'application/pdf' }), go = () => navigator.share({ files: [file], title: name }).catch(() => {});
     try { await navigator.share({ files: [file], title: name }); }
@@ -126,6 +137,45 @@ async function exportDoc(share) {
 }
 $('expgo').onclick = () => exportDoc(false);
 $('expshare').onclick = () => exportDoc(true);
+
+// ---------- Avant / après : chaque page modifiée, originale à gauche, telle qu'elle sera téléchargée à droite ----------
+let preview = null;
+$('expprev').onclick = async () => {
+  const o = exportOptions();
+  if (!o) return;
+  const btn = $('expprev');
+  btn.classList.add('busy');
+  try {
+    const out = await makePdf(o), doc = await pdfjsLib.getDocument({ data: out.slice(), password: o.pw }).promise;
+    preview = { o, out };
+    const changed = o.list.map((pg, i) => ({ pg, i })).filter(({ pg }) => items.some(it => it.pg === pg) || pg.rot || pg.crop || deco.wm || deco.header || deco.footer || deco.num || o.a4);
+    const draw = async (page, vp) => {
+      const c = document.createElement('canvas'), k = Math.min(2, 900 / vp.width);
+      const v = vp.clone({ scale: vp.scale * k });
+      c.width = v.width; c.height = v.height;
+      await page.render({ canvasContext: c.getContext('2d'), viewport: v }).promise;
+      return c;
+    };
+    const blocks = [];
+    for (const { pg, i } of changed) {
+      const p = await doc.getPage(i + 1), before = await draw(pg.pdfPage, viewportOf(pg)), after = await draw(p, p.getViewport({ scale: 1 }));
+      const b = document.createElement('div');
+      b.className = 'prevpage';
+      b.innerHTML = `<h4>${esc(tr('Page {n}', { n: pages.indexOf(pg) + 1 }))}</h4><div class="prevpair"><figure><figcaption>${esc(tr('Avant'))}</figcaption></figure><figure><figcaption>${esc(tr('Après'))}</figcaption></figure></div>`;
+      b.querySelectorAll('figure')[0].append(before);
+      b.querySelectorAll('figure')[1].append(after);
+      blocks.push(b);
+    }
+    $('prevpages').replaceChildren(...(blocks.length ? blocks : [Object.assign(document.createElement('p'), { textContent: tr('Aucune page modifiée.') })]));
+    $('expdlg').close();
+    $('prevdlg').showModal();
+  } catch (e) {
+    console.error(e);
+    $('expmsg').textContent = tr("Erreur lors de l'enregistrement : {m}", { m: e.message });
+  } finally { btn.classList.remove('busy'); }
+};
+$('prevback').onclick = () => { $('prevdlg').close(); $('expdlg').showModal(); };
+$('prevgo').onclick = () => preview && exportDoc(false, preview);
 
 // ---------- Fabrication du PDF final ----------
 // Rectangle (repère de la page affichée) → repère MuPDF de la page d'origine (sans notre rotation ajoutée)
@@ -429,6 +479,8 @@ async function build(list, localFonts = []) {
         line(pt(it.x, it.y), tip, it.w, color, opacity); line(pt(...h1), tip, it.w, color, opacity); line(pt(...h2), tip, it.w, color, opacity);
       } else if (it.type === 'line') {
         line(pt(it.x, it.y), pt(it.x2, it.y2), it.w, color, opacity);
+      } else if (it.type === 'link') {
+        writeLink(pdf, page, it, box(Math.min(it.x, it.x2), Math.min(it.y, it.y2), Math.max(it.x, it.x2), Math.max(it.y, it.y2)), target);
       } else if (it.type === 'field') {
         newFields.push({ it, page, rect: box(Math.min(it.x, it.x2), Math.min(it.y, it.y2), Math.max(it.x, it.x2), Math.max(it.y, it.y2)), rotate });
       } else if (it.type !== 'redact') { // caviardage : déjà appliqué par MuPDF
@@ -451,6 +503,7 @@ async function build(list, localFonts = []) {
         await writeLine(d.t, d.x, d.y, d.size, null, rgb(.27, .27, .27), 1, [0, 0], 0);
     }
   }
+  writeBookmarks(pdf, target);
   // 4. champs de formulaire créés dans Plume : le PDF devient remplissable
   if (newFields.length) {
     const form = pdf.getForm(), helv = await pdf.embedFont(StandardFonts.Helvetica), taken = new Set(form.getFields().map(f => f.getName()));
@@ -531,19 +584,24 @@ function idb(mode, fn) {
   });
 }
 let restoring = false;
+// Le document entier, sérialisable : sauvegarde automatique et modèles
+function snapshot() {
+  const used = [...new Set(pages.map(p => p.src))];
+  return {
+    t: Date.now(), name: $('fname').textContent, expname: $('expname').value, deco,
+    sources: used.map(s => ({ name: s.name, bytes: s.bytes, fields: s.fields, fields0: s.fields0, signed: s.signed })),
+    pages: pages.map(p => ({ src: used.indexOf(p.src), index: p.index, rot: p.rot, crop: p.crop || null, ocr: p.ocr || null })),
+    items: items.filter(it => !(it.fresh && !it.text.trim())).map(it => {
+      const { el, host, input, span, spans, pg, before, fresh, _op0, ...x } = it;
+      return { ...x, pg: pages.indexOf(pg) };
+    }),
+    bookmarks: bookmarks.map(b => ({ title: b.title, page: pages.indexOf(b.pg) })).filter(b => b.page >= 0),
+  };
+}
 async function autosave() {
   if (!pages.length || restoring) return; // pas de sauvegarde partielle pendant une reprise
   try {
-    const used = [...new Set(pages.map(p => p.src))];
-    await idb('readwrite', s => s.put({
-      t: Date.now(), name: $('fname').textContent, expname: $('expname').value, deco,
-      sources: used.map(s => ({ name: s.name, bytes: s.bytes, fields: s.fields, fields0: s.fields0 })),
-      pages: pages.map(p => ({ src: used.indexOf(p.src), index: p.index, rot: p.rot, crop: p.crop || null, ocr: p.ocr || null })),
-      items: items.filter(it => !(it.fresh && !it.text.trim())).map(it => {
-        const { el, host, input, span, spans, pg, before, fresh, _op0, ...x } = it;
-        return { ...x, pg: pages.indexOf(pg) };
-      }),
-    }, 'session'));
+    await idb('readwrite', s => s.put(snapshot(), 'session'));
     $('saved').classList.add('on');
     clearTimeout(autosave.t);
     autosave.t = setTimeout(() => $('saved').classList.remove('on'), 1600);
@@ -559,7 +617,7 @@ async function restoreInner(s) {
   const srcs = [];
   for (const x of s.sources) {
     const doc = await pdfjsLib.getDocument({ data: x.bytes.slice() }).promise;
-    srcs.push({ name: x.name, bytes: x.bytes, doc, fields: x.fields, fields0: x.fields0 });
+    srcs.push({ name: x.name, bytes: x.bytes, doc, fields: structuredClone(x.fields), fields0: x.fields0, signed: x.signed });
   }
   sources = srcs;
   const list = [];
@@ -572,6 +630,7 @@ async function restoreInner(s) {
     }
     claimSpans(pg);
   });
+  bookmarks = (s.bookmarks || []).map(b => ({ title: b.title, pg: list[b.page] })).filter(b => b.pg);
   select(null);
   past = []; future = [];
   changed();

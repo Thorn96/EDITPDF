@@ -6,6 +6,7 @@ const HINTS = {
   highlight: 'Fais glisser sur le texte à surligner',
   draw: 'Dessine à main levée',
   rect: 'Clique et fais glisser pour tracer un rectangle',
+  link: 'Trace la zone cliquable, puis indique une adresse web ou un numéro de page',
   ellipse: 'Clique et fais glisser pour tracer un cercle',
   line: 'Clique et fais glisser pour tracer un trait',
   arrow: 'Fais glisser du départ vers la pointe de la flèche',
@@ -15,8 +16,8 @@ const HINTS = {
   move: 'Clic : sélectionner · Maj+clic ou cadre : plusieurs · flèches : ajuster · Alt : sans aimantation',
   crop: 'Trace la zone de la page à garder · Échap : annuler',
 };
-const KEYS = { t: 'text', e: 'edit', s: 'stamp', h: 'highlight', d: 'draw', r: 'rect', c: 'ellipse', l: 'line', a: 'arrow', n: 'note', f: 'field', x: 'redact', v: 'move' };
-const SHAPES = ['rect', 'ellipse', 'line', 'arrow'];
+const KEYS = { t: 'text', e: 'edit', s: 'stamp', h: 'highlight', d: 'draw', r: 'rect', c: 'ellipse', l: 'line', a: 'arrow', k: 'link', n: 'note', f: 'field', x: 'redact', v: 'move' };
+const SHAPES = ['rect', 'ellipse', 'line', 'arrow', 'link'];
 // Contexte d'un élément = liste d'options affichées pour lui dans la barre
 const ctxOf = it => it.orig ? 'edit' : it.note ? 'note' : it.frame ? 'seal' : ({ mark: 'stamp', hl: 'highlight', ink: 'draw' })[it.type] || it.type;
 const TEXT_STAMPS = { date: () => today(), lu: () => tr('Lu et approuvé'), bon: () => tr('Bon pour accord'), fait: () => tr('Fait à  le {d}', { d: today() }) };
@@ -72,6 +73,7 @@ function reflect() {
     if (it.type === 'text') showFont(it.font);
     if (it.type === 'mark') showKind(it.kind);
     if (it.type === 'rect' || it.type === 'ellipse') $('fill').classList.toggle('on', !!it.fill);
+    if (it.type === 'link') $('linkto').value = it.url || (it.page ? String(it.page) : '');
     if (it.type === 'field') { $('fldkind').value = it.fkind; $('fldname').value = it.name; $('fldopts').value = (it.opts || []).join(', '); }
     $('rot').value = Math.round(it.rot || 0);
     $('opacity').value = Math.round((it.op ?? 1) * 100);
@@ -94,14 +96,14 @@ function richFont(it) {
   it.font = it.segs[0].f;
 }
 const PROP_OK = {
-  color: it => !['img', 'redact', 'field'].includes(it.type),
+  color: it => !['img', 'redact', 'field', 'link'].includes(it.type),
   size: it => it.type === 'text' || it.type === 'mark',
   width: it => ['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(it.type),
   font: it => it.type === 'text',
   kind: it => it.type === 'mark' && !TEXT_STAMPS[stampKind],
   fill: it => it.type === 'rect' || it.type === 'ellipse',
   rot: it => (it.type === 'text' && !it.orig) || it.type === 'img',
-  op: it => !['redact', 'field'].includes(it.type),
+  op: it => !['redact', 'field', 'link'].includes(it.type),
   field: it => it.type === 'field',
 };
 function applyProps(kind) {

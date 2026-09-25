@@ -31,7 +31,7 @@
   <div class="doc">
     <label class="btn" title="Ouvrir un PDF ou des images (Ctrl+O)">
       <svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>
-      <span class="lbl">Ouvrir</span><input type="file" id="file" accept="application/pdf,.pdf,image/*" multiple hidden>
+      <span class="lbl">Ouvrir</span><input type="file" id="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
     </label>
     <span id="fname">Aucun fichier</span>
     <span id="saved">✓ Sauvegardé</span>
@@ -70,7 +70,7 @@
     <div class="side-actions">
       <label class="btn add" title="Ajouter à la suite les pages d'un PDF, ou des images comme nouvelles pages">
         <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>PDF ou images
-        <input type="file" id="addfile" accept="application/pdf,.pdf,image/*" multiple hidden>
+        <input type="file" id="addfile" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
       </label>
       <label class="btn add" for="scanfile" title="Photographier une feuille et l'ajouter comme page">
         <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>Numériser
@@ -135,6 +135,7 @@
           <button data-t="ellipse" data-tip="Cercle · C" aria-label="Cercle"><svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="7"/></svg></button>
           <button data-t="line" data-tip="Trait · L" aria-label="Trait"><svg class="i" viewBox="0 0 24 24"><path d="M5 19 19 5"/></svg></button>
           <button data-t="arrow" data-tip="Flèche · A" aria-label="Flèche"><svg class="i" viewBox="0 0 24 24"><path d="M5 19 19 5M10 5h9v9"/></svg></button>
+          <button data-t="link" data-tip="Lien cliquable · K" aria-label="Lien"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
         </div>
       </div>
       <button data-t="note" data-tip="Note (post-it) · N" aria-label="Note">
@@ -187,6 +188,7 @@
         <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Plus fin">−</button><input id="width" type="number" value="1.5" min="0.5" max="12" step="0.5"><button data-target="width" data-step="0.5" aria-label="Plus épais">+</button></div>
       </div>
       <div class="prop" data-for="rect ellipse"><button class="tog" id="fill" title="Forme remplie de la couleur">▮ Rempli</button></div>
+      <div class="prop" data-for="link"><input id="linkto" class="mini wide" placeholder="https://… ou n° de page" title="Destination du lien"></div>
       <div class="prop" data-for="field">
         <select id="fldkind" class="sel-font" title="Type de champ">
           <option value="text">Texte</option><option value="multi">Texte sur plusieurs lignes</option><option value="check">Case à cocher</option><option value="list">Liste de choix</option>
@@ -302,11 +304,25 @@
   <label class="chk"><input type="checkbox" id="expa4"> Mettre toutes les pages au format A4</label>
   <label class="chk"><input type="checkbox" id="exppw"> Protéger par un mot de passe</label>
   <div class="fld" id="exppwbox" hidden><input id="exppass" class="txt" type="password" placeholder="Mot de passe à l'ouverture" autocomplete="new-password"></div>
+  <p id="expsigned" class="warnline" hidden>Ce PDF est signé électroniquement : le fichier modifié ne portera plus de signature valable.</p>
   <div id="expmsg" class="dlg-msg"></div>
   <div class="dlg-foot">
     <button id="expcancel" class="btn grow">Annuler</button>
+    <button id="expprev" class="btn"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14" rx="1.5"/><rect x="13" y="5" width="8" height="14" rx="1.5"/></svg>Avant / après</button>
     <button id="expshare" class="btn" hidden><svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>Partager</button>
     <button id="expgo" class="btn primary"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Télécharger</button>
+  </div>
+</dialog>
+
+<dialog id="prevdlg" class="wide">
+  <div class="dlg-head">
+    <h3>Avant / après</h3>
+    <p>Chaque page modifiée, telle qu'elle est et telle qu'elle sera téléchargée.</p>
+  </div>
+  <div id="prevpages" class="prevpages"></div>
+  <div class="dlg-foot">
+    <button id="prevback" class="btn grow">Retour</button>
+    <button id="prevgo" class="btn primary"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Télécharger</button>
   </div>
 </dialog>
 
@@ -409,6 +425,37 @@
   <div class="dlg-foot"><button id="batchcancel" class="btn">Fermer</button><button id="batchgo" class="btn primary"><span class="spin"></span>Lancer</button></div>
 </dialog>
 
+<dialog id="profdlg">
+  <div class="dlg-head"><h3>Mon profil</h3><p>Gardé seulement dans ce navigateur. Sert à remplir les formulaires d'un clic.</p></div>
+  <div class="profgrid" id="profgrid"></div>
+  <div class="dlg-foot"><button id="profclose" class="btn grow">Fermer</button><button id="profsave" class="btn primary">Enregistrer</button></div>
+</dialog>
+
+<dialog id="filldlg" class="wide">
+  <div class="dlg-head"><h3>Remplir avec mon profil</h3><p id="fillinfo"></p></div>
+  <div id="filllist" class="checklist"></div>
+  <div class="dlg-foot"><button id="fillprof" class="btn grow">Modifier mon profil</button><button id="fillclose" class="btn">Annuler</button><button id="fillgo" class="btn primary">Remplir</button></div>
+</dialog>
+
+<dialog id="tpldlg">
+  <div class="dlg-head"><h3>Mes modèles</h3><p>Des documents prêts à resservir, gardés dans ce navigateur.</p></div>
+  <div id="tpllist" class="checklist"></div>
+  <div class="dlg-foot"><button id="tplclose" class="btn grow">Fermer</button><button id="tplsave" class="btn primary">Enregistrer le document comme modèle</button></div>
+</dialog>
+
+<dialog id="redactdlg">
+  <div class="dlg-head"><h3>Caviarder automatiquement</h3><p>Les informations trouvées dans le texte du document seront masquées, puis vraiment effacées au téléchargement.</p></div>
+  <div id="redactlist" class="checklist"></div>
+  <div id="redactmsg" class="dlg-msg"></div>
+  <div class="dlg-foot"><button id="redactclose" class="btn grow">Annuler</button><button id="redactgo" class="btn primary">Caviarder</button></div>
+</dialog>
+
+<dialog id="bmdlg">
+  <div class="dlg-head"><h3>Signets</h3><p>La table des matières affichée à côté du PDF dans les lecteurs.</p></div>
+  <div id="bmlist" class="checklist"></div>
+  <div class="dlg-foot"><button id="bmauto" class="btn grow">Proposer d'après les titres</button><button id="bmadd" class="btn">Ajouter</button><button id="bmclose" class="btn primary">Terminé</button></div>
+</dialog>
+
 <dialog id="textdlg" class="wide">
   <div class="dlg-head"><h3>Texte du document</h3><p id="textinfo"></p></div>
   <div class="fld"><textarea id="textout" class="area" readonly></textarea></div>
@@ -459,6 +506,8 @@
 <script src="js/pagetools.js"></script>
 <script src="js/stamps.js"></script>
 <script src="js/tools.js"></script>
+<script src="js/assist.js"></script>
+<script src="js/convert.js"></script>
 <script src="js/report.js"></script>
 <script src="js/prefs.js"></script>
 <script src="js/i18n.js"></script>

@@ -35,7 +35,7 @@ const plural = (n, one, many) => tr(n > 1 ? many : one, { n });
 const today = () => new Date().toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR');
 
 // ---------- Petits outils ----------
-function toast(msg, kind = '', action) {
+function toast(msg, kind = '', action, ms) {
   const t = document.createElement('div');
   t.className = 'toast ' + kind;
   t.append(tr(msg));
@@ -46,7 +46,7 @@ function toast(msg, kind = '', action) {
     t.append(b);
   }
   $('toasts').append(t);
-  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, action ? 6000 : 3800);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, ms || (action ? 6000 : 3800));
 }
 
 // Fenêtre de question générique : résout avec la valeur du bouton (et le texte saisi), ou null si on ferme

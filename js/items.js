@@ -2,7 +2,7 @@
 // ---------- Éléments posés sur les pages ----------
 // it.el : l'élément dessiné ; it.host : ce qui est posé dans la page (it.el, ou le <svg> qui entoure une forme).
 // Chaque élément a son propre calque : l'ordre des éléments (premier plan / arrière-plan) est le même à l'écran et dans le PDF.
-const SVG_TAG = { rect: 'rect', hl: 'rect', redact: 'rect', ellipse: 'ellipse', line: 'line', arrow: 'path', mark: 'path', ink: 'path' };
+const SVG_TAG = { rect: 'rect', hl: 'rect', redact: 'rect', link: 'rect', ellipse: 'ellipse', line: 'line', arrow: 'path', mark: 'path', ink: 'path' };
 const SVG_NS = 'http://www.w3.org/2000/svg';
 function makeEl(it) {
   if (it.type === 'text') {
@@ -307,6 +307,7 @@ function drawShape(it) {
   else { a('x', x); a('y', y); a('width', w); a('height', h); }
   if (it.type === 'hl') { a('fill', it.color); a('fill-opacity', .4); a('stroke', 'none'); }
   else if (it.type === 'redact') { a('fill', '#111'); a('stroke', 'none'); }
+  else if (it.type === 'link') { a('stroke-width', 1); it.host.querySelector('title')?.remove(); it.host.insertAdjacentHTML('afterbegin', `<title>${esc(linkLabel(it))}</title>`); }
   else { a('fill', it.fill ? it.color : 'none'); a('stroke', it.color); a('stroke-width', it.w); }
 }
 const textPad = it => it.note ? 8 : it.frame ? 6 : 4;
@@ -505,7 +506,15 @@ function down(e, pg) {
                ...((tool === 'rect' || tool === 'ellipse') && { fill: $('fill').classList.contains('on') }),
                ...(f && { ...f, name: nextFieldName(f.name) }) });
     onMove = ev => { [it.x2, it.y2] = pos(ev); draw(it); };
-    onUp = () => {
+    onUp = async () => {
+      if (it.type === 'link') { // lien : un cadre, puis sa destination
+        if (Math.hypot(it.x2 - it.x, it.y2 - it.y) < 3) [it.x2, it.y2] = [sx + 120, sy + 16];
+        draw(it);
+        if (!await askLink(it)) return detach(it);
+        draw(it);
+        reflect();
+        return recAdd(it);
+      }
       if (Math.hypot(it.x2 - it.x, it.y2 - it.y) < 3) {
         if (it.type !== 'field') return detach(it);
         [it.x2, it.y2] = it.fkind === 'check' ? [sx + 12, sy + 12] : [sx + 160, sy + (it.fkind === 'multi' ? 48 : 18)]; // simple clic : taille par défaut

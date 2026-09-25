@@ -321,6 +321,24 @@ dialog::backdrop { background: #1d23318f; backdrop-filter: blur(3px); }
 .dlg-head p { margin: 0; color: var(--muted); font-size: 13px; white-space: pre-line; }
 .dlg-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 18px 26px 24px; flex-wrap: wrap; }
 .dlg-foot .grow { margin-right: auto; }
+.profgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; padding: 6px 26px; max-height: 60vh; overflow: auto; }
+.profgrid label { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.profgrid label.full { grid-column: 1 / -1; }
+.checklist { padding: 4px 26px; max-height: 58vh; overflow: auto; display: grid; gap: 6px; }
+.checklist .row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.checklist .row .grow { flex: 1; min-width: 0; }
+.checklist .row small { display: block; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.checklist .row input.txt { width: 100%; }
+.checklist .empty { color: var(--muted); padding: 10px 0; }
+@media (max-width: 560px) { .profgrid { grid-template-columns: 1fr; } }
+svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1d6fe0; stroke-dasharray: 4 3; }
+.warnline { margin: 10px 26px 0; padding: 9px 12px; border-radius: 10px; background: color-mix(in srgb, #e0a800 16%, transparent); font-size: 13px; }
+.prevpages { max-height: min(66vh, 720px); overflow: auto; padding: 4px 26px 8px; display: grid; gap: 16px; }
+.prevpage h4 { margin: 0 0 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.prevpair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.prevpair figure { margin: 0; }
+.prevpair figcaption { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.prevpair canvas { width: 100%; border-radius: 6px; box-shadow: 0 1px 3px #0003; background: #fff; }
 .dlg-msg { min-height: 20px; padding: 8px 26px 0; color: var(--accent); font-size: 13px; }
 .padwrap { position: relative; margin: 16px 26px 8px; border-radius: 15px; background: #fff; border: 1px solid var(--line); overflow: hidden; }
 .padwrap::before { content: '×'; position: absolute; left: 18px; bottom: 50px; font: 22px var(--display); color: #c9bfa9; pointer-events: none; }

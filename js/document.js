@@ -3,6 +3,7 @@
 const isPdf = f => /\.pdf$/i.test(f.name) || f.type === 'application/pdf';
 const isImg = f => f.type.startsWith('image/');
 const isEncrypted = b => /\/Encrypt[\s/<]/.test(new TextDecoder('latin1').decode(b));
+const isSigned = b => /\/ByteRange\s*\[/.test(new TextDecoder('latin1').decode(b)); // signature électronique : toute modification l'invalide
 
 // PDF protégé : on demande le mot de passe puis on travaille sur une copie déchiffrée
 async function decrypt(bytes, name) {
@@ -22,9 +23,11 @@ async function decrypt(bytes, name) {
 
 async function addSource(bytes, name) {
   if (isEncrypted(bytes)) bytes = await decrypt(bytes, name);
+  const signed = isSigned(bytes);
+  if (signed) toast(tr('« {name} » est signé électroniquement : le modifier annulera sa signature.', { name }), '', null, 7000);
   bytes = await repairText(bytes);
   const doc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise; // pdf.js détache le buffer qu'on lui donne
-  const src = { name, bytes, doc, fields: {}, fields0: {} }, list = [];
+  const src = { name, bytes, doc, fields: {}, fields0: {}, signed }, list = [];
   for (let i = 0; i < doc.numPages; i++) list.push({ src, index: i, rot: 0, pdfPage: await doc.getPage(i + 1) });
   sources.push(src);
   if (bytes.length > BIG_PDF) setTimeout(() => repairLater(src), 1500);
@@ -55,8 +58,8 @@ async function imagesToPdf(files) {
 
 async function openFiles(files, mode) {
   files = [...files];
-  const pdfs = files.filter(isPdf), imgs = files.filter(isImg);
-  if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF ni une image.", 'error');
+  const pdfs = files.filter(f => isPdf(f) || isDocx(f)), imgs = files.filter(isImg);
+  if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word, ni une image.", 'error');
   if (!mode && pages.length) {
     if (!pdfs.length) { // des images alors qu'un document est ouvert
       mode = await ask({ title: 'Ajouter des images', text: 'Où mettre ces images ?', buttons: [
@@ -69,9 +72,15 @@ async function openFiles(files, mode) {
   }
   const list = [];
   try {
-    for (const f of pdfs) list.push({ bytes: new Uint8Array(await f.arrayBuffer()), name: f.name });
+    for (const f of pdfs) {
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      if (!isDocx(f)) { list.push({ bytes, name: f.name }); continue; }
+      try { list.push({ bytes: await docxToPdf(bytes), name: baseName(f.name) + '.pdf', made: true }); } // document Word converti en PDF
+      catch (e) { console.error(e); toast(tr('« {name} » : document Word illisible.', { name: f.name }), 'error'); }
+    }
     if (imgs.length) list.push({ bytes: await imagesToPdf(imgs), name: (imgs.length === 1 ? baseName(imgs[0].name) : 'Images') + '.pdf', made: true });
   } catch (e) { return toast('Impossible de lire ces images.', 'error'); }
+  if (!list.length) return;
   return openSources(list, mode || 'replace');
 }
 // Ajoute des PDF (octets) au document : « replace » repart de zéro, « append » ajoute à la suite (annulable)
@@ -111,7 +120,7 @@ function resetDoc() {
   closeFind();
   closeGrid?.();
   renderQueue.clear();
-  items = []; pages = []; sources = []; past = []; future = [];
+  items = []; pages = []; sources = []; past = []; future = []; bookmarks = [];
   mount();
   $('undo').disabled = $('redo').disabled = true;
 }
