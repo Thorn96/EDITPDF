@@ -3,6 +3,7 @@
 const here = p => new URL(p, document.baseURI).href;
 pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js');
 const $ = id => document.getElementById(id), measure = document.createElement('canvas').getContext('2d');
+measure.fontKerning = 'none'; // mesures sans crénage, comme le texte écrit dans le PDF
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 // Unités : les éléments sont stockés en points PDF, dans le repère de la page affichée (origine en haut à gauche).
 const L = 1.2, BASE = 0.345; // interligne ; ligne de base = milieu de la ligne + 0,345 em

@@ -139,7 +139,7 @@ async function redactSource(src, its) {
   const mupdf = await getMupdf(), R = mupdf.PDFPage, doc = mupdf.Document.openDocument(src.bytes, 'application/pdf');
   const passes = [
     // bande intérieure au morceau : MuPDF retire tout glyphe qui la touche, on évite ainsi les voisins
-    [its.filter(i => i.orig && !i.orig.scan), ({ orig: o }) => [o.x + 2, o.top + o.h * .35, o.x + o.w - 2, o.top + o.h * .75],
+    [its.filter(i => i.orig && !i.orig.scan), ({ orig: o }) => [o.x + Math.min(2, o.h * .12), o.top + o.h * .35, o.x + o.w - Math.min(2, o.h * .12), o.top + o.h * .75],
      [false, R.REDACT_IMAGE_NONE, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
     [its.filter(i => i.orig?.scan), ({ orig: { box: b } }) => [b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1],
      [false, R.REDACT_IMAGE_PIXELS, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
@@ -240,6 +240,7 @@ async function build(list, localFonts = []) {
   pdf.registerFontkit(fontkit);
   const imgs = {}, fonts = {}, newFields = [];
   const font = f => pdfFont(pdf, f, fonts, localFonts);
+  let fams; // polices du PDF par famille, lues au premier texte d'origine corrigé
   for (const [n, p] of list.entries()) {
     const page = target.get(p), pageRot = p.vp.rotation, rotate = degrees(pageRot);
     const P = (x, y) => p.vp.convertToPdfPoint(x, y), pt = (x, y) => { const [X, Y] = P(x, y); return { x: X, y: Y }; };
@@ -256,6 +257,49 @@ async function build(list, localFonts = []) {
         page.drawText(txt, { x: X, y: Y, size, font: ff, color, opacity, rotate: degrees(pageRot - deg) });
         off += ff.widthOfTextAtSize(txt, size);
       }
+    };
+    // Texte d'origine corrigé : écrit avec la police intégrée au PDF quand elle a les lettres voulues (rendu identique au reste,
+    // ligatures comprises), sinon avec son équivalent, lettre par lettre ; même serrage et espacement des mots que la ligne d'origine
+    const fontKeys = new Map();
+    const writeOrig = async (str, x, y, it, color, opacity, c, deg) => {
+      const L_ = PDFLib, size = it.size, ls = it.ls || 0, ws = it.ws || 0, f0 = normFont(it.font);
+      const cands = f0.local && !f0.touched ? (it.orig.fonts || []).flatMap(n => (fams ??= fontsByFamily(pdf)).get(famKey(n)) || []) : [];
+      const main = await font(it.font), chars = [...str], glyphs = [];
+      let fb;
+      for (let i = 0; i < chars.length;) {
+        let g = null;
+        for (let n = Math.min(3, chars.length - i); n && !g; n--) { // ligatures (« ti », « ffi »…) d'abord, si la police d'origine en a
+          const s = chars.slice(i, i + n).join('');
+          for (const f of cands) { const code = f.rev.get(s); if (code != null) { g = { f, code, n }; break; } }
+        }
+        if (!g) {
+          const s = chars[i];
+          if (!hasGlyph(main, s)) fb ??= await font({ key: 'verdana', bold: f0.bold, italic: f0.italic });
+          g = { pf: fb && !hasGlyph(main, s) && hasGlyph(fb, s) ? fb : main, s, n: 1 };
+        }
+        g.space = g.n === 1 && chars[i] === ' ';
+        glyphs.push(g);
+        i += g.n;
+      }
+      const keyOf = g => {
+        const o = g.f || g.pf;
+        if (!fontKeys.has(o)) fontKeys.set(o, g.f ? page.node.newFontDictionary('PlumeO', g.f.ref) : page.node.newFontDictionary(g.pf.name, g.pf.ref));
+        return fontKeys.get(o);
+      };
+      const [X, Y] = P(...rotPt(x, y, c, deg)), gs = opacity < 1 && page.maybeEmbedGraphicsState({ opacity });
+      const ops = [L_.pushGraphicsState(), ...(gs ? [L_.setGraphicsState(gs)] : []), L_.beginText(), L_.setFillingColor(color),
+                   L_.rotateAndSkewTextRadiansAndTranslate((pageRot - deg) * Math.PI / 180, 0, 0, X, Y)];
+      for (let i = 0; i < glyphs.length;) { // un TJ par police : chaque glyphe suivi de son espacement (en millièmes de corps, vers la gauche)
+        const key = keyOf(glyphs[i]), arr = [];
+        for (; i < glyphs.length && keyOf(glyphs[i]) === key; i++) {
+          const g = glyphs[i];
+          arr.push(g.f ? L_.PDFHexString.of(g.code.toString(16).padStart(2 * g.f.bytes, '0')) : g.pf.encodeText(g.s));
+          const extra = ls * g.n + (g.space ? ws : 0);
+          if (extra) arr.push(-extra / size * 1000);
+        }
+        ops.push(L_.setFontAndSize(key, size), L_.PDFOperator.of(L_.PDFOperatorNames.ShowTextAdjusted, [pdf.context.obj(arr)]));
+      }
+      page.pushOperators(...ops, L_.endText(), L_.popGraphicsState());
     };
     if (p.ocr) { // scan reconnu : texte invisible pour pouvoir sélectionner et chercher dans le PDF
       const f = await font(null);
@@ -289,7 +333,11 @@ async function build(list, localFonts = []) {
           outline(it.frame === 'round' ? rounded(x0, y0, x1, y1, Math.min(10, (y1 - y0) / 2)) : corners, o);
           if (it.frame === 'double') outline([r(x0 + 3, y0 + 3), r(x1 - 3, y0 + 3), r(x1 - 3, y1 - 3), r(x0 + 3, y1 - 3)], o);
         }
-        for (const [i, ln] of lines.entries()) if (ln.trim()) await writeLine(ln, it.x, it.y + (i * L + L / 2 + BASE) * it.size, it.size, it.font, color, opacity, c, deg);
+        for (const [i, ln] of lines.entries()) if (ln.trim()) {
+          const y = it.y + (i * L + L / 2 + BASE) * it.size;
+          if (it.orig) await writeOrig(ln, it.x, y, it, color, opacity, c, deg);
+          else await writeLine(ln, it.x, y, it.size, it.font, color, opacity, c, deg);
+        }
       } else if (it.type === 'mark') {
         const s = it.size, m = (dx, dy) => pt(it.x + dx * s, it.y + dy * s);
         if (it.kind === 'dot') page.drawCircle({ ...m(0, 0), size: s * .28, color, opacity });

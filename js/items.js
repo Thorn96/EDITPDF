@@ -219,16 +219,57 @@ function drawShape(it) {
   else { a('fill', it.fill ? it.color : 'none'); a('stroke', it.color); a('stroke-width', it.w); }
 }
 const textPad = it => it.note ? 8 : it.frame ? 6 : 4;
+// Texte d'origine corrigé : même serrage des lettres (ou même espacement des mots d'un texte justifié) que la ligne d'origine,
+// pour qu'une ligne peu modifiée garde sa longueur et que ce qui n'a pas changé reste à sa place. measure.font doit être à jour.
+function origSpacing(it) {
+  const o = it.orig;
+  if (o?.scan) { // ligne scannée : espacement calé par matchScanFont, valable tant que police et taille n'ont pas changé
+    const f = normFont(it.font);
+    if (!it.fit || it.fit.key !== f.key || !!it.fit.bold !== !!f.bold || Math.abs(it.fit.size - it.size) > .01) it.ls = 0;
+    it.ws = 0;
+    return;
+  }
+  if (!o || !it.font.local || it.font.touched || Math.abs(it.size - o.h) > .01) { it.ls = it.ws = 0; return; }
+  if (!document.fonts.check(measure.font)) return; // mesure fausse tant que la police n'est pas chargée
+  const raw = o.raw ?? it.run?.str ?? '', n = [...raw].length, spaces = raw.split(' ').length - 1, extra = o.w - measure.measureText(raw).width;
+  it.ls = it.ws = 0;
+  if (extra > 0 && spaces) it.ws = Math.min(extra / spaces, it.size);
+  else if (n > 1 && Math.abs(extra / n) < .08 * it.size) it.ls = extra / n;
+}
+// Position réelle de la ligne de base dans une ligne de texte : dépend de la police et des arrondis du navigateur à cette taille
+const baselines = new Map();
+function baselineOf(css) {
+  if (baselines.has(css)) return baselines.get(css);
+  const d = Object.assign(document.createElement('div'), { innerHTML: 'x<span style="display:inline-block;width:0;height:0"></span>' });
+  d.style.cssText = `position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:${css};line-height:${L}`; // font remet line-height à zéro : après
+  document.body.append(d);
+  const b = d.lastChild.getBoundingClientRect().bottom - d.getBoundingClientRect().top;
+  d.remove();
+  if (document.fonts.check(css)) baselines.set(css, b); // police pas encore chargée : mesure provisoire
+  return b;
+}
 function drawText(it) {
   const f = it.font, fam = cssFamily(f), weight = f.bold ? '700' : '400', style = f.italic ? 'italic' : 'normal', ta = it.input, pad = textPad(it);
   measure.font = `${style} ${weight} ${it.size}px ${fam}`;
   whenFontReady(measure.font, () => it.el.isConnected && drawText(it));
-  const natural = Math.max(...it.text.split('\n').map(l => measure.measureText(l).width)) + it.size * .6;
-  Object.assign(it.el.style, { left: it.x - pad + 'px', top: it.y - pad + 'px', background: it.note ? NOTE_BG : it.orig?.scan ? it.bg : '',
+  origSpacing(it);
+  const spaced = l => measure.measureText(l).width + (it.ls || 0) * [...l].length + (it.ws || 0) * (l.split(' ').length - 1);
+  const natural = Math.max(...it.text.split('\n').map(spaced)) + it.size * .6;
+  // ligne de base au même endroit qu'à l'enregistrement, quelle que soit la hauteur de ligne propre à la police
+  const shift = (L / 2 + BASE) * it.size - baselineOf(measure.font);
+  const cover = !!it.orig; // texte d'origine corrigé : on masque exactement l'ancien, sans déborder sur ses voisins
+  Object.assign(it.el.style, { left: it.x - pad + 'px', top: it.y - pad + 'px', background: it.note ? NOTE_BG : '',
                                borderColor: it.frame ? it.color : '' });
   Object.assign(ta.style, { width: (it.wrapW || Math.max(natural, it.orig?.w || 0, it.size)) + 'px', fontSize: it.size + 'px',
                             lineHeight: L, fontFamily: fam, fontWeight: weight, fontStyle: style, color: it.color,
-                            background: it.bg || 'transparent', whiteSpace: it.wrapW ? 'pre-wrap' : 'pre' });
+                            background: cover ? 'transparent' : it.bg || 'transparent', whiteSpace: it.wrapW ? 'pre-wrap' : 'pre',
+                            transform: Math.abs(shift) > .01 ? `translateY(${shift}px)` : '',
+                            letterSpacing: it.ls ? it.ls + 'px' : '', wordSpacing: it.ws ? it.ws + 'px' : '' });
+  if (cover) {
+    const o = it.orig, base = o.top + .85 * o.h, c = it.el.cover ??= it.el.insertBefore(Object.assign(document.createElement('span'), { className: 'cover' }), ta);
+    const [x0, y0, x1, y1] = o.scan ? [o.box[0] - 1, o.box[1] - 1, o.box[2] + 1, o.box[3] + 1] : [o.x - .5, base - .92 * o.h, o.x + o.w + .5, base + .27 * o.h];
+    Object.assign(c.style, { left: x0 - it.x + pad + 'px', top: y0 - it.y + pad + 'px', width: x1 - x0 + 'px', height: y1 - y0 + 'px', background: it.bg });
+  }
   ta.style.height = '0px';
   ta.style.height = ta.scrollHeight + 'px';
 }
@@ -382,7 +423,7 @@ function fontOf(pg, id) {
   return { local: !!name, ps: name, family, generic, key: fontKeyFor(name, generic), bold: /bold|black|heavy|semibold|demi/i.test(name), italic: /italic|oblique/i.test(name) };
 }
 // Couleur du fond (pixel le plus clair) et de l'encre (pixel le plus sombre) d'une zone de la page
-function sample(pg, x0, y0, x1, y1) {
+function sample(pg, x0, y0, x1, y1, scan) {
   if (pg.renderedZ == null) return null; // page pas encore dessinée : on relèvera plus tard
   const k = pg.canvas.width / pg.vp.width;
   const d = pg.canvas.getContext('2d').getImageData(x0 * k, y0 * k, Math.max(1, (x1 - x0) * k), Math.max(1, (y1 - y0) * k)).data;
@@ -392,21 +433,47 @@ function sample(pg, x0, y0, x1, y1) {
     if (s < min) { min = s; ink = [d[i], d[i + 1], d[i + 2]]; }
     if (s > max) { max = s; bg = [d[i], d[i + 1], d[i + 2]]; }
   }
+  if (scan) { // scan : le pixel le plus noir est trop foncé, on prend la teinte moyenne du cœur des lettres
+    const t = [0, 0, 0];
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i] + d[i + 1] + d[i + 2] <= min + (max - min) * .3) { t[0] += d[i]; t[1] += d[i + 1]; t[2] += d[i + 2]; n++; }
+    if (n) ink = t.map(v => Math.round(v / n));
+  }
+  // l'anticrénelage éclaircit le noir et fonce le blanc : on retrouve les vraies couleurs quand elles sont proches
+  const grey = c => Math.max(...c) - Math.min(...c) < 24;
+  if (grey(ink) && Math.max(...ink) < 90) ink = [0, 0, 0];
+  if (grey(bg) && Math.min(...bg) > 232) bg = [255, 255, 255];
   return { ink: hex(ink), bg: hex(bg) };
 }
 function resample(it) {
-  const s = sample(it.pg, ...it.orig.box);
+  const s = sample(it.pg, ...it.orig.box, it.orig.scan);
   if (!s) return;
   it.bg = s.bg;
   if (it.needSample === 'color') it.color = s.ink;
   it.needSample = false;
 }
+const runFonts = (pg, r) => r.fonts || [...new Set((r.parts || [r]).map(p => fontOf(pg, p.font).ps))].filter(Boolean);
 function editRun(span, pg, text, focus = true) {
-  const r = span.run, box = r.box || [r.x, r.top, r.x + r.w, r.top + r.px * 1.1], s = sample(pg, ...box);
+  const r = span.run, box = r.box || [r.x, r.top, r.x + r.w, r.top + r.px * 1.1], s = sample(pg, ...box, r.scan), font = r.scan ? { key: 'arial' } : fontOf(pg, r.font);
   const it = add({ type: 'text', pg, x: r.x, y: r.top + .85 * r.px - (L / 2 + BASE) * r.px, text: text ?? r.str, size: r.px,
-                   color: s?.ink || '#000000', bg: s?.bg || '#ffffff', needSample: s ? false : 'color',
-                   span, run: r, font: r.scan ? { key: 'arial' } : fontOf(pg, r.font),
-                   orig: { x: r.x, top: r.top, w: r.w, h: r.px, scan: !!r.scan, box } }, focus);
+                   color: s?.ink || '#000000', bg: s?.bg || '#ffffff', needSample: s ? false : 'color', span, run: r, font,
+                   orig: { x: r.x, top: r.top, w: r.w, h: r.px, scan: !!r.scan, box, raw: r.raw, fonts: r.scan ? [] : runFonts(pg, r) } }, focus);
+  // ligne scannée : police, taille et espacement retrouvés d'après les pixels (quelques dixièmes de seconde)
+  if (r.scan) matchScanFont(pg, r).then(m => {
+    if (!m || it.font !== font) return; // police changée entre-temps
+    Object.assign(it, { font: m.font, size: m.size, x: m.x, y: r.top + .85 * r.px - (L / 2 + BASE) * m.size, ls: m.ls, fit: { ...m.font, size: m.size } });
+    draw(it);
+    if (current === it) reflect();
+    changed();
+  }, e => console.warn('Police du scan', e));
+  // page pas encore dessinée : polices inconnues pour l'instant, on les récupère sans attendre le dessin
+  else if (!pg.pdfPage.commonObjs.has(r.font)) pg.pdfPage.getOperatorList().then(() => {
+    if (it.font !== font) return; // police changée entre-temps
+    it.font = fontOf(pg, r.font);
+    it.orig.fonts = runFonts(pg, r);
+    draw(it);
+    if (current === it) reflect();
+  }, () => {});
   recAdd(it);
   return it;
 }

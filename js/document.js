@@ -22,6 +22,7 @@ async function decrypt(bytes, name) {
 
 async function addSource(bytes, name) {
   if (isEncrypted(bytes)) bytes = await decrypt(bytes, name);
+  bytes = await repairText(bytes);
   const doc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise; // pdf.js détache le buffer qu'on lui donne
   const src = { name, bytes, doc, fields: {}, fields0: {} }, list = [];
   for (let i = 0; i < doc.numPages; i++) list.push({ src, index: i, rot: 0, pdfPage: await doc.getPage(i + 1) });
@@ -157,16 +158,28 @@ function makeDom(pg) {
 const toBase = (pg, e) => { const r = pg.layer.getBoundingClientRect(); return [(e.clientX - r.left) / Z, (e.clientY - r.top) / Z]; };
 
 async function buildPage(pg) {
-  // zones cliquables sur chaque morceau de texte du PDF (outil « Corriger le texte »)
+  // zones cliquables sur chaque ligne de texte du PDF (outil « Corriger le texte ») : les morceaux voisins de même police,
+  // que le PDF découpe souvent au milieu d'un mot (« fil » + « s Léonard »), sont réunis ; une tabulation sépare deux zones
+  // Le style (gras, italique) n'est connu qu'une fois la page dessinée : refineRuns sépare alors les styles différents.
   const tc = await pg.pdfPage.getTextContent();
-  let n = 0;
+  let n = 0, cur = null, space = false;
+  const flush = () => { if (cur) { addRun(pg, runOf(cur.parts, cur)); n++; } cur = null; };
   for (const t of tc.items) {
-    if (!t.str.trim()) continue;
+    if (!t.str) continue;
     const tx = pdfjsLib.Util.transform(pg.vp.transform, t.transform), px = Math.hypot(tx[2], tx[3]);
-    if (Math.abs(tx[1]) > 0.01 * px) continue; // ponytail: texte penché/vertical à l'écran ignoré
-    addRun(pg, { str: t.str, font: t.fontName, px, x: tx[4], top: tx[5] - 0.85 * px, w: t.width });
-    n++;
+    if (Math.abs(tx[1]) > 0.01 * px || tx[0] <= 0) continue; // ponytail: texte penché, vertical ou à l'envers à l'écran ignoré
+    const x = tx[4], base = tx[5], blank = !t.str.trim(), end = cur && cur.parts.at(-1), gap = cur ? x - (end.x + end.w) : 0;
+    if (cur && Math.abs(base - cur.base) < .2 * px && (blank || Math.abs(px - cur.px) < .08 * px && gap > -.5 * px && gap < 1.2 * px)) {
+      if (blank) { space = true; continue; } // espace seul : sa largeur (tabulation ?) ne compte pas
+      const sep = (space || gap > .15 * px) && !/\s$/.test(end.str) && !/^\s/.test(t.str) ? ' ' : '';
+      cur.parts.push({ str: sep + t.str, font: t.fontName, x, w: t.width });
+    } else {
+      flush();
+      if (!blank) cur = { px, base, parts: [{ str: t.str, font: t.fontName, x, w: t.width }] };
+    }
+    space = false;
   }
+  flush();
   pg.ocr?.forEach(r => addRun(pg, r));
   // page « scannée » = sans texte mais avec une image (une page blanche n'en est pas une)
   const O = pdfjsLib.OPS, imgOps = [O.paintImageXObject, O.paintJpegXObject, O.paintInlineImageXObject];
@@ -174,14 +187,49 @@ async function buildPage(pg) {
   pg.wrap.classList.toggle('ocrdone', !!pg.ocr);
   await buildFields(pg);
   pg.built = true;
+  refineRuns(pg);
 }
-function addRun(pg, r) {
+// Ligne de texte faite de morceaux consécutifs
+function runOf(parts, { px, base }) {
+  const a = parts[0], z = parts.at(-1), raw = parts.map(p => p.str).join('').trimStart(); // raw : avec les espaces de fin comptés dans la largeur
+  return { str: raw.trim(), raw, font: a.font, parts, px, base, x: a.x, top: base - 0.85 * px, w: z.x + z.w - a.x };
+}
+const styleOf = (pg, id) => { const f = fontOf(pg, id); return [f.family, f.bold, f.italic].join('|'); };
+// Une fois les polices connues (page dessinée) : une ligne mêlant plusieurs styles devient une zone par style,
+// pour qu'une correction garde le gras ou l'italique du reste de la ligne
+function refineRuns(pg) {
+  if (!pg.built) return false;
+  let split = false;
+  for (const d of [...pg.layer.querySelectorAll('.tl')]) {
+    const r = d.run;
+    if (!r.parts || r.fonts || !r.parts.every(p => pg.pdfPage.commonObjs.has(p.font))) continue;
+    const groups = [];
+    for (const p of r.parts) {
+      const s = styleOf(pg, p.font);
+      if (groups.at(-1)?.s === s) groups.at(-1).parts.push(p); else groups.push({ s, parts: [p] });
+    }
+    const runs = groups.map(g => Object.assign(runOf(g.parts, r), { fonts: [...new Set(g.parts.map(p => fontOf(pg, p.font).ps))] }));
+    if (runs.length === 1) { r.fonts = runs[0].fonts; continue; }
+    d.replaceWith(...runs.map(x => runDiv(x)));
+    split = true;
+  }
+  if (split && !$('find').hidden) runFind(true); // résultats de recherche posés sur les anciennes zones
+  return split;
+}
+// Polices d'une page connues sans la dessiner (recherche sur des pages pas encore affichées)
+async function ensureFonts(pg) {
+  if (![...pg.layer.querySelectorAll('.tl')].some(d => d.run.parts && !d.run.fonts)) return;
+  await pg.pdfPage.getOperatorList();
+  refineRuns(pg);
+}
+function runDiv(r) {
   const d = document.createElement('div');
   d.className = 'tl';
   d.run = r;
   Object.assign(d.style, { left: r.x + 'px', top: r.top + 'px', width: r.w + 'px', height: r.px * 1.1 + 'px' });
-  pg.layer.append(d);
+  return d;
 }
+const addRun = (pg, r) => pg.layer.append(runDiv(r));
 // Reconstruit l'affichage d'une page (après rotation ou recadrage)
 async function rebuildPage(pg) {
   const w = pg.wrap, t = pg.thumb, its = items.filter(i => i.pg === pg);
@@ -240,6 +288,7 @@ async function renderCanvas(pg) {
   pg.canvas.replaceWith(c); // remplacé une fois prêt : pas de clignotement
   pg.canvas = c;
   pg.renderedZ = z;
+  refineRuns(pg);
   for (const it of items) if (it.pg === pg && it.needSample) { resample(it); draw(it); } // couleurs relevées sur une page pas encore dessinée
 }
 const ensureRendered = async pg => { if (pg.renderedZ == null) await renderCanvas(pg); };
