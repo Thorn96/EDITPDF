@@ -1,7 +1,7 @@
 // Plume · Signaler un problème : message envoyé par e-mail via Web3Forms.
 // La clé ci-dessous est liée à l'adresse de réception, qui n'apparaît jamais dans le site.
 // Tant qu'elle est vide, l'entrée « Signaler un problème » n'est pas proposée.
-const REPORT_KEY = '';
+const REPORT_KEY = 'c08dd81e-4270-4727-a2da-339f62a4150c';
 
 function openReport() {
   $('repmsgbox').textContent = '';
