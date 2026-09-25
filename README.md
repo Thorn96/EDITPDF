@@ -56,6 +56,7 @@ Tout se passe dans le navigateur : les PDF ne sont envoyés sur aucun serveur, e
 
 - `index.html` : la page ; `css/rature.css` : l'apparence.
 - `js/` : le code, par domaine (`core` utilitaires et historique, `document` pages et rendu, `items` éléments posés, `app` fabrication du PDF, `assist` profil, modèles, caviardage auto, liens et signets, `convert` Word, `tabs` onglets, `i18n` traduction anglaise…).
+- `guides/` : pages guides (signer, remplir, corriger, caviarder, dossier de location, sans envoi) ; les pages et `sitemap.xml` sont fabriquées par `node guides/build.js`, à relancer après chaque modification. Un guide ouvre l'éditeur avec l'outil déjà choisi : `/?outil=edit`, `redact`, `text`… (`sign` ouvre la signature).
 - `lib/` : pdf.js, pdf-lib, fontkit, MuPDF.js, Tesseract.js ; `fonts/` : polices de l'interface et polices embarquées dans les PDF.
 
 ## Bibliothèques et polices

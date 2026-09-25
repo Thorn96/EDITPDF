@@ -99,7 +99,7 @@ async function openSources(list, mode, quiet, at) {
       if (!quiet) toast(plural(all.length, '{n} page ajoutée', '{n} pages ajoutées'));
     }
     changed();
-    if (first) setTimeout(maybeTour, 600);
+    if (first) setTimeout(() => OUTIL === 'sign' ? document.querySelector('#tools [data-a=sign]').click() : maybeTour(), 600);
     return all;
   } catch (e) {
     console.error(e);

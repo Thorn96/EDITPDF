@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://rature.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://rature.app/signer-un-pdf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rature.app/remplir-un-pdf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rature.app/modifier-texte-pdf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rature.app/dossier-de-location-pdf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rature.app/caviarder-un-pdf/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://rature.app/editeur-pdf-sans-envoi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
