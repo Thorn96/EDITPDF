@@ -134,23 +134,74 @@ function fzRect(pg, [x0, y0, x1, y1]) {
   const b = pg.vp0.convertToViewportPoint(...pg.vp.convertToPdfPoint(x1, y1));
   return [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[0], b[0]), Math.max(a[1], b[1])];
 }
+// Ce qui change vraiment dans un texte d'origine corrigé : une ligne identique reste intacte dans le PDF, et dans une ligne
+// modifiée on garde tel quel le début, jusqu'au mot où commence la modification. Seulement si l'élément n'a été ni déplacé,
+// ni agrandi, ni recoloré, ni changé de police (sinon toute la ligne est réécrite).
+function planEdit(it) {
+  const o = it.orig, f = normFont(it.font), olines = o.lines || [{ x: o.x, top: o.top, w: o.w, str: o.str }];
+  const laid = it.text.trim() ? layoutLines(it) : [], last = s => s.split(' ').at(-1);
+  const same = olines.every(l => l.str != null) && o.y0 != null && Math.abs(it.x - o.x) < .01 && Math.abs(it.y - o.y0) < .01 && Math.abs(it.size - o.h) < .01
+    && f.local && !f.touched && it.color === o.color && !it.rot && (it.op ?? 1) === 1 && !it.pg.rot && !it.pg.pdfPage.rotate;
+  return olines.map((l, i) => {
+    const t = laid[i]?.t.trimEnd(), s = l.str.trimEnd();
+    if (!same || t == null) return { line: l, p: 0 };
+    if (t === s) return { line: l, keep: true };
+    // ligne justifiée qui ne finit plus sur le même mot : la place libre change beaucoup, on la réécrit entière pour garder des espaces réguliers
+    if (it.justify && laid[i].soft && last(t) !== last(s)) return { line: l, p: 0 };
+    let p = 0;
+    while (p < t.length && p < s.length && t[p] === s[p]) p++;
+    return { line: l, p: s.lastIndexOf(' ', p - 1) + 1 }; // début du mot modifié
+  });
+}
+// Position exacte, dans le PDF, du début de la partie à réécrire (MuPDF lit la place de chaque lettre) ; sinon, toute la ligne
+function locateCut(pg, chars, pl, h) {
+  const l = pl.line, [x0, y0, x1, y1] = fzRect(pg, [l.x - 1, l.top, l.x + l.w + 1, l.top + h * 1.1]);
+  // ordre de lecture de MuPDF, sans retrier : une ligature (« tt ») donne deux lettres, la seconde placée au bout du glyphe
+  const cs = chars.filter(c => c.cx > x0 && c.cx < x1 && c.cy > y0 && c.cy < y1), s = l.str;
+  let i = 0, j = 0, at = -1;
+  while (i < s.length && j < cs.length) { // correspondance lettre à lettre, les espaces pouvant manquer d'un côté ou de l'autre
+    if (i === pl.p) at = j;
+    if (s[i] === cs[j].c) { i++; j++; }
+    else if (/\s/.test(cs[j].c)) j++;
+    else if (/\s/.test(s[i])) i++;
+    else return;
+  }
+  if (i === pl.p && at < 0 && j < cs.length) at = j;
+  if (at < 0) return;
+  const back = ([x, y]) => pg.vp.convertToViewportPoint(...pg.vp0.convertToPdfPoint(x, y))[0];
+  pl.start = back([cs[at].ox, cs[at].cy]);
+  pl.cut = at ? back([(cs[at - 1].x1 + cs[at].x0) / 2, cs[at].cy]) : pl.start - .5;
+}
 // Supprime vraiment du fichier : textes corrigés, lignes scannées corrigées, zones caviardées (MuPDF)
-async function redactSource(src, its) {
+async function redactSource(src, its, plans) {
   const mupdf = await getMupdf(), R = mupdf.PDFPage, doc = mupdf.Document.openDocument(src.bytes, 'application/pdf');
+  // place des lettres des lignes à réécrire en partie
+  for (const pg of new Set(its.filter(i => plans.get(i)?.some(pl => pl.p > 0)).map(i => i.pg))) {
+    const chars = [];
+    doc.loadPage(pg.index).toStructuredText('preserve-whitespace').walk({
+      onChar(c, origin, font, size, q) { const xs = [q[0], q[2], q[4], q[6]], ys = [q[1], q[3], q[5], q[7]];
+        chars.push({ c, ox: origin[0], x0: Math.min(...xs), x1: Math.max(...xs), cx: (Math.min(...xs) + Math.max(...xs)) / 2, cy: (Math.min(...ys) + Math.max(...ys)) / 2 }); },
+    });
+    for (const it of its) if (it.pg === pg) for (const pl of plans.get(it) || []) if (pl.p > 0) locateCut(pg, chars, pl, it.orig.h);
+  }
+  const bands = it => { // bande intérieure à chaque ligne : MuPDF retire tout glyphe qui la touche, on évite ainsi les voisins
+    const o = it.orig, pad = Math.min(2, o.h * .12);
+    return (plans.get(it) || (o.lines || [o]).map(line => ({ line, p: 0 }))).filter(pl => !pl.keep)
+      .map(({ line: l, cut }) => [cut ?? l.x + pad, l.top + o.h * .35, l.x + l.w - pad, l.top + o.h * .75]);
+  };
   const passes = [
-    // bande intérieure au morceau : MuPDF retire tout glyphe qui la touche, on évite ainsi les voisins
-    [its.filter(i => i.orig && !i.orig.scan), ({ orig: o }) => [o.x + Math.min(2, o.h * .12), o.top + o.h * .35, o.x + o.w - Math.min(2, o.h * .12), o.top + o.h * .75],
+    [its.filter(i => i.orig && !i.orig.scan), bands,
      [false, R.REDACT_IMAGE_NONE, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
-    [its.filter(i => i.orig?.scan), ({ orig: { box: b } }) => [b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1],
+    [its.filter(i => i.orig?.scan), ({ orig: { box: b } }) => [[b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1]],
      [false, R.REDACT_IMAGE_PIXELS, R.REDACT_LINE_ART_NONE, R.REDACT_TEXT_REMOVE]],
-    [its.filter(i => i.type === 'redact'), i => [i.x, i.y, i.x2, i.y2],
+    [its.filter(i => i.type === 'redact'), i => [[i.x, i.y, i.x2, i.y2]],
      [true, R.REDACT_IMAGE_PIXELS, R.REDACT_LINE_ART_REMOVE_IF_COVERED, R.REDACT_TEXT_REMOVE]],
   ];
-  for (const [list, rectOf, args] of passes) {
+  for (const [list, rectsOf, args] of passes) {
     const touched = new Map();
     for (const it of list) {
       if (!touched.has(it.pg)) touched.set(it.pg, doc.loadPage(it.pg.index));
-      touched.get(it.pg).createAnnotation('Redact').setRect(fzRect(it.pg, rectOf(it)));
+      for (const r of rectsOf(it)) touched.get(it.pg).createAnnotation('Redact').setRect(fzRect(it.pg, r));
     }
     for (const page of touched.values()) page.applyRedactions(...args);
   }
@@ -206,10 +257,11 @@ function glyphRuns(str, font, fb) {
 async function build(list, localFonts = []) {
   const { PDFDocument, degrees, rgb, LineCapStyle, BlendMode, StandardFonts } = PDFLib;
   // 1. par fichier source : suppressions réelles (MuPDF) puis formulaire rempli
-  const used = [...new Set(list.map(p => p.src))], docs = new Map();
+  const used = [...new Set(list.map(p => p.src))], docs = new Map(), plans = new Map();
+  for (const it of items) if (list.includes(it.pg) && it.orig && !it.orig.scan) plans.set(it, planEdit(it));
   for (const s of used) {
     const its = items.filter(i => i.pg.src === s && list.includes(i.pg));
-    const d = await PDFDocument.load(its.some(i => i.orig || i.type === 'redact') ? await redactSource(s, its) : s.bytes);
+    const d = await PDFDocument.load(its.some(i => i.orig || i.type === 'redact') ? await redactSource(s, its, plans) : s.bytes);
     await fillForm(d, s);
     docs.set(s, d);
   }
@@ -261,8 +313,8 @@ async function build(list, localFonts = []) {
     // Texte d'origine corrigé : écrit avec la police intégrée au PDF quand elle a les lettres voulues (rendu identique au reste,
     // ligatures comprises), sinon avec son équivalent, lettre par lettre ; même serrage et espacement des mots que la ligne d'origine
     const fontKeys = new Map();
-    const writeOrig = async (str, x, y, it, color, opacity, c, deg) => {
-      const L_ = PDFLib, size = it.size, ls = it.ls || 0, ws = it.ws || 0, f0 = normFont(it.font);
+    const writeOrig = async (str, x, y, it, color, opacity, c, deg, wsLine) => {
+      const L_ = PDFLib, size = it.size, ls = it.ls || 0, ws = wsLine ?? it.ws ?? 0, f0 = normFont(it.font);
       const cands = f0.local && !f0.touched ? (it.orig.fonts || []).flatMap(n => (fams ??= fontsByFamily(pdf)).get(famKey(n)) || []) : [];
       const main = await font(it.font), chars = [...str], glyphs = [];
       let fb;
@@ -304,7 +356,7 @@ async function build(list, localFonts = []) {
     if (p.ocr) { // scan reconnu : texte invisible pour pouvoir sélectionner et chercher dans le PDF
       const f = await font(null);
       for (const r of p.ocr) {
-        if (items.some(i => i.run === r)) continue;
+        if (items.some(i => runsOf(i).includes(r))) continue;
         const [x, y] = P(r.x, r.top + .85 * r.px);
         try { page.drawText(r.str, { x, y, size: r.px, font: f, opacity: 0, rotate }); } catch {}
       }
@@ -321,8 +373,10 @@ async function build(list, localFonts = []) {
           page.drawRectangle({ ...box(b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1), color: hexRgb(it.bg) });
         }
         if (!it.text.trim()) continue;
-        const main = await font(it.font), lines = wrapText(it.text, it.wrapW, main, it.size);
-        const w = it.input?.offsetWidth || it.wrapW || Math.max(...lines.map(l => main.widthOfTextAtSize(l, it.size))), h = lines.length * L * it.size;
+        // lignes coupées comme à l'écran (sinon, hors page affichée, par nos propres mesures)
+        const main = await font(it.font), lh = it.lh || L;
+        const lines = it.input?.isConnected ? layoutLines(it) : wrapText(it.text, it.wrapW, main, it.size).map(t => ({ t, soft: false }));
+        const w = it.input?.offsetWidth || it.wrapW || Math.max(...lines.map(l => main.widthOfTextAtSize(l.t, it.size))), h = lines.length * lh * it.size;
         const c = [it.x + w / 2, it.y + h / 2], pad = textPad(it), r = (x, y) => rotPt(x, y, c, deg);
         const corners = [r(it.x - pad, it.y - pad), r(it.x + w + pad, it.y - pad), r(it.x + w + pad, it.y + h + pad), r(it.x - pad, it.y + h + pad)];
         if (it.note) outline(corners, { color: hexRgb(NOTE_BG), borderColor: hexRgb(NOTE_EDGE), borderWidth: .6, opacity, borderOpacity: opacity });
@@ -333,10 +387,24 @@ async function build(list, localFonts = []) {
           outline(it.frame === 'round' ? rounded(x0, y0, x1, y1, Math.min(10, (y1 - y0) / 2)) : corners, o);
           if (it.frame === 'double') outline([r(x0 + 3, y0 + 3), r(x1 - 3, y0 + 3), r(x1 - 3, y1 - 3), r(x0 + 3, y1 - 3)], o);
         }
-        for (const [i, ln] of lines.entries()) if (ln.trim()) {
-          const y = it.y + (i * L + L / 2 + BASE) * it.size;
-          if (it.orig) await writeOrig(ln, it.x, y, it, color, opacity, c, deg);
-          else await writeLine(ln, it.x, y, it.size, it.font, color, opacity, c, deg);
+        const plan = plans.get(it) || [];
+        for (const [i, { t, soft }] of lines.entries()) if (t.trim()) {
+          const pl = plan[i];
+          if (pl?.keep) continue; // ligne inchangée : laissée telle quelle dans le PDF
+          const y = it.y + (i * lh + lh / 2 + BASE) * it.size, part = pl?.start != null; // part : seule la fin de la ligne est réécrite
+          let ln = part ? t.slice(pl.p) : t;
+          if (it.wrapW || part) ln = ln.trimEnd();
+          if (!ln) continue;
+          const x = part ? pl.start : it.x;
+          // paragraphe justifié : la place libre de chaque ligne coupée automatiquement va aux espaces, comme à l'écran
+          let ws;
+          if (it.justify && soft && ln.includes(' ')) {
+            const f = normFont(it.font);
+            measure.font = `${f.italic ? 'italic ' : ''}${f.bold ? '700' : '400'} ${it.size}px ${cssFamily(f)}`;
+            ws = Math.max(0, (it.x + it.wrapW - x - textW(ln) - (it.ls || 0) * [...ln].length) / (ln.split(' ').length - 1));
+          }
+          if (it.orig) await writeOrig(ln, x, y, it, color, opacity, c, deg, ws);
+          else await writeLine(ln, x, y, it.size, it.font, color, opacity, c, deg);
         }
       } else if (it.type === 'mark') {
         const s = it.size, m = (dx, dy) => pt(it.x + dx * s, it.y + dy * s);
@@ -462,7 +530,7 @@ async function autosave() {
       sources: used.map(s => ({ name: s.name, bytes: s.bytes, fields: s.fields, fields0: s.fields0 })),
       pages: pages.map(p => ({ src: used.indexOf(p.src), index: p.index, rot: p.rot, crop: p.crop || null, ocr: p.ocr || null })),
       items: items.filter(it => !(it.fresh && !it.text.trim())).map(it => {
-        const { el, host, input, span, pg, before, fresh, _op0, ...x } = it;
+        const { el, host, input, span, spans, pg, before, fresh, _op0, ...x } = it;
         return { ...x, pg: pages.indexOf(pg) };
       }),
     }, 'session'));
@@ -490,13 +558,9 @@ async function restoreInner(s) {
   await showEntries(list, 0, pg => { // chaque page retrouve ses éléments dès qu'elle est prête
     for (const x of s.items) {
       if (list[x.pg] !== pg) continue;
-      const it = { ...x, pg };
-      if (it.run) { // retrouve le morceau de texte d'origine corrigé
-        const span = [...pg.layer.querySelectorAll('.tl')].find(d => d.run.str === it.run.str && Math.abs(d.run.x - it.run.x) < .5 && Math.abs(d.run.top - it.run.top) < .5);
-        if (span) { it.span = span; it.run = span.run; }
-      }
-      attach(it);
+      attach({ ...x, pg });
     }
+    claimSpans(pg);
   });
   select(null);
   past = []; future = [];

@@ -4,6 +4,15 @@ const here = p => new URL(p, document.baseURI).href;
 pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js');
 const $ = id => document.getElementById(id), measure = document.createElement('canvas').getContext('2d');
 measure.fontKerning = 'none'; // mesures sans crénage, comme le texte écrit dans le PDF
+// Largeur exacte d'un texte tel que le navigateur le met en page dans nos zones de texte (sans ligatures ni crénage) :
+// measureText applique les ligatures (« tt », « fi ») et sous-estime, ce qui fausse coupures de ligne et espacements
+const widthProbe = document.createElement('span');
+function textW(s, font = measure.font) {
+  if (!widthProbe.isConnected) { widthProbe.style.cssText = 'position:absolute;left:-99999px;top:0;visibility:hidden;white-space:pre'; document.body.append(widthProbe); }
+  Object.assign(widthProbe.style, { font, fontKerning: 'none', fontVariantLigatures: 'none' }); // font remet les deux autres à zéro : après
+  widthProbe.textContent = s;
+  return widthProbe.getBoundingClientRect().width;
+}
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 // Unités : les éléments sont stockés en points PDF, dans le repère de la page affichée (origine en haut à gauche).
 const L = 1.2, BASE = 0.345; // interligne ; ligne de base = milieu de la ligne + 0,345 em

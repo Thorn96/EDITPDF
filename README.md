@@ -10,9 +10,10 @@ Outil gratuit pour remplir, signer et corriger des PDF directement dans le navig
 - **Formulaires PDF** : les champs prévus dans le document deviennent remplissables et le restent dans le PDF téléchargé.
 - **Rendre un PDF remplissable** : dessine des champs (texte, texte sur plusieurs lignes, case à cocher, liste de choix).
 - **Texte** sur une ou plusieurs lignes, retour à la ligne automatique, 8 polices (Arial / Helvetica, Times New Roman, Courier New, Calibri, Cambria, Segoe UI, Verdana, Lato), gras, italique.
-- **Corriger le texte existant** : l'ancien texte est réellement supprimé du fichier ; le nouveau reprend la police d'origine (celle de l'ordinateur si elle est installée, sinon un équivalent aux mêmes largeurs de lettres).
+- **Corriger le texte existant, comme dans Acrobat** : un clic dans un paragraphe l'édite en entier, et le texte se redistribue sur ses lignes (justifié si l'original l'était). L'ancien texte est réellement supprimé du fichier ; le nouveau est écrit avec la police intégrée au PDF lui-même, ligatures comprises, au même endroit et avec le même espacement. Une lettre absente de cette police est écrite avec un équivalent aux mêmes largeurs.
+- **Textes illisibles réparés** : les ligatures mal déclarées par Word (« cau�on », « atestons ») sont retrouvées à l'ouverture, pour l'édition, la recherche et le copier-coller.
 - **Rechercher / remplacer** dans tout le document, avec la même suppression réelle.
-- **Pages scannées** : reconnaissance du texte (OCR) pour corriger une ligne d'un scan ; le PDF devient aussi cherchable.
+- **Pages scannées** : reconnaissance du texte (OCR, français et anglais) pour corriger une ligne d'un scan ; la police, la taille et l'espacement sont retrouvés d'après l'image. Le PDF devient aussi cherchable.
 - **Cocher, dater, mentions** : ✓, ✗, ●, date du jour, « Lu et approuvé », « Bon pour accord », « Fait à … le … ».
 
 **Signer, annoter**

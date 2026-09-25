@@ -49,9 +49,12 @@ function placeHost(it) {
   const i = items.indexOf(it), next = items.slice(i + 1).find(x => x.pg === it.pg && x.host?.parentNode === it.pg.layer);
   next ? next.host.before(it.host) : it.pg.layer.append(it.host);
 }
+// Zones de texte d'origine remplacées par un élément : une ligne (span) ou les lignes d'un paragraphe (spans)
+const spansOf = it => it.spans || (it.span ? [it.span] : []);
+const runsOf = it => it.runs || (it.run ? [it.run] : []);
 function attach(it, at = items.length) {
   if (!it.el) makeEl(it);
-  it.span?.remove();
+  spansOf(it).forEach(s => s?.remove());
   items.splice(Math.min(at, items.length), 0, it);
   placeHost(it);
   draw(it);
@@ -62,7 +65,7 @@ function detach(it) {
   if (selection.includes(it)) select(it, true); // la retire de la sélection
   items.splice(i, 1);
   it.host.remove();
-  if (it.span) it.pg.layer.append(it.span); // texte d'origine de nouveau cliquable
+  spansOf(it).forEach(s => s && it.pg.layer.append(s)); // texte d'origine de nouveau cliquable
   return i;
 }
 function add(it, focus = true) {
@@ -127,7 +130,7 @@ function setLock(list, v) {
 }
 // Copie d'un élément (sur la même page ou une autre : position proportionnelle à la taille de la page)
 function cloneItem(it, pg = it.pg, dx = 0, dy = 0) {
-  const { el, host, input, span, run, orig, bg, before, fresh, lock, pg: p0, ...rest } = it;
+  const { el, host, input, span, spans, run, runs, orig, fit, bg, before, fresh, lock, pg: p0, ...rest } = it;
   const c = structuredClone(rest), kx = pg.vp.width / p0.vp.width, ky = pg.vp.height / p0.vp.height;
   c.pg = pg;
   c.x = c.x * kx + dx; c.y = c.y * ky + dy;
@@ -223,7 +226,7 @@ const textPad = it => it.note ? 8 : it.frame ? 6 : 4;
 // pour qu'une ligne peu modifiée garde sa longueur et que ce qui n'a pas changé reste à sa place. measure.font doit être à jour.
 function origSpacing(it) {
   const o = it.orig;
-  if (o?.scan) { // ligne scannée : espacement calé par matchScanFont, valable tant que police et taille n'ont pas changé
+  if (it.fit || o?.scan) { // ligne scannée ou paragraphe : espacement calé une fois, valable tant que police et taille n'ont pas changé
     const f = normFont(it.font);
     if (!it.fit || it.fit.key !== f.key || !!it.fit.bold !== !!f.bold || Math.abs(it.fit.size - it.size) > .01) it.ls = 0;
     it.ws = 0;
@@ -231,21 +234,29 @@ function origSpacing(it) {
   }
   if (!o || !it.font.local || it.font.touched || Math.abs(it.size - o.h) > .01) { it.ls = it.ws = 0; return; }
   if (!document.fonts.check(measure.font)) return; // mesure fausse tant que la police n'est pas chargée
-  const raw = o.raw ?? it.run?.str ?? '', n = [...raw].length, spaces = raw.split(' ').length - 1, extra = o.w - measure.measureText(raw).width;
+  const raw = o.raw ?? it.run?.str ?? '', n = [...raw].length, spaces = raw.split(' ').length - 1, extra = o.w - textW(raw);
   it.ls = it.ws = 0;
   if (extra > 0 && spaces) it.ws = Math.min(extra / spaces, it.size);
   else if (n > 1 && Math.abs(extra / n) < .08 * it.size) it.ls = extra / n;
 }
+// Zones de l'ancien texte à masquer (repère de la page) : chaque ligne d'origine, ou la boîte de la ligne scannée
+function coverRects(it) {
+  const o = it.orig;
+  if (!o) return [];
+  if (o.scan) return [[o.box[0] - 1, o.box[1] - 1, o.box[2] + 1, o.box[3] + 1]];
+  return (o.lines || [o]).map(l => { const base = l.top + .85 * o.h; return [l.x - .5, base - .92 * o.h, l.x + l.w + .5, base + .27 * o.h]; });
+}
 // Position réelle de la ligne de base dans une ligne de texte : dépend de la police et des arrondis du navigateur à cette taille
 const baselines = new Map();
-function baselineOf(css) {
-  if (baselines.has(css)) return baselines.get(css);
+function baselineOf(css, lh = L) {
+  const key = css + '|' + lh;
+  if (baselines.has(key)) return baselines.get(key);
   const d = Object.assign(document.createElement('div'), { innerHTML: 'x<span style="display:inline-block;width:0;height:0"></span>' });
-  d.style.cssText = `position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:${css};line-height:${L}`; // font remet line-height à zéro : après
+  d.style.cssText = `position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:${css};line-height:${lh}`; // font remet line-height à zéro : après
   document.body.append(d);
   const b = d.lastChild.getBoundingClientRect().bottom - d.getBoundingClientRect().top;
   d.remove();
-  if (document.fonts.check(css)) baselines.set(css, b); // police pas encore chargée : mesure provisoire
+  if (document.fonts.check(css)) baselines.set(key, b); // police pas encore chargée : mesure provisoire
   return b;
 }
 function drawText(it) {
@@ -253,23 +264,23 @@ function drawText(it) {
   measure.font = `${style} ${weight} ${it.size}px ${fam}`;
   whenFontReady(measure.font, () => it.el.isConnected && drawText(it));
   origSpacing(it);
-  const spaced = l => measure.measureText(l).width + (it.ls || 0) * [...l].length + (it.ws || 0) * (l.split(' ').length - 1);
+  const spaced = l => textW(l) + (it.ls || 0) * [...l].length + (it.ws || 0) * (l.split(' ').length - 1);
   const natural = Math.max(...it.text.split('\n').map(spaced)) + it.size * .6;
   // ligne de base au même endroit qu'à l'enregistrement, quelle que soit la hauteur de ligne propre à la police
-  const shift = (L / 2 + BASE) * it.size - baselineOf(measure.font);
-  const cover = !!it.orig; // texte d'origine corrigé : on masque exactement l'ancien, sans déborder sur ses voisins
+  const lh = it.lh || L, shift = (lh / 2 + BASE) * it.size - baselineOf(measure.font, lh);
   Object.assign(it.el.style, { left: it.x - pad + 'px', top: it.y - pad + 'px', background: it.note ? NOTE_BG : '',
                                borderColor: it.frame ? it.color : '' });
   Object.assign(ta.style, { width: (it.wrapW || Math.max(natural, it.orig?.w || 0, it.size)) + 'px', fontSize: it.size + 'px',
-                            lineHeight: L, fontFamily: fam, fontWeight: weight, fontStyle: style, color: it.color,
-                            background: cover ? 'transparent' : it.bg || 'transparent', whiteSpace: it.wrapW ? 'pre-wrap' : 'pre',
-                            transform: Math.abs(shift) > .01 ? `translateY(${shift}px)` : '',
+                            lineHeight: lh, fontFamily: fam, fontWeight: weight, fontStyle: style, color: it.color,
+                            background: it.orig ? 'transparent' : it.bg || 'transparent', whiteSpace: it.wrapW ? 'pre-wrap' : 'pre',
+                            textAlign: it.justify ? 'justify' : '', transform: Math.abs(shift) > .01 ? `translateY(${shift}px)` : '',
                             letterSpacing: it.ls ? it.ls + 'px' : '', wordSpacing: it.ws ? it.ws + 'px' : '' });
-  if (cover) {
-    const o = it.orig, base = o.top + .85 * o.h, c = it.el.cover ??= it.el.insertBefore(Object.assign(document.createElement('span'), { className: 'cover' }), ta);
-    const [x0, y0, x1, y1] = o.scan ? [o.box[0] - 1, o.box[1] - 1, o.box[2] + 1, o.box[3] + 1] : [o.x - .5, base - .92 * o.h, o.x + o.w + .5, base + .27 * o.h];
+  // texte d'origine corrigé : on masque exactement l'ancien (chaque ligne d'un paragraphe), sans déborder sur ses voisins
+  const covers = it.el.covers ??= [];
+  coverRects(it).forEach(([x0, y0, x1, y1], i) => {
+    const c = covers[i] ??= it.el.insertBefore(Object.assign(document.createElement('span'), { className: 'cover' }), ta);
     Object.assign(c.style, { left: x0 - it.x + pad + 'px', top: y0 - it.y + pad + 'px', width: x1 - x0 + 'px', height: y1 - y0 + 'px', background: it.bg });
-  }
+  });
   ta.style.height = '0px';
   ta.style.height = ta.scrollHeight + 'px';
 }
@@ -366,7 +377,7 @@ function down(e, pg) {
       }
     };
   } else if (tool === 'edit') {
-    if (cl.contains('tl')) editRun(t, pg); else select(null);
+    if (cl.contains('tl')) { e.preventDefault(); editText(t, pg, sx, sy); } else select(null);
     e.preventDefault();
     return;
   } else if (tool === 'text' || tool === 'note') {
@@ -449,7 +460,7 @@ function resample(it) {
   const s = sample(it.pg, ...it.orig.box, it.orig.scan);
   if (!s) return;
   it.bg = s.bg;
-  if (it.needSample === 'color') it.color = s.ink;
+  if (it.needSample === 'color') { if (it.orig?.color === it.color) it.orig.color = s.ink; it.color = s.ink; }
   it.needSample = false;
 }
 const runFonts = (pg, r) => r.fonts || [...new Set((r.parts || [r]).map(p => fontOf(pg, p.font).ps))].filter(Boolean);
@@ -457,7 +468,8 @@ function editRun(span, pg, text, focus = true) {
   const r = span.run, box = r.box || [r.x, r.top, r.x + r.w, r.top + r.px * 1.1], s = sample(pg, ...box, r.scan), font = r.scan ? { key: 'arial' } : fontOf(pg, r.font);
   const it = add({ type: 'text', pg, x: r.x, y: r.top + .85 * r.px - (L / 2 + BASE) * r.px, text: text ?? r.str, size: r.px,
                    color: s?.ink || '#000000', bg: s?.bg || '#ffffff', needSample: s ? false : 'color', span, run: r, font,
-                   orig: { x: r.x, top: r.top, w: r.w, h: r.px, scan: !!r.scan, box, raw: r.raw, fonts: r.scan ? [] : runFonts(pg, r) } }, focus);
+                   orig: { x: r.x, top: r.top, w: r.w, h: r.px, scan: !!r.scan, box, raw: r.raw, str: r.str, fonts: r.scan ? [] : runFonts(pg, r) } }, focus);
+  Object.assign(it.orig, { y0: it.y, color: it.color }); // position et couleur d'origine : tant qu'elles ne changent pas, ce qui n'a pas été retouché reste intact
   // ligne scannée : police, taille et espacement retrouvés d'après les pixels (quelques dixièmes de seconde)
   if (r.scan) matchScanFont(pg, r).then(m => {
     if (!m || it.font !== font) return; // police changée entre-temps
@@ -476,4 +488,106 @@ function editRun(span, pg, text, focus = true) {
   }, () => {});
   recAdd(it);
   return it;
+}
+
+// ---------- Paragraphes ----------
+// Comme dans Acrobat : un clic dans un paragraphe l'édite en entier et le texte se redistribue sur ses lignes,
+// justifié si l'original l'était. Paragraphe = lignes voisines de même style, alignées à gauche, régulièrement espacées.
+function paraOf(span, pg) {
+  const r0 = span.run;
+  if (r0.scan || !r0.fonts) return [span]; // scan, ou styles pas encore connus
+  const s0 = styleOf(pg, r0.font), all = [...pg.layer.querySelectorAll('.tl')];
+  const mates = all.filter(d => d.run.fonts && !d.run.scan && Math.abs(d.run.x - r0.x) < 1 && Math.abs(d.run.px - r0.px) < .03 * r0.px && styleOf(pg, d.run.font) === s0)
+    .sort((a, b) => a.run.base - b.run.base);
+  const i = mates.indexOf(span), out = [span];
+  let gap = 0;
+  const next = (a, b) => { const g = b.base - a.base; if (g < a.px || g > 1.8 * a.px || gap && Math.abs(g - gap) > .06 * gap) return false; gap ||= g; return true; };
+  for (let k = i + 1; k < mates.length && next(mates[k - 1].run, mates[k].run); k++) out.push(mates[k]);
+  for (let k = i - 1; k >= 0 && next(mates[k].run, mates[k + 1].run); k--) out.unshift(mates[k]);
+  // autre chose sur ces lignes (mot en gras, colonne voisine) : on s'en tient à la ligne cliquée
+  const right = Math.max(...out.map(d => d.run.x + d.run.w)) + 2 * r0.px;
+  if (all.some(d => !out.includes(d) && d.run.x < right && d.run.x + d.run.w > r0.x && out.some(o => Math.abs(d.run.base - o.run.base) < .2 * r0.px))) return [span];
+  return out;
+}
+async function editPara(spans, pg) {
+  const rs = spans.map(s => s.run), r0 = rs[0], size = r0.px, font = fontOf(pg, r0.font);
+  const css = `${font.italic ? 'italic ' : ''}${font.bold ? '700' : '400'} ${size}px ${cssFamily(font)}`;
+  await document.fonts.load(css).catch(() => {});
+  measure.font = css;
+  const mw = s => textW(s), len = s => [...s].length, first = r => r.str.split(/\s/)[0];
+  const W0 = Math.max(...rs.map(r => r.w)), sp = mw(' ');
+  // largeur de la colonne : la plus longue ligne de la page qui commence au même endroit
+  const lines = [...[...pg.layer.querySelectorAll('.tl')].map(d => d.run), ...items.filter(i => i.pg === pg).flatMap(runsOf)];
+  const col = Math.max(W0, ...lines.filter(r => Math.abs(r.x - r0.x) < 1).map(r => r.w));
+  // retour automatique : le premier mot de la ligne suivante n'aurait pas tenu dans la colonne ; sinon retour voulu (adresse, liste…)
+  const soft = rs.slice(0, -1).map((r, i) => r.w + sp + mw(first(rs[i + 1])) > col + .5);
+  const justify = soft.some(Boolean) && rs.every((r, i) => !soft[i] || Math.abs(r.w - W0) < .01 * W0);
+  // serrage des lettres d'après les lignes non étirées ; en justifié, au moins ce qu'il faut pour que chaque ligne d'origine tienne
+  // (Word tasse parfois une ligne d'un rien pour y faire entrer un dernier mot)
+  const plain = rs.filter((r, i) => !(justify && soft[i])), n = plain.reduce((t, r) => t + len(r.raw ?? r.str), 0);
+  const extra = plain.reduce((t, r) => t + r.w - mw(r.raw ?? r.str), 0);
+  let ls = n > 10 && Math.abs(extra / n) < .08 * size ? extra / n : 0;
+  if (justify) ls = Math.min(ls, 0, ...rs.filter((r, i) => soft[i]).map(r => (W0 + .2 - mw(r.str)) / len(r.str)));
+  if (ls < -.08 * size) return null;
+  const nat = r => mw(r.str) + ls * len(r.str);
+  // largeur de coupure : chaque ligne d'origine y tient, et le premier mot de la suivante n'y entre pas
+  const lo = Math.max(...rs.map(nat)), hi = Math.min(...rs.slice(0, -1).map((r, i) => soft[i] ? nat(r) + sp + ls + mw(first(rs[i + 1])) + ls * len(first(rs[i + 1])) : Infinity));
+  const W = justify ? Math.max(W0 + .3, lo + .1) : clamp(col + .3, lo + .3, hi - .3);
+  const gaps = rs.slice(1).map((r, i) => r.base - rs[i].base).sort((a, b) => a - b), lh = gaps[gaps.length >> 1] / size;
+  const box = [r0.x, Math.min(...rs.map(r => r.top)), r0.x + W0, Math.max(...rs.map(r => r.top + r.px * 1.1))], s = sample(pg, ...box);
+  const it = add({ type: 'text', pg, x: r0.x, y: r0.base - (lh / 2 + BASE) * size, size, lh, wrapW: W, justify, ls, font, spans, runs: rs,
+                   text: rs.map((r, i) => r.str + (i < rs.length - 1 ? soft[i] ? ' ' : '\n' : '')).join(''),
+                   fit: { key: normFont(font).key, bold: !!font.bold, size }, color: s?.ink || '#000000', bg: s?.bg || '#ffffff', needSample: s ? false : 'color',
+                   orig: { x: r0.x, top: r0.top, w: W0, h: size, box, raw: r0.raw, fonts: [...new Set(rs.flatMap(r => r.fonts))], lines: rs.map(r => ({ x: r.x, top: r.top, w: r.w, str: r.str })) } }, false);
+  Object.assign(it.orig, { y0: it.y, color: it.color });
+  // garde-fou : si notre mise en page ne retombe pas exactement sur les lignes d'origine, on n'édite que la ligne cliquée
+  const got = layoutLines(it).map(l => l.t.trim().replace(/\s+/g, ' ')), want = rs.map(r => r.str.trim().replace(/\s+/g, ' '));
+  if (got.join('\n') !== want.join('\n')) { detach(it); return null; }
+  recAdd(it);
+  return it;
+}
+// Clic sur un texte d'origine : son paragraphe, ou sa seule ligne ; curseur placé là où l'on a cliqué
+async function editText(span, pg, x, y) {
+  const para = paraOf(span, pg), it = para.length > 1 && await editPara(para, pg) || editRun(span, pg, undefined, false);
+  it.input.focus();
+  const i = caretAt(it, x, y);
+  it.input.setSelectionRange(i, i);
+}
+function caretAt(it, x, y) {
+  const lines = layoutLines(it), k = clamp(Math.floor((y - it.y) / ((it.lh || L) * it.size)) || 0, 0, lines.length - 1);
+  const f = it.font, l = lines[k].t, t = l.trimEnd(), spaces = s => s.split(' ').length - 1;
+  measure.font = `${f.italic ? 'italic ' : ''}${f.bold ? '700' : '400'} ${it.size}px ${cssFamily(f)}`;
+  // ligne justifiée : les espaces y sont élargis
+  const wide = it.justify && lines[k].soft && spaces(t) ? (it.wrapW - textW(t) - (it.ls || 0) * t.length) / spaces(t) : 0;
+  let best = 0, bd = Infinity;
+  for (let j = 0; j <= l.length; j++) {
+    const d = Math.abs(it.x + measure.measureText(l.slice(0, j)).width + (it.ls || 0) * j + wide * spaces(l.slice(0, j)) - x);
+    if (d < bd) { bd = d; best = j; }
+  }
+  return lines.slice(0, k).reduce((t, l) => t + l.t.length + (l.soft ? 0 : 1), 0) + best;
+}
+// Lignes telles que le navigateur les affiche, retours automatiques compris : le PDF enregistré est coupé exactement pareil
+function layoutLines(it) {
+  const ta = it.input, text = it.text;
+  if (!ta?.isConnected || !it.wrapW) return text.split('\n').map(t => ({ t, soft: false }));
+  const m = document.createElement('div'), cs = getComputedStyle(ta);
+  for (const p of ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing', 'wordSpacing', 'lineHeight', 'whiteSpace', 'textAlign',
+                   'fontKerning', 'fontVariantLigatures', 'overflowWrap', 'wordBreak', 'tabSize']) m.style[p] = cs[p];
+  Object.assign(m.style, { position: 'absolute', left: '-99999px', top: '0', width: ta.clientWidth + 'px', visibility: 'hidden' });
+  m.textContent = text;
+  document.body.append(m);
+  const node = m.firstChild, range = document.createRange(), out = [];
+  let top = null, start = 0;
+  for (let i = 0; node && i < text.length; i++) {
+    if (text[i] === '\n') { out.push({ t: text.slice(start, i), soft: false }); start = i + 1; top = null; continue; }
+    range.setStart(node, i);
+    range.setEnd(node, i + 1);
+    const r = range.getClientRects()[0];
+    if (!r) continue;
+    if (top === null) top = r.top;
+    else if (r.top > top + 1) { out.push({ t: text.slice(start, i), soft: true }); start = i; top = r.top; }
+  }
+  out.push({ t: text.slice(start), soft: false });
+  m.remove();
+  return out;
 }

@@ -213,8 +213,20 @@ function refineRuns(pg) {
     d.replaceWith(...runs.map(x => runDiv(x)));
     split = true;
   }
+  if (split) claimSpans(pg);
   if (split && !$('find').hidden) runFind(true); // résultats de recherche posés sur les anciennes zones
   return split;
+}
+// Lignes d'origine déjà corrigées (reprise d'une sauvegarde, lignes re-séparées par style) : retirées de la page, rattachées à leur élément
+const sameRun = (a, b) => a.str === b.str && Math.abs(a.x - b.x) < .5 && Math.abs(a.top - b.top) < .5;
+function claimSpans(pg) {
+  const free = [...pg.layer.querySelectorAll('.tl')];
+  for (const it of items) if (it.pg === pg) runsOf(it).forEach((r, i) => {
+    const d = free.find(d => sameRun(d.run, r));
+    if (!d) return;
+    d.remove();
+    if (it.runs) { (it.spans ??= [])[i] = d; it.runs[i] = d.run; } else { it.span = d; it.run = d.run; }
+  });
 }
 // Polices d'une page connues sans la dessiner (recherche sur des pages pas encore affichées)
 async function ensureFonts(pg) {

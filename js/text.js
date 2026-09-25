@@ -19,7 +19,8 @@ function hitRect(h) {
     return [r.x + measureW(r.str.slice(0, h.start), r.px, f) * k, r.top, Math.max(2, measureW(r.str.substr(h.start, h.len), r.px, f) * k), r.px * 1.1];
   }
   const it = h.it, before = it.text.slice(0, h.start), line = before.split('\n').length - 1, col = before.slice(before.lastIndexOf('\n') + 1);
-  return [it.x + measureW(col, it.size, it.font), it.y + line * L * it.size, Math.max(2, measureW(it.text.substr(h.start, h.len), it.size, it.font)), L * it.size];
+  const lh = (it.lh || L) * it.size;
+  return [it.x + measureW(col, it.size, it.font), it.y + line * lh, Math.max(2, measureW(it.text.substr(h.start, h.len), it.size, it.font)), lh];
 }
 function runFind(keep) {
   const q = $('fq').value, old = hitI;
@@ -149,7 +150,7 @@ async function ocrPage(pg, btn = document.createElement('button'), quiet) {
       // hauteur des minuscules (estimée par Tesseract sur toute la ligne) : la mesure la plus stable de la taille du texte
       const ra = l.rowAttributes, xh = ra?.row_height ? (ra.row_height - ra.ascenders - ra.descenders) / k : 0;
       const px = clamp(xh > 1 ? xh / .48 : (bl - b.y0) / .72 / k, 4, 200);
-      pg.ocr.push({ str, px, xh, x: b.x0 / k, top: bl / k - .85 * px, w: (b.x1 - b.x0) / k, scan: true, box: [b.x0 / k, b.y0 / k, b.x1 / k, b.y1 / k],
+      pg.ocr.push({ str, px, xh, x: b.x0 / k, base: bl / k, top: bl / k - .85 * px, w: (b.x1 - b.x0) / k, scan: true, box: [b.x0 / k, b.y0 / k, b.x1 / k, b.y1 / k],
                     words: (l.words || []).filter(w => w.text.trim()).map(w => ({ t: w.text.trim(), b: [w.bbox.x0 / k, w.bbox.y0 / k, w.bbox.x1 / k, w.bbox.y1 / k] })) });
     }
     pg.ocr.forEach(r => addRun(pg, r));
