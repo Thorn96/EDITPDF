@@ -604,4 +604,4 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
   #histbtn { display: none; } .brand svg { width: 26px; height: 26px; }
   header { gap: 4px; } .actions { gap: 3px; } header .btn { height: 36px; padding: 0 9px; } header .btn.icon { width: 34px; padding: 0; }
 }
-@media (max-width: 900px) { body:not(.loaded) #desk { --mx: 10px; } }
+@media (max-width: 1180px) { body:not(.loaded) #desk { --mx: 10px; } }

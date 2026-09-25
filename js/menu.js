@@ -118,6 +118,7 @@ function settingsEntries() {
     { label: 'Revoir la visite guidée', fn: () => startTour(true), disabled: !pages.length },
     { label: 'Raccourcis clavier', key: '?', fn: showHelp },
     REPORT_KEY && { label: 'Signaler un problème…', fn: openReport },
+    { label: '☕ Soutenir Rature (offrir un café)', fn: donate },
     { label: 'Réinitialiser mes préférences', fn: resetPrefs },
   ];
 }

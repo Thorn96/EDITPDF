@@ -16,6 +16,7 @@ Object.assign(EN, {
   'Glisse ton PDF ici': 'Drop your PDF here', 'ou': 'or', 'Choisir un fichier': 'Choose a file', "c'est ici !": 'right here!',
   "PDF, document Word ou photos d'une feuille. Le fichier reste sur ton appareil.": 'PDF, Word document or photos of a sheet. The file stays on your device.',
   "Gratuit · sans inscription · rien n'est envoyé": 'Free · no sign-up · nothing is uploaded',
+  'Offrir un café ☕': 'Buy me a coffee ☕', '☕ Soutenir Rature (offrir un café)': '☕ Support Rature (buy me a coffee)',
   'Écrire': 'Write', 'Corriger': 'Edit text', 'Cocher': 'Tick', 'Signer': 'Sign', 'Image': 'Image', 'Signer le document': 'Sign the document',
   'Clique sur ta signature pour la poser sur la page.': 'Click your signature to place it on the page.',
   'Numériser un document': 'Scan a document', "avec l'appareil photo du téléphone": "with your phone's camera", 'Reprendre ton travail': 'Pick up where you left off',
