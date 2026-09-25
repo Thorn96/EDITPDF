@@ -2,7 +2,7 @@
 
 Outil gratuit pour remplir, signer et corriger des PDF directement dans le navigateur, sur ordinateur comme sur téléphone. En français et en anglais.
 
-**Utiliser l'outil :** https://thorn96.github.io/EDITPDF/
+**Utiliser l'outil :** https://editpdf-tau.vercel.app/
 
 ## Ce qu'on peut faire
 
