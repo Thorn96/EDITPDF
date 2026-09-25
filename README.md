@@ -2,7 +2,7 @@
 
 Outil gratuit pour remplir, signer et corriger des PDF directement dans le navigateur, sur ordinateur comme sur téléphone. En français et en anglais.
 
-**Utiliser l'outil :** https://editpdf-tau.vercel.app/
+**Utiliser l'outil :** https://rature.app/
 
 **Pourquoi « Rature » :** on corrige un PDF comme une copie, au stylo rouge : on barre, on réécrit, on signe. L'interface reprend le cahier à grands carreaux, la marge rouge et le stylo bleu.
 

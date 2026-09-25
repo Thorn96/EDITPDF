@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://editpdf-tau.vercel.app/sitemap.xml
+Sitemap: https://rature.app/sitemap.xml
