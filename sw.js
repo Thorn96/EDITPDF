@@ -32,7 +32,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET' || !req.url.startsWith('http')) return;
   const put = res => { if (res.ok) { const copy = res.clone(); caches.open(V).then(c => c.put(req, copy)); } return res; };
   const url = new URL(req.url);
-  if (url.origin !== location.origin) return; // rien à mettre en cache ailleurs
+  if (url.origin !== location.origin || url.pathname.startsWith('/_vercel/')) return; // rien à mettre en cache ailleurs, ni les statistiques Vercel
   if (FROZEN.test(url.pathname)) e.respondWith(caches.match(req, { ignoreVary: true }).then(hit => hit || fetch(req).then(put)));
   else e.respondWith(fetch(req).then(put).catch(() => caches.match(req, { ignoreSearch: true, ignoreVary: true })));
 });
