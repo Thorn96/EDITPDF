@@ -3,34 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plume · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF</title>
+<title>Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF</title>
 <meta name="description" content="Remplir, signer, modifier le texte, caviarder, fusionner et convertir vos PDF gratuitement, sans inscription. Tout se passe dans votre navigateur : vos fichiers ne sont envoyés nulle part.">
 <meta name="keywords" content="éditeur PDF gratuit, modifier PDF, remplir PDF, signer PDF, modifier texte PDF, caviarder PDF, fusionner PDF, PDF en Word, OCR">
 <link rel="canonical" href="https://editpdf-tau.vercel.app/">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Plume">
+<meta property="og:site_name" content="Rature">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_GB">
 <meta property="og:url" content="https://editpdf-tau.vercel.app/">
-<meta property="og:title" content="Plume · Éditeur PDF gratuit : remplir, signer, modifier">
+<meta property="og:title" content="Rature · Éditeur PDF gratuit : remplir, signer, modifier">
 <meta property="og:description" content="Remplir, signer et corriger vos PDF gratuitement, sans inscription. Tout se passe dans votre navigateur.">
 <meta property="og:image" content="https://editpdf-tau.vercel.app/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Plume, éditeur PDF gratuit : remplir, signer et corriger vos PDF">
+<meta property="og:image:alt" content="Rature, éditeur PDF gratuit : remplir, signer et corriger vos PDF">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Plume · Éditeur PDF gratuit">
+<meta name="twitter:title" content="Rature · Éditeur PDF gratuit">
 <meta name="twitter:description" content="Remplir, signer et corriger vos PDF gratuitement, dans le navigateur.">
 <meta name="twitter:image" content="https://editpdf-tau.vercel.app/og-image.jpg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Plume","alternateName":"Plume · Éditeur PDF","url":"https://editpdf-tau.vercel.app/","image":"https://editpdf-tau.vercel.app/og-image.jpg",
+{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · Éditeur PDF","url":"https://editpdf-tau.vercel.app/","image":"https://editpdf-tau.vercel.app/og-image.jpg",
  "description":"Éditeur PDF gratuit dans le navigateur : remplir des formulaires, signer, modifier le texte existant, caviarder, fusionner, convertir en Word, reconnaissance de texte (OCR).",
  "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"Navigateur récent (Chrome, Edge, Firefox, Safari)",
  "inLanguage":["fr","en"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
  "featureList":["Remplir un formulaire PDF","Signer un PDF","Modifier le texte d'un PDF","Caviarder","Fusionner et réorganiser les pages","Convertir un PDF en Word","Reconnaissance de texte (OCR)","Aucun fichier envoyé sur Internet"]}
 </script>
-<meta name="theme-color" content="#d4472b">
+<meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -39,7 +39,7 @@
 <script src="lib/pdfjs/pdf.min.js"></script>
 <script src="lib/pdf-lib/pdf-lib.min.js"></script>
 <script src="lib/pdf-lib/fontkit.umd.min.js"></script>
-<link rel="stylesheet" href="css/plume.css">
+<link rel="stylesheet" href="css/rature.css">
 <!-- Vercel Web Analytics : visites comptées sans cookie, rien sur le contenu des PDF -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -47,11 +47,11 @@
 <body data-tool="text">
 
 <svg width="0" height="0" style="position:absolute">
-  <symbol id="nib" viewBox="0 0 24 24"><path d="M12 2.5 18.5 9 15 19.5H9L5.5 9z"/><path d="M12 9v5.2"/><circle cx="12" cy="15.6" r="1.3"/><path d="M8.5 22h7"/></symbol>
+  <symbol id="logo" viewBox="0 0 40 40"><rect x="3" y="5" width="30" height="32" rx="3" fill="#fff" stroke="#15151f" stroke-width="2.4"/><path d="M9 15h18M9 22h13" stroke="#15151f" stroke-width="2.4" stroke-linecap="round"/><path d="M7 23C14 18 24 27 36 16" fill="none" stroke="#e2494f" stroke-width="3.4" stroke-linecap="round"/></symbol>
 </svg>
 
 <header>
-  <div class="brand"><svg class="i"><use href="#nib"/></svg><b>Plume</b><small>éditeur PDF</small></div>
+  <div class="brand"><svg><use href="#logo"/></svg><b>Rature</b><small>éditeur PDF</small></div>
   <button id="btnPages" class="btn icon ghost drawer-btn" title="Pages"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="11" height="14" rx="1.5"/><path d="M9 21h9.5a1.5 1.5 0 0 0 1.5-1.5V8"/></svg></button>
   <div class="doc">
     <label class="btn" title="Ouvrir un PDF ou des images (Ctrl+O)">
@@ -63,7 +63,7 @@
     <span id="saved">✓ Sauvegardé</span>
   </div>
   <div class="actions">
-    <button id="install" class="btn ghost" hidden title="Installer Plume comme une application">
+    <button id="install" class="btn ghost" hidden title="Installer Rature comme une application">
       <svg class="i" viewBox="0 0 24 24"><path d="M12 3v11M7 9.5l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg><span class="lbl">Installer</span>
     </button>
     <button id="findbtn" class="btn icon ghost" title="Rechercher et remplacer (Ctrl+F)">
@@ -109,28 +109,34 @@
   <section id="desk">
     <div id="empty">
       <div class="welcome">
-        <label class="drop" for="file">
-          <div class="art"><i></i><i></i><svg class="i"><use href="#nib"/></svg></div>
-          <h1>Glisse ton <em>PDF</em> ici</h1>
-          <p>ou <u>choisis un fichier</u> — des photos deviennent un PDF</p>
+        <div class="pitch">
+          <p class="eyebrow">Plus besoin d'<s>imprimante<svg viewBox="0 0 520 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 34C120 18 300 46 514 22"/></svg></s></p>
+          <h1>Remplis et signe ton PDF.</h1>
+          <p>Remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.</p>
           <ul>
-            <li style="--i:0">✎ Remplir un formulaire</li>
-            <li style="--i:1">✍ Signer</li>
-            <li style="--i:2">Aa Corriger le texte</li>
-            <li style="--i:3">▮ Caviarder</li>
-            <li style="--i:4">⧉ Fusionner, réorganiser</li>
+            <li>Écrire et corriger le vrai texte</li>
+            <li>Signer à la souris ou au doigt</li>
+            <li>Effacer pour de bon ce qui doit disparaître</li>
+            <li>Fusionner et réorganiser les pages</li>
           </ul>
-          <small>
-            <svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-            Tes fichiers restent sur ton appareil : rien n'est envoyé sur Internet.
-          </small>
-        </label>
-        <div class="alt">
-          <label class="btn" for="scanfile">
-            <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
-            Numériser un document
+          <div class="alt">
+            <label class="btn" for="scanfile">
+              <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
+              Numériser un document
+            </label>
+            <span>avec l'appareil photo du téléphone</span>
+          </div>
+        </div>
+        <div class="dropwrap">
+          <label class="drop" for="file" tabindex="0">
+            <svg class="down" viewBox="0 0 84 96" aria-hidden="true"><path d="M8 6h46l22 22v62H8z" fill="var(--paper)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M54 6v22h22" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M42 40v30M30 58l12 12 12-12" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <strong>Glisse ton PDF ici</strong>
+            <span class="or">ou</span>
+            <span class="cta"><svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>Choisir un fichier</span>
+            <small>PDF, document Word ou photos d'une feuille. Le fichier reste sur ton appareil.</small>
+            <svg class="fly" viewBox="0 0 104 128" aria-hidden="true"><path d="M6 6h62l30 30v86H6z" fill="#fff" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M68 6v30h30" fill="none" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M18 50h58M18 62h40" stroke="#c9c3b4" stroke-width="5" stroke-linecap="round"/><rect x="18" y="80" width="46" height="22" rx="4" fill="#e2494f"/><text x="41" y="96" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="14" fill="#fff">PDF</text></svg>
           </label>
-          <span>avec l'appareil photo du téléphone</span>
+          <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>c'est ici !</span></div>
         </div>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -146,18 +152,20 @@
 
     <nav id="tools" class="float" aria-label="Outils">
       <button data-t="text" class="on" data-tip="Ajouter du texte · T" aria-label="Ajouter du texte">
-        <svg class="i" viewBox="0 0 24 24"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg><span>Écrire</span></button>
       <button data-t="edit" data-tip="Corriger le texte du PDF · E" aria-label="Corriger le texte du PDF">
-        <svg class="i" viewBox="0 0 24 24"><path d="M3 7V5h10v2M8 5v12M6 17h4"/><path d="M14 20.5l.8-3.3 5.3-5.3 2.5 2.5-5.3 5.3z"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 7V5h10v2M8 5v12M6 17h4"/><path d="M14 20.5l.8-3.3 5.3-5.3 2.5 2.5-5.3 5.3z"/></svg><span>Corriger</span></button>
       <button data-t="stamp" data-tip="Cocher, dater, mentions · S" aria-label="Symboles et mentions">
-        <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg><span>Cocher</span></button>
+      <button data-a="sign" data-tip="Signer le document" aria-label="Signer le document">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 17c3-1 4-6 6-6s1 5 3 5 3-3 4-3 1.5 2 5 2"/></svg><span>Signer</span></button>
       <hr>
       <button data-t="highlight" data-tip="Surligner · H" aria-label="Surligner">
-        <svg class="i" viewBox="0 0 24 24"><path d="m9 15-4 4h5l1.5-1.5"/><path d="M8.5 12.5 16 5l3 3-7.5 7.5z"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="m9 15-4 4h5l1.5-1.5"/><path d="M8.5 12.5 16 5l3 3-7.5 7.5z"/></svg><span>Surligner</span></button>
       <button data-t="draw" data-tip="Dessiner à main levée · D" aria-label="Dessiner">
-        <svg class="i" viewBox="0 0 24 24"><path d="M3 17c2.5-2 4-7 6-7s1 6 3.5 6S16 9 18 9s2 3 3 4"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 17c2.5-2 4-7 6-7s1 6 3.5 6S16 9 18 9s2 3 3 4"/></svg><span>Dessiner</span></button>
       <div class="tgroup">
-        <button data-t="rect" id="shapebtn" aria-label="Formes"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg><i></i></button>
+        <button data-t="rect" id="shapebtn" aria-label="Formes"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg><span>Formes</span><i></i></button>
         <div class="flyout">
           <button data-t="rect" data-tip="Rectangle · R" aria-label="Rectangle"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></button>
           <button data-t="ellipse" data-tip="Cercle · C" aria-label="Cercle"><svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="7"/></svg></button>
@@ -167,16 +175,16 @@
         </div>
       </div>
       <button data-t="note" data-tip="Note (post-it) · N" aria-label="Note">
-        <svg class="i" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5V14l-6 6H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M14 20v-4.5a1.5 1.5 0 0 1 1.5-1.5H20M8 9h8M8 12.5h4"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5V14l-6 6H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M14 20v-4.5a1.5 1.5 0 0 1 1.5-1.5H20M8 9h8M8 12.5h4"/></svg><span>Note</span></button>
       <button data-t="field" data-tip="Champ de formulaire · F" aria-label="Champ de formulaire">
-        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 10.5v3M10 12h7" opacity=".7"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 10.5v3M10 12h7" opacity=".7"/></svg><span>Champ</span></button>
       <hr>
       <button data-t="redact" data-tip="Caviarder (effacer définitivement) · X" aria-label="Caviarder">
-        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="1.5" fill="currentColor"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="1.5" fill="currentColor"/></svg><span>Caviarder</span></button>
       <button data-a="image" data-tip="Insérer une image · I" aria-label="Insérer une image">
-        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg><span>Image</span></button>
       <button data-t="move" data-tip="Sélectionner, déplacer · V" aria-label="Déplacer">
-        <svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg></button>
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span>Déplacer</span></button>
     </nav>
     <input type="file" id="imgfile" accept="image/*" hidden>
 

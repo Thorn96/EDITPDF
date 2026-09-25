@@ -1,4 +1,4 @@
-// Plume · Images, signatures, numérisation
+// Rature · Images, signatures, numérisation
 // ---------- Images et signatures ----------
 function placeImage(img, pg, cx, cy, width) {
   pg ||= visiblePage();
@@ -19,17 +19,17 @@ async function insertImageFile(file) {
 }
 $('imgfile').onchange = e => { if (e.target.files[0]) insertImageFile(e.target.files[0]); e.target.value = ''; };
 const typing = () => { const a = document.activeElement; return /^(TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable || (a.tagName === 'INPUT' && !/^(color|checkbox|radio|file|range)$/.test(a.type)); };
-// Copier / couper / coller : éléments de Plume, ou image venant d'ailleurs
+// Copier / couper / coller : éléments de Rature, ou image venant d'ailleurs
 addEventListener('copy', e => {
   if (typing() || !selection.length) return;
   clip = selection.map(i => cloneItem(i));
-  e.clipboardData.setData('text/plain', `[Plume] ${clip.length} élément(s)`); // remplace une éventuelle image dans le presse-papiers
+  e.clipboardData.setData('text/plain', `[Rature] ${clip.length} élément(s)`); // remplace une éventuelle image dans le presse-papiers
   e.preventDefault();
 });
 addEventListener('cut', e => {
   if (typing() || !selection.length) return;
   clip = selection.map(i => cloneItem(i));
-  e.clipboardData.setData('text/plain', `[Plume] ${clip.length} élément(s)`);
+  e.clipboardData.setData('text/plain', `[Rature] ${clip.length} élément(s)`);
   e.preventDefault();
   delMany(selection);
 });
@@ -37,7 +37,7 @@ addEventListener('paste', e => {
   if (typing() || !pages.length) return;
   const f = [...e.clipboardData.files].find(isImg);
   if (f) { e.preventDefault(); return insertImageFile(f); }
-  if (clip.length && e.clipboardData.getData('text/plain').startsWith('[Plume]')) { e.preventDefault(); pasteItems(); }
+  if (clip.length && e.clipboardData.getData('text/plain').startsWith('[Rature]')) { e.preventDefault(); pasteItems(); }
 });
 
 let sigs = [];

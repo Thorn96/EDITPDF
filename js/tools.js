@@ -1,4 +1,4 @@
-// Plume · Outils sur le document entier : extraire le texte, comparer deux PDF, traitement par lot
+// Rature · Outils sur le document entier : extraire le texte, comparer deux PDF, traitement par lot
 // ---------- Extraire le texte ----------
 const scannedPages = () => pages.filter(p => p.wrap.classList.contains('scan') && !p.ocr);
 async function openText() {
@@ -138,7 +138,7 @@ $('batchgo').onclick = async () => {
         out.push({ name: f.name, data: res });
       } catch (e) { console.error(e); failed.push(f.name); }
     }
-    if (out.length) download(makeZip(out), tr('Plume - lot.zip'));
+    if (out.length) download(makeZip(out), tr('Rature - lot.zip'));
     msg(failed.length ? tr('Terminé. Impossible de traiter : {names}', { names: failed.join(', ') }) : plural(out.length, 'Terminé : {n} fichier traité.', 'Terminé : {n} fichiers traités.'));
   } finally {
     deco = keepDeco;

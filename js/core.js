@@ -1,4 +1,4 @@
-// Plume · Base : utilitaires, traduction, fenêtres, historique
+// Rature · Base : utilitaires, traduction, fenêtres, historique
 // Tout est hébergé sur le site (lib/, fonts/) : rien n'est demandé à un autre serveur
 const here = p => new URL(p, document.baseURI).href;
 pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js');

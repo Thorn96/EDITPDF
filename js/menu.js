@@ -1,4 +1,4 @@
-// Plume · Menus : clic droit sur un élément ou une page, menus « Plus d'outils » et « Réglages »
+// Rature · Menus : clic droit sur un élément ou une page, menus « Plus d'outils » et « Réglages »
 // entries : { label, fn, key, danger, on, disabled } | '-' (séparateur) | { head } (titre de section)
 function openMenu(x, y, entries) {
   const m = $('menu');
@@ -43,7 +43,7 @@ function openItemMenu(e, it) {
   const list = [...selection], locked = list.every(i => i.lock), canRot = list.some(PROP_OK.rot);
   openMenu(e.clientX, e.clientY, [
     { label: 'Dupliquer', key: 'Ctrl D', fn: () => duplicate(list) },
-    { label: 'Copier', key: 'Ctrl C', fn: () => { clip = list.map(i => cloneItem(i)); navigator.clipboard?.writeText(`[Plume] ${clip.length}`).catch(() => {}); toast('Copié'); } },
+    { label: 'Copier', key: 'Ctrl C', fn: () => { clip = list.map(i => cloneItem(i)); navigator.clipboard?.writeText(`[Rature] ${clip.length}`).catch(() => {}); toast('Copié'); } },
     { label: 'Sur toutes les pages', fn: () => copyToAllPages(list), disabled: pages.length < 2 },
     '-',
     { label: 'Premier plan', fn: () => userReorder(list, true) },
@@ -91,6 +91,7 @@ function toolsEntries() {
     { head: 'Document' },
     { label: 'Filigrane, numéros de page, en-tête…', fn: openDeco, disabled: none },
     { label: 'Rechercher et remplacer', key: 'Ctrl F', fn: () => openFind(), disabled: none },
+    { label: 'Historique des modifications', fn: openHistory },
     { label: 'Caviarder automatiquement…', fn: openAutoRedact, disabled: none },
     { label: 'Ajouter un lien', key: 'K', fn: () => setTool('link'), disabled: none },
     { label: 'Signets (table des matières)…', fn: openBookmarks, disabled: none },
@@ -132,7 +133,7 @@ function goToStep(n) { // n : nombre d'étapes à garder faites
 function openHistory() {
   if (closeMenu()) return;
   const steps = [...past.map((a, i) => ({ a, n: i + 1, done: true })), ...[...future].reverse().map((a, i) => ({ a, n: past.length + i + 1, done: false }))];
-  openMenu(...menuAt($('histbtn')), [
+  openMenu(...menuAt($('histbtn').offsetParent ? $('histbtn') : $('toolsbtn')), [
     { head: steps.length ? 'Historique' : "Aucune modification pour l'instant" },
     ...steps.slice(-40).reverse().map(({ a, n, done }) => ({ label: a.label || tr('Modification'), key: ago(a.t), on: n === past.length, undone: !done, fn: () => goToStep(n) })),
     steps.length && '-',

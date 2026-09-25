@@ -1,17 +1,23 @@
-// Plume · Version anglaise. La clé est le texte français tel qu'il apparaît dans l'interface.
+// Rature · Version anglaise. La clé est le texte français tel qu'il apparaît dans l'interface.
 Object.assign(EN, {
   // En-tête, accueil
-  'Plume · Éditeur PDF': 'Plume · PDF editor', 'éditeur PDF': 'PDF editor', 'Pages': 'Pages',
+  'Rature · Éditeur PDF': 'Rature · PDF editor', 'éditeur PDF': 'PDF editor', 'Pages': 'Pages',
   'Ouvrir un PDF ou des images (Ctrl+O)': 'Open a PDF or images (Ctrl+O)', 'Ouvrir': 'Open', 'Aucun fichier': 'No file', '✓ Sauvegardé': '✓ Saved',
-  'Installer Plume comme une application': 'Install Plume as an app', 'Installer': 'Install',
+  'Installer Rature comme une application': 'Install Rature as an app', 'Installer': 'Install',
   'Rechercher et remplacer (Ctrl+F)': 'Find and replace (Ctrl+F)', 'Filigrane, numéros de page, en-tête': 'Watermark, page numbers, header',
   "Plus d'outils": 'More tools', 'Thème': 'Theme', 'Réglages': 'Settings', 'Raccourcis clavier (?)': 'Keyboard shortcuts (?)', 'Mes signatures': 'My signatures',
   'Annuler (Ctrl+Z)': 'Undo (Ctrl+Z)', 'Rétablir (Ctrl+Y)': 'Redo (Ctrl+Y)', 'Télécharger ou partager le PDF modifié (Ctrl+S)': 'Download or share the edited PDF (Ctrl+S)',
   'Télécharger': 'Download', "Ajouter à la suite les pages d'un PDF, ou des images comme nouvelles pages": 'Append the pages of a PDF, or images as new pages',
   'PDF ou images': 'PDF or images', "Photographier une feuille et l'ajouter comme page": 'Photograph a sheet and add it as a page', 'Numériser': 'Scan',
-  'Glisse ton': 'Drop your', 'ici': 'here', 'ou': 'or', 'choisis un fichier': 'choose a file', '— des photos deviennent un PDF': '— photos become a PDF',
-  '✎ Remplir un formulaire': '✎ Fill in a form', '✍ Signer': '✍ Sign', 'Aa Corriger le texte': 'Aa Fix the text', '▮ Caviarder': '▮ Redact', '⧉ Fusionner, réorganiser': '⧉ Merge, reorder',
-  "Tes fichiers restent sur ton appareil : rien n'est envoyé sur Internet.": 'Your files stay on your device: nothing is sent over the Internet.',
+  "Plus besoin d'": 'Who needs a ', 'imprimante': 'printer', 'Remplis et signe ton PDF.': 'Fill in and sign your PDF.',
+  'Remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.': 'Fill in a form, fix the text, sign by hand, then download. It all happens in your browser.',
+  'Écrire et corriger le vrai texte': 'Write and fix the real text', 'Signer à la souris ou au doigt': 'Sign with the mouse or your finger',
+  'Effacer pour de bon ce qui doit disparaître': 'Erase for good what must go', 'Fusionner et réorganiser les pages': 'Merge and reorder pages',
+  'Glisse ton PDF ici': 'Drop your PDF here', 'ou': 'or', 'Choisir un fichier': 'Choose a file', "c'est ici !": 'right here!',
+  "PDF, document Word ou photos d'une feuille. Le fichier reste sur ton appareil.": 'PDF, Word document or photos of a sheet. The file stays on your device.',
+  "Gratuit · sans inscription · rien n'est envoyé": 'Free · no sign-up · nothing is uploaded',
+  'Écrire': 'Write', 'Corriger': 'Edit text', 'Cocher': 'Tick', 'Signer': 'Sign', 'Image': 'Image', 'Signer le document': 'Sign the document',
+  'Clique sur ta signature pour la poser sur la page.': 'Click your signature to place it on the page.',
   'Numériser un document': 'Scan a document', "avec l'appareil photo du téléphone": "with your phone's camera", 'Reprendre ton travail': 'Pick up where you left off',
   'Reprendre': 'Resume', 'Oublier ce travail': 'Forget this work',
   // Outils
@@ -81,7 +87,7 @@ Object.assign(EN, {
   'Choisir les PDF': 'Choose the PDFs', 'Filigrane, numéros, en-tête et pied de page actuels': 'Current watermark, numbers, header and footer', '(menu Mise en page)': '(Layout menu)',
   'Réduire la taille': 'Reduce the size', 'Format A4': 'A4 format', 'Mot de passe': 'Password', 'Fermer': 'Close', 'Lancer': 'Start',
   '{n} fichier choisi': '{n} file chosen', '{n} fichiers choisis': '{n} files chosen', "Choisis d'abord les PDF à traiter.": 'Choose the PDFs to process first.',
-  'Choisis un mot de passe (sans virgule).': 'Choose a password (no comma).', 'Plume - lot.zip': 'Plume - batch.zip', 'Fichier {k} sur {n} : {name}': 'File {k} of {n}: {name}',
+  'Choisis un mot de passe (sans virgule).': 'Choose a password (no comma).', 'Rature - lot.zip': 'Rature - batch.zip', 'Fichier {k} sur {n} : {name}': 'File {k} of {n}: {name}',
   'Terminé : {n} fichier traité.': 'Done: {n} file processed.', 'Terminé : {n} fichiers traités.': 'Done: {n} files processed.', 'Terminé. Impossible de traiter : {names}': 'Done. Could not process: {names}',
   'Texte du document': "Document's text", 'Reconnaître les pages scannées': 'Recognise the scanned pages', 'Copier': 'Copy', 'Télécharger (.txt)': 'Download (.txt)',
   'Lecture du document…': 'Reading the document…', 'Texte de toutes les pages, avec tes modifications.': 'Text of every page, with your changes.', 'Texte copié': 'Text copied', 'Page {k} sur {n}…': 'Page {k} of {n}…',
@@ -124,7 +130,7 @@ Object.assign(EN, {
   '{n} remplacement': '{n} replacement', '{n} remplacements': '{n} replacements', 'Chargement de la reconnaissance…': 'Loading recognition…', 'Lecture du texte… {p} %': 'Reading the text… {p}%',
   '{n} ligne reconnue : clique dessus pour la corriger.': '{n} line recognised: click it to fix it.', '{n} lignes reconnues : clique sur une ligne pour la corriger.': '{n} lines recognised: click a line to fix it.',
   'Aucun texte reconnu sur cette page.': 'No text recognised on this page.', 'La reconnaissance du texte a échoué.': 'Text recognition failed.', "Ce fichier n'est pas une image.": 'This file is not an image.',
-  'Image illisible.': 'Unreadable image.', 'Travail repris là où tu l\'avais laissé': 'Work resumed where you left off', 'Impossible de reprendre ce travail.': 'Could not resume this work.', 'Plume est installée ✓': 'Plume is installed ✓',
+  'Image illisible.': 'Unreadable image.', 'Travail repris là où tu l\'avais laissé': 'Work resumed where you left off', 'Impossible de reprendre ce travail.': 'Could not resume this work.', 'Rature est installée ✓': 'Rature is installed ✓',
   'Page blanche ajoutée': 'Blank page added', 'Page dupliquée (copie figée, avec ses corrections)': 'Page duplicated (flattened copy, with its corrections)', 'Page dupliquée': 'Page duplicated',
   'Trace la zone de la page à garder': 'Draw the area of the page to keep', 'Garder seulement la zone sélectionnée ? Le reste sera masqué dans le PDF (annulable).': 'Keep only the selected area? The rest will be hidden in the PDF (can be undone).',
   'Recadrer': 'Crop', 'Recadre la page avant de corriger son texte.': 'Crop the page before fixing its text.', '{n} page supprimée': '{n} page deleted', '{n} pages supprimées': '{n} pages deleted',
@@ -149,7 +155,7 @@ Object.assign(EN, {
   'Thème : automatique': 'Theme: automatic', 'Thème : clair': 'Theme: light', 'Thème : sombre': 'Theme: dark',
   // Visite guidée
   'Passer': 'Skip', 'Suivant': 'Next', 'Terminer': 'Finish',
-  'Tes outils : texte, correction du texte du PDF, coches, surligneur, formes, champs de formulaire… Survole un bouton pour voir son nom et son raccourci clavier.': "Your tools: text, fixing the PDF's text, ticks, highlighter, shapes, form fields… Hover over a button to see its name and keyboard shortcut.",
+  'Tes outils : texte, correction du texte du PDF, coches, surligneur, formes, champs de formulaire… Survole un bouton pour voir son raccourci clavier.': "Your tools: text, fixing the PDF's text, ticks, highlighter, shapes, form fields… Hover over a button to see its keyboard shortcut.",
   "Les réglages de l'outil ou de l'élément sélectionné : couleur, police, taille, rotation, opacité…": 'Settings for the tool or selected item: colour, font, size, rotation, opacity…',
   'Tes pages : glisse-les pour les réorganiser. Clic droit sur une page pour la dupliquer, la pivoter ou la recadrer.': 'Your pages: drag them to reorder. Right-click a page to duplicate, rotate or crop it.',
   "Tes signatures et tampons : crée-les une fois, puis pose-les d'un clic ou en les glissant sur la page.": 'Your signatures and stamps: create them once, then place them with a click or by dragging them onto the page.',
@@ -157,7 +163,7 @@ Object.assign(EN, {
   'Langue, thème clair ou sombre, et cette visite si tu veux la revoir.': 'Language, light or dark theme, and this tour if you want to see it again.',
   "Quand c'est prêt : télécharge, partage, compresse ou protège ton PDF par mot de passe.": "When it's ready: download, share, compress or password-protect your PDF.",
   // Page, référencement
-  'Plume · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF': 'Plume · Free online PDF editor: fill in, sign, edit a PDF',
+  'Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF': 'Rature · Free online PDF editor: fill in, sign, edit a PDF',
   // Avant / après, signature électronique
   'Avant / après': 'Before / after', 'Avant': 'Before', 'Après': 'After', 'Retour': 'Back', 'Aucune page modifiée.': 'No page changed.',
   "Chaque page modifiée, telle qu'elle est et telle qu'elle sera téléchargée.": 'Each changed page, as it is now and as it will be downloaded.',

@@ -1,4 +1,4 @@
-// Plume · Signaler un problème : message envoyé par e-mail via Web3Forms.
+// Rature · Signaler un problème : message envoyé par e-mail via Web3Forms.
 // La clé ci-dessous est liée à l'adresse de réception, qui n'apparaît jamais dans le site.
 // Tant qu'elle est vide, l'entrée « Signaler un problème » n'est pas proposée.
 const REPORT_KEY = 'c08dd81e-4270-4727-a2da-339f62a4150c';
@@ -17,7 +17,7 @@ $('repgo').onclick = async () => {
   try {
     const r = await fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ access_key: REPORT_KEY, subject: 'Plume : signalement', from_name: 'Plume', message: message + infos, ...(mail && { email: mail }) }),
+      body: JSON.stringify({ access_key: REPORT_KEY, subject: 'Rature : signalement', from_name: 'Rature', message: message + infos, ...(mail && { email: mail }) }),
     });
     if (!(await r.json()).success) throw new Error('refusé');
     $('reportdlg').close();

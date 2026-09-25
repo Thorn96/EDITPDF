@@ -1,4 +1,4 @@
-// Plume · Outils, sélection, barre d'options
+// Rature · Outils, sélection, barre d'options
 const HINTS = {
   text: 'Clique pour écrire · Entrée : nouvelle ligne · Échap : terminer · poignée bleue : largeur du paragraphe',
   edit: 'Clique sur un texte du PDF pour le corriger · vide-le pour le supprimer',
@@ -33,12 +33,22 @@ function setTool(t) {
     sb.classList.add('on');
   }
   select(null);
-  $('hint').innerHTML = `${esc(tr(HINTS[t]))}<i></i><kbd>?</kbd> ${esc(tr('raccourcis'))}`;
+  // consigne en 2 temps : l'outil choisi, puis quoi faire sur la page
+  const tb = document.querySelector(`#tools [data-t=${t}][data-tip]`), name = tb?.querySelector('span')?.textContent || tb?.dataset.tip.split(' · ')[0];
+  $('hint').innerHTML = (name ? `<em>1</em>${esc(tr('Outil'))} <b>${esc(name)}</b><em>2</em>` : '') + `${esc(tr(HINTS[t]))}<i></i><kbd>?</kbd> ${esc(tr('raccourcis'))}`;
   prefsChanged();
 }
 $('tools').onclick = e => {
   const b = e.target.closest('button');
   if (b?.dataset.a === 'image') return pages.length ? $('imgfile').click() : toast("Ouvre d'abord un PDF.", 'error');
+  if (b?.dataset.a === 'sign') { // pas de signature : on la crée ; sinon on montre où elles sont
+    if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
+    if (!$('siglist').children.length) return $('signew').click();
+    const side = document.querySelector('.side.right');
+    document.body.classList.add('show-right');
+    side.classList.remove('flash'); void side.offsetWidth; side.classList.add('flash');
+    return toast('Clique sur ta signature pour la poser sur la page.');
+  }
   if (b?.dataset.t) { setTool(b.dataset.t); b.blur(); }
 };
 

@@ -1,4 +1,4 @@
-// Plume · Tampons personnalisés : texte encadré (« PAYÉ », « REÇU LE {date} »…) ou image d'un tampon d'entreprise
+// Rature · Tampons personnalisés : texte encadré (« PAYÉ », « REÇU LE {date} »…) ou image d'un tampon d'entreprise
 const STAMPS0 = [
   { id: 's1', text: 'PAYÉ', color: '#c62828', frame: 'rect' },
   { id: 's2', text: 'REÇU LE {date}', color: '#1d3fbf', frame: 'round' },

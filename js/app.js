@@ -1,4 +1,4 @@
-// Plume · Clavier, téléchargement, fabrication du PDF, sauvegarde, application
+// Rature · Clavier, téléchargement, fabrication du PDF, sauvegarde, application
 // ---------- Clavier ----------
 addEventListener('keydown', e => {
   if (document.querySelector('dialog[open]') || !$('tour').hidden) return;
@@ -504,7 +504,7 @@ async function build(list, localFonts = []) {
     }
   }
   writeBookmarks(pdf, target);
-  // 4. champs de formulaire créés dans Plume : le PDF devient remplissable
+  // 4. champs de formulaire créés dans Rature : le PDF devient remplissable
   if (newFields.length) {
     const form = pdf.getForm(), helv = await pdf.embedFont(StandardFonts.Helvetica), taken = new Set(form.getFields().map(f => f.getName()));
     for (const { it, page, rect, rotate } of newFields) {
@@ -656,6 +656,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
 let installEvt;
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; $('install').hidden = false; });
 $('install').onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $('install').hidden = true; };
-addEventListener('appinstalled', () => { $('install').hidden = true; toast('Plume est installée ✓'); });
-// « Ouvrir avec Plume » depuis l'explorateur de fichiers (application installée)
+addEventListener('appinstalled', () => { $('install').hidden = true; toast('Rature est installée ✓'); });
+// « Ouvrir avec Rature » depuis l'explorateur de fichiers (application installée)
 if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files?.length) openFiles(await Promise.all(p.files.map(h => h.getFile()))); });

@@ -1,4 +1,4 @@
-// Plume · Aides : profil et remplissage intelligent, modèles, caviardage automatique, signets, liens
+// Rature · Aides : profil et remplissage intelligent, modèles, caviardage automatique, signets, liens
 
 // ---------- Mon profil ----------
 // Chaque info : clé, libellé, et comment la reconnaître dans un formulaire (libellé imprimé ou nom de champ, sans accents)

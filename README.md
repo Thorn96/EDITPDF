@@ -1,8 +1,10 @@
-# Plume · Éditeur PDF
+# Rature · Éditeur PDF
 
 Outil gratuit pour remplir, signer et corriger des PDF directement dans le navigateur, sur ordinateur comme sur téléphone. En français et en anglais.
 
 **Utiliser l'outil :** https://editpdf-tau.vercel.app/
+
+**Pourquoi « Rature » :** on corrige un PDF comme une copie, au stylo rouge : on barre, on réécrit, on signe. L'interface reprend le cahier à grands carreaux, la marge rouge et le stylo bleu.
 
 ## Ce qu'on peut faire
 
@@ -52,11 +54,11 @@ Tout se passe dans le navigateur : les PDF ne sont envoyés sur aucun serveur, e
 
 ## Organisation du code
 
-- `index.html` : la page ; `css/plume.css` : l'apparence.
+- `index.html` : la page ; `css/rature.css` : l'apparence.
 - `js/` : le code, par domaine (`core` utilitaires et historique, `document` pages et rendu, `items` éléments posés, `app` fabrication du PDF, `assist` profil, modèles, caviardage auto, liens et signets, `convert` Word, `tabs` onglets, `i18n` traduction anglaise…).
 - `lib/` : pdf.js, pdf-lib, fontkit, MuPDF.js, Tesseract.js ; `fonts/` : polices de l'interface et polices embarquées dans les PDF.
 
 ## Bibliothèques et polices
 
 [pdf.js](https://mozilla.github.io/pdf.js/) (Apache 2.0), [pdf-lib](https://pdf-lib.js.org/) et fontkit (MIT), [MuPDF.js](https://mupdf.readthedocs.io/) (AGPL 3.0), [Tesseract.js](https://tesseract.projectnaptha.com/) (Apache 2.0).
-Polices libres : Liberation, Carlito, Caladea, Selawik, Lato (SIL OFL), DejaVu (licence libre DejaVu), Bricolage Grotesque et Fraunces (SIL OFL). Les licences sont dans les dossiers `lib/` et `fonts/`.
+Polices libres : Liberation, Carlito, Caladea, Selawik, Lato (SIL OFL), DejaVu (licence libre DejaVu), Young Serif, Schibsted Grotesk et Nothing You Could Do (SIL OFL). Les licences sont dans les dossiers `lib/` et `fonts/`.

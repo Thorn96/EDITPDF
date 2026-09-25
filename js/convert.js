@@ -1,4 +1,4 @@
-// Plume · Conversion : PDF → Word (.docx), Word (.docx) → PDF
+// Rature · Conversion : PDF → Word (.docx), Word (.docx) → PDF
 // ponytail: le texte, ses paragraphes et le gras/italique/taille ; pas les images, tableaux complexes ni mises en page en colonnes
 
 const xmlEsc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]).replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, '');

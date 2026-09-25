@@ -1,4 +1,4 @@
-// Plume · Préférences mémorisées, thème, couleurs favorites, langue, visite guidée
+// Rature · Préférences mémorisées, thème, couleurs favorites, langue, visite guidée
 const PREFS0 = { tool: 'text', font: 'arial', bold: false, italic: false, size: 11, width: 1.5, pen: '#000000', hl: '#ffd84d',
                  theme: 'auto', lang: '', favs: [], tour: false };
 let prefs = { ...PREFS0 };
@@ -90,7 +90,7 @@ function setLang(l) {
 
 // ---------- Visite guidée ----------
 const TOUR = [
-  ['#tools', 'Tes outils : texte, correction du texte du PDF, coches, surligneur, formes, champs de formulaire… Survole un bouton pour voir son nom et son raccourci clavier.'],
+  ['#tools', 'Tes outils : texte, correction du texte du PDF, coches, surligneur, formes, champs de formulaire… Survole un bouton pour voir son raccourci clavier.'],
   ['#props', 'Les réglages de l\'outil ou de l\'élément sélectionné : couleur, police, taille, rotation, opacité…'],
   ['.side.left', 'Tes pages : glisse-les pour les réorganiser. Clic droit sur une page pour la dupliquer, la pivoter ou la recadrer.'],
   ['.side.right', 'Tes signatures et tampons : crée-les une fois, puis pose-les d\'un clic ou en les glissant sur la page.'],

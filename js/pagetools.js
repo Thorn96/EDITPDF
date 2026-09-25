@@ -1,4 +1,4 @@
-// Plume · Outils de pages : vue en grille, page blanche, duplication, recadrage, découpage
+// Rature · Outils de pages : vue en grille, page blanche, duplication, recadrage, découpage
 // ---------- Vue en grille ----------
 let gridSel = new Set(), gridLast = null;
 const gridIO = new IntersectionObserver(entries => {

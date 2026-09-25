@@ -1,4 +1,4 @@
-// Plume · Onglets : plusieurs documents ouverts à la fois.
+// Rature · Onglets : plusieurs documents ouverts à la fois.
 // L'onglet affiché vit dans les variables globales (pages, items…) ; les autres gardent leur état de côté.
 const tabs = [null]; // état des onglets en arrière-plan (celui de l'onglet affiché : null)
 let tabAt = 0, openInNewTab = false;

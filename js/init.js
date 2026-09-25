@@ -1,4 +1,4 @@
-// Plume · démarrage (chargé en dernier)
+// Rature · démarrage (chargé en dernier)
 applyPrefs();
 translateDOM();
 renderSigs();

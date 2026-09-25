@@ -1,4 +1,4 @@
-// Plume · Rechercher / remplacer, mise en page, OCR
+// Rature · Rechercher / remplacer, mise en page, OCR
 // ---------- Rechercher / remplacer ----------
 let hits = [], hitI = -1;
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

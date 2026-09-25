@@ -1,4 +1,4 @@
-// Plume · Polices intégrées aux PDF
+// Rature · Polices intégrées aux PDF
 // Polices libres ayant les mêmes largeurs de lettres que les polices courantes des PDF (Arial, Times, Calibri…) :
 // un texte corrigé garde exactement la même longueur. Fichiers dans fonts/pdf, chargés seulement si besoin.
 const FONTS = {

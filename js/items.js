@@ -1,4 +1,4 @@
-// Plume · Éléments posés sur les pages, souris, texte d'origine
+// Rature · Éléments posés sur les pages, souris, texte d'origine
 // ---------- Éléments posés sur les pages ----------
 // it.el : l'élément dessiné ; it.host : ce qui est posé dans la page (it.el, ou le <svg> qui entoure une forme).
 // Chaque élément a son propre calque : l'ordre des éléments (premier plan / arrière-plan) est le même à l'écran et dans le PDF.

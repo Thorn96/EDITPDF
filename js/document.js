@@ -1,4 +1,4 @@
-// Plume · Ouverture des fichiers, pages (rendu à la demande), zoom, formulaires
+// Rature · Ouverture des fichiers, pages (rendu à la demande), zoom, formulaires
 // ---------- Ouverture des fichiers ----------
 const isPdf = f => /\.pdf$/i.test(f.name) || f.type === 'application/pdf';
 const isImg = f => f.type.startsWith('image/');
@@ -107,6 +107,7 @@ async function openSources(list, mode, quiet, at) {
     if (!pages.length) resetDoc();
   }
 }
+document.querySelector('.drop').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('file').click(); } };
 $('file').onchange = e => { openFiles(e.target.files, openInNewTab ? 'tab' : undefined); openInNewTab = false; e.target.value = ''; };
 $('addfile').onchange = e => { openFiles(e.target.files, 'append'); e.target.value = ''; };
 const desk = $('desk');

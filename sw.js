@@ -1,10 +1,10 @@
-// Plume : fonctionne hors ligne une fois ouvert en ligne. Tout est hébergé sur le site.
-// Page et scripts de Plume : réseau d'abord (les mises à jour arrivent tout de suite), cache si hors ligne.
+// Rature : fonctionne hors ligne une fois ouvert en ligne. Tout est hébergé sur le site.
+// Page et scripts de Rature : réseau d'abord (les mises à jour arrivent tout de suite), cache si hors ligne.
 // Bibliothèques et polices (versions figées) : cache d'abord.
-const V = 'plume-v4';
+const V = 'rature-v5';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png',
-  './css/plume.css', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
+  './css/rature.css', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
   './lib/pdfjs/pdf.min.js', './lib/pdfjs/pdf.worker.min.js', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
 ];
 // Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes : téléchargés en arrière-plan
