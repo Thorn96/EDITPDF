@@ -110,6 +110,7 @@ async function openSources(list, mode, quiet, at) {
 }
 document.querySelector('.drop').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('file').click(); } };
 $('file').onchange = e => { openFiles(e.target.files, openInNewTab ? 'tab' : undefined); openInNewTab = false; e.target.value = ''; };
+$('file').addEventListener('cancel', () => { openInNewTab = false; }); // choix de fichier annulé après « + » : le prochain « Ouvrir » ne crée pas d'onglet
 $('addfile').onchange = e => { openFiles(e.target.files, 'append'); e.target.value = ''; };
 const desk = $('desk');
 desk.ondragover = e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); desk.classList.add('over'); } };

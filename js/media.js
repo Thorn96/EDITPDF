@@ -179,7 +179,7 @@ function layoutScan() {
   const st = $('scanstage').getBoundingClientRect(), r = $('scanimg').getBoundingClientRect(), s = r.width / scan.photo.width;
   const P = scan.pts.map(([x, y]) => [r.left - st.left + x * s, r.top - st.top + y * s]);
   document.querySelectorAll('.hdl').forEach((h, i) => Object.assign(h.style, { left: P[i][0] + 'px', top: P[i][1] + 'px' }));
-  $('scansvg').innerHTML = `<polygon points="${P.map(p => p.join(',')).join(' ')}" fill="#d4472b22" stroke="#d4472b" stroke-width="2"/>`;
+  $('scansvg').innerHTML = `<polygon points="${P.map(p => p.join(',')).join(' ')}" fill="#e2494f22" stroke="#e2494f" stroke-width="2"/>`;
 }
 addEventListener('resize', () => { if ($('scandlg').open) layoutScan(); });
 document.querySelectorAll('.hdl').forEach((h, i) => {

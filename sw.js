@@ -7,7 +7,8 @@ const CORE = [
   './css/rature.css', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
   './lib/pdfjs/pdf.min.js', './lib/pdfjs/pdf.worker.min.js', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
 ];
-// Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes : téléchargés en arrière-plan
+// Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes (~19 Mo) : téléchargés en arrière-plan seulement
+// pour l'application installée (message « later » envoyé par la page). Sur le site, ils sont mis en cache à leur première utilisation.
 const LATER = [
   './lib/mupdf/mupdf.js', './lib/mupdf/mupdf-wasm.js', './lib/mupdf/mupdf-wasm.wasm',
   './lib/tesseract/tesseract.min.js', './lib/tesseract/worker.min.js', './lib/tesseract/tesseract-core-simd-lstm.wasm.js', './lib/tesseract/lang/fra.traineddata.gz', './lib/tesseract/lang/eng.traineddata.gz',
@@ -23,7 +24,6 @@ self.addEventListener('activate', e => {
   e.waitUntil((async () => {
     for (const k of await caches.keys()) if (k !== V) await caches.delete(k);
     await self.clients.claim();
-    caches.open(V).then(c => c.addAll(LATER)).catch(() => {});
   })());
 });
 
@@ -35,4 +35,9 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin || url.pathname.startsWith('/_vercel/')) return; // rien à mettre en cache ailleurs, ni les statistiques Vercel
   if (FROZEN.test(url.pathname)) e.respondWith(caches.match(req, { ignoreVary: true }).then(hit => hit || fetch(req).then(put)));
   else e.respondWith(fetch(req).then(put).catch(() => caches.match(req, { ignoreSearch: true, ignoreVary: true })));
+});
+
+self.addEventListener('message', e => {
+  if (e.data !== 'later') return;
+  e.waitUntil(caches.open(V).then(async c => { for (const u of LATER) if (!await c.match(u)) await c.add(u).catch(() => {}); })); // seulement ce qui manque
 });

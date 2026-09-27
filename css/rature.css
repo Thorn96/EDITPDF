@@ -189,12 +189,12 @@ body[data-tool=edit] .page.scan:not(.ocrdone) .ocr { display: inline-flex; }
 .deco .wm { left: 50%; top: 50%; font-weight: 700; transform: translate(-50%, -50%) rotate(-45deg); }
 
 /* champs de formulaire du PDF */
-.field { position: absolute; margin: 0; padding: 0 2px; border: 0; border-bottom: 1px solid #2f62e066; border-radius: 1px;
-         background: #2f62e014; color: #000; font-family: Helvetica, Arial, sans-serif; outline: none; }
-.field:hover { background: #2f62e024; }
-.field:focus { background: #2f62e02e; box-shadow: 0 0 0 1px #2f62e0; }
+.field { position: absolute; margin: 0; padding: 0 2px; border: 0; border-bottom: 1px solid #2b3fd166; border-radius: 1px;
+         background: #2b3fd114; color: #000; font-family: Helvetica, Arial, sans-serif; outline: none; }
+.field:hover { background: #2b3fd124; }
+.field:focus { background: #2b3fd12e; box-shadow: 0 0 0 1px #2b3fd1; }
 textarea.field { resize: none; padding: 1px 2px; line-height: 1.15; }
-input.field[type=checkbox], input.field[type=radio] { border: 0; background: none; box-shadow: none; accent-color: #2f62e0; cursor: pointer; }
+input.field[type=checkbox], input.field[type=radio] { border: 0; background: none; box-shadow: none; accent-color: #2b3fd1; cursor: pointer; }
 .field:disabled { background: transparent; border-color: transparent; }
 
 /* ---------- Barre d'outils (rail) ---------- */
@@ -502,9 +502,9 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .locked { cursor: default !important; }
 .box.locked, .img.locked, .fieldbox.locked { outline-style: dotted !important; }
 .box.locked .grip { display: none; }
-.fieldbox { position: absolute; border: calc(1px / var(--z)) dashed #2f62e0; background: #2f62e012; border-radius: 2px; cursor: move; overflow: hidden; }
-.fieldbox.sel, .fieldbox:hover { background: #2f62e022; box-shadow: 0 0 0 calc(3px / var(--z)) var(--sel-soft); }
-.fieldbox span { position: absolute; left: 3px; top: 1px; font: 600 8px/1.2 var(--ui); color: #2f62e0; white-space: nowrap; pointer-events: none; }
+.fieldbox { position: absolute; border: calc(1px / var(--z)) dashed #2b3fd1; background: #2b3fd112; border-radius: 2px; cursor: move; overflow: hidden; }
+.fieldbox.sel, .fieldbox:hover { background: #2b3fd122; box-shadow: 0 0 0 calc(3px / var(--z)) var(--sel-soft); }
+.fieldbox span { position: absolute; left: 3px; top: 1px; font: 600 8px/1.2 var(--ui); color: #2b3fd1; white-space: nowrap; pointer-events: none; }
 .marquee.crop { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 9999px #0003; }
 .mini { height: 31px; width: 130px; padding: 0 9px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--panel); font-size: 13px; }
 .mini.wide { width: 200px; }

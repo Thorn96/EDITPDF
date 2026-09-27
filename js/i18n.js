@@ -137,7 +137,7 @@ Object.assign(EN, {
   'Trace la zone de la page à garder': 'Draw the area of the page to keep', 'Garder seulement la zone sélectionnée ? Le reste sera masqué dans le PDF (annulable).': 'Keep only the selected area? The rest will be hidden in the PDF (can be undone).',
   'Recadrer': 'Crop', 'Recadre la page avant de corriger son texte.': 'Crop the page before fixing its text.', '{n} page supprimée': '{n} page deleted', '{n} pages supprimées': '{n} pages deleted',
   // Raccourcis
-  'Raccourcis clavier': 'Keyboard shortcuts', 'Compris': 'Got it', 'Texte · Corriger le texte · Cocher, mentions · Note': 'Text · Fix the text · Tick, phrases · Note',
+  'Raccourcis clavier': 'Keyboard shortcuts', 'Compris': 'Got it', 'Écrire · Corriger · Cocher, mentions · Note': 'Write · Edit text · Tick, standard phrases · Note',
   'Surligner · Dessiner · Champ de formulaire': 'Highlight · Draw · Form field', 'Rectangle · Cercle · Trait · Flèche': 'Rectangle · Circle · Line · Arrow', 'Caviarder · Image · Sélectionner': 'Redact · Image · Select',
   'Vue en grille des pages': 'Page grid view', 'Annuler · Rétablir': 'Undo · Redo', 'Effacer · Dupliquer la sélection': 'Delete · Duplicate the selection', 'Suppr': 'Del', 'Maj+clic': 'Shift+click',
   'Sélection multiple · Tout sélectionner sur la page': 'Multiple selection · Select everything on the page', 'Copier · Couper · Coller (aussi une image)': 'Copy · Cut · Paste (an image too)',

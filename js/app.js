@@ -36,7 +36,7 @@ addEventListener('keydown', e => {
 });
 function showHelp() {
   const rows = [
-    ['T · E · S · N', 'Texte · Corriger le texte · Cocher, mentions · Note'], ['H · D · F', 'Surligner · Dessiner · Champ de formulaire'],
+    ['T · E · S · N', 'Écrire · Corriger · Cocher, mentions · Note'], ['H · D · F', 'Surligner · Dessiner · Champ de formulaire'],
     ['R · C · L · A · K', 'Rectangle · Cercle · Trait · Flèche · Lien'], ['X · I · V', 'Caviarder · Image · Sélectionner'],
     ['G', 'Vue en grille des pages'], ['Ctrl Z · Ctrl Y', 'Annuler · Rétablir'], ['Suppr · Ctrl D', 'Effacer · Dupliquer la sélection'],
     ['Maj+clic · Ctrl A', 'Sélection multiple · Tout sélectionner sur la page'], ['Ctrl C · Ctrl X · Ctrl V', 'Copier · Couper · Coller (aussi une image)'],
@@ -655,7 +655,11 @@ async function checkResume() {
 }
 
 // ---------- Application installable / hors ligne ----------
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register(here('sw.js')).catch(() => {});
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register(here('sw.js')).catch(() => {});
+  // application installée : tout est téléchargé d'avance pour marcher hors ligne (sur le site, on n'impose pas ~19 Mo à chaque visiteur)
+  if (matchMedia('(display-mode: standalone)').matches) navigator.serviceWorker.ready.then(r => r.active?.postMessage('later'));
+}
 let installEvt;
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; $('install').hidden = false; });
 $('install').onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $('install').hidden = true; };
