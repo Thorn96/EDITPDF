@@ -80,6 +80,7 @@ async function setLang(l) {
   prefs.lang = l;
   savePrefs();
   if (l === lang) return;
+  track('langue', { vers: l });
   if (pages.length) await autosave();
   location.href = here(l === 'en' ? 'en/' : '') + (pages.length ? '?reprendre' : '');
 }

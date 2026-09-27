@@ -110,7 +110,8 @@ async function makePdf(o) {
   return out;
 }
 const DONATE = 'https://buymeacoffee.com/leonardguik'; // simple lien : aucun script de Buy Me a Coffee chargé sur le site
-const donate = () => open(DONATE, '_blank', 'noopener');
+const donate = () => { track('cafe', { depuis: 'appli' }); open(DONATE, '_blank', 'noopener'); };
+$('coffee').addEventListener('click', () => track('cafe', { depuis: 'bouton' }));
 async function exportDoc(share, ready) {
   const o = ready?.o || exportOptions();
   if (!o) return;
@@ -121,6 +122,7 @@ async function exportDoc(share, ready) {
   btn.classList.add('busy');
   try {
     const out = ready?.out || await makePdf(o);
+    track(share ? 'partage' : 'telechargement', { pages: o.list.length, reduit: !!o.compress, motdepasse: !!o.pw });
     if (!share) { download(new Blob([out], { type: 'application/pdf' }), name); return toast(tr('{name} téléchargé ✓', { name }), '', { label: 'Offrir un café ☕', fn: donate }); }
     const file = new File([out], name, { type: 'application/pdf' }), go = () => navigator.share({ files: [file], title: name }).catch(() => {});
     try { await navigator.share({ files: [file], title: name }); }

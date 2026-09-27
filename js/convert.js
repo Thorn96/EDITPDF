@@ -45,6 +45,7 @@ async function exportDocx() {
       ['word/document.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body.join('')}<w:sectPr><w:pgSz w:w="${W}" w:h="${H}"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr></w:body></w:document>`],
     ].map(([name, s]) => ({ name, data: enc.encode(s) }));
     const name = ($('expname').value.trim() || baseName($('fname').textContent) || 'document').replace(/\.pdf$/i, '') + '.docx';
+    track('word');
     download(makeZip(files), name);
     toast(tr('{name} téléchargé ✓', { name }));
   } catch (e) { console.error(e); toast(tr('Conversion impossible : {m}', { m: e.message }), 'error'); }

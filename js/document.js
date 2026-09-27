@@ -57,7 +57,8 @@ async function imagesToPdf(files) {
 }
 
 async function openFiles(files, mode) {
-  await libsReady();
+  try { await libsReady(); } // bibliothèques PDF pas encore chargées (connexion coupée…) : on le dit au lieu de ne rien faire
+  catch (e) { console.error(e); return toast('Les outils PDF n’ont pas pu se charger : vérifie ta connexion, puis réessaie.', 'error'); }
   files = [...files];
   const pdfs = files.filter(f => isPdf(f) || isDocx(f)), imgs = files.filter(isImg);
   if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word, ni une image.", 'error');
@@ -100,6 +101,7 @@ async function openSources(list, mode, quiet, at) {
       if (!quiet) toast(plural(all.length, '{n} page ajoutée', '{n} pages ajoutées'));
     }
     changed();
+    track(first ? 'ouverture' : 'ajout', { pages: all.length });
     if (first) setTimeout(afterOpen, 600);
     return all;
   } catch (e) {
@@ -115,7 +117,12 @@ $('addfile').onchange = e => { openFiles(e.target.files, 'append'); e.target.val
 const desk = $('desk');
 desk.ondragover = e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); desk.classList.add('over'); } };
 desk.ondragleave = e => { if (!desk.contains(e.relatedTarget)) desk.classList.remove('over'); };
-desk.ondrop = e => { desk.classList.remove('over'); if (e.dataTransfer.files.length) { e.preventDefault(); openFiles(e.dataTransfer.files); } };
+desk.ondrop = e => {
+  desk.classList.remove('over');
+  if (e.dataTransfer.files.length) { e.preventDefault(); return openFiles(e.dataTransfer.files); }
+  // glissé depuis la liste des téléchargements du navigateur ou une messagerie : un lien arrive, pas le fichier
+  if ([...e.dataTransfer.types].some(t => t === 'text/uri-list' || t === 'Files')) toast('Ce fichier ne peut pas être glissé depuis cet endroit : glisse-le depuis ton dossier (par exemple Téléchargements), ou clique sur « Choisir un fichier ».', 'error', null, 9000);
+};
 addEventListener('dragover', e => e.preventDefault()); // évite que le navigateur ouvre le fichier à la place de l'outil
 addEventListener('drop', e => e.preventDefault());
 
@@ -538,7 +545,7 @@ function setField(src, k, v, from) {
 }
 // Premier document ouvert : action demandée par un guide (rature.app/?outil=…, une seule fois), sinon proposition de lire un scan, sinon visite guidée
 function afterOpen() {
-  const act = !afterOpen.done && { sign: () => document.querySelector('#tools [data-a=sign]').click(), ocr: scanDocument, word: exportDocx,
+  const act = !afterOpen.done && { sign: () => document.querySelector('#tools [data-a=sign]').click(), ocr: scanDocument, word: () => toast('Document prêt à convertir.', '', { label: 'Exporter en Word', fn: exportDocx }, 15000),
                                    compress: () => { openExport(); $('expcompress').checked = true; } }[OUTIL];
   if (act) { afterOpen.done = true; return act(); }
   if (pages.some(p => p.wrap.classList.contains('scan') && !p.ocr))

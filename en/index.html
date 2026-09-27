@@ -52,7 +52,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
 <link rel="preload" href="../fonts/ui/SchibstedGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../fonts/ui/fonts.css">
 <link rel="stylesheet" href="../fonts/pdf/fonts.css">
-<link rel="stylesheet" href="../css/rature.css">
+<link rel="stylesheet" href="../css/rature.min.css">
 <!-- Vercel Web Analytics : visites comptées sans cookie, rien sur le contenu des PDF -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -152,7 +152,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
           </label>
           <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>right here!</span></div>
         </div>
-        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a pdf</a> · <a href="/en/fill-pdf/">fill in a pdf</a> · <a href="/en/edit-pdf-text/">edit pdf text</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a pdf</a></p>
+        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a PDF</a> · <a href="/en/fill-pdf/">fill in a PDF</a> · <a href="/en/edit-pdf-text/">edit PDF text</a> · <a href="/en/ocr-pdf/">OCR: read a scan</a> · <a href="/en/merge-pdf/">merge PDFs</a> · <a href="/en/compress-pdf/">compress a PDF</a> · <a href="/en/photos-to-pdf/">photos to PDF</a> · <a href="/en/pdf-to-word/">PDF to Word</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a PDF</a></p>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <div><b>Pick up where you left off</b><small id="resumeinfo"></small></div>
@@ -555,25 +555,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
 </div>
 <div id="toasts" aria-live="polite"></div>
 
-<!-- scripts différés, exécutés dans l'ordre une fois la page affichée ; les bibliothèques PDF sont chargées ensuite par core.js -->
-<script defer src="../js/core.js"></script>
-<script defer src="../js/fonts.js"></script>
-<script defer src="../js/ui.js"></script>
-<script defer src="../js/document.js"></script>
-<script defer src="../js/items.js"></script>
-<script defer src="../js/text.js"></script>
-<script defer src="../js/media.js"></script>
-<script defer src="../js/app.js"></script>
-<script defer src="../js/menu.js"></script>
-<script defer src="../js/pagetools.js"></script>
-<script defer src="../js/stamps.js"></script>
-<script defer src="../js/tools.js"></script>
-<script defer src="../js/assist.js"></script>
-<script defer src="../js/convert.js"></script>
-<script defer src="../js/tabs.js"></script>
-<script defer src="../js/report.js"></script>
-<script defer src="../js/prefs.js"></script>
-<script defer src="../js/i18n.js"></script>
-<script defer src="../js/init.js"></script>
+<!-- tout le code de l'éditeur en un fichier minifié (sources dans js/, fabriqué par node guides/build.js), exécuté une fois la page affichée ; les bibliothèques PDF sont chargées ensuite par core.js -->
+<script defer src="../js/rature.min.js"></script>
 </body>
 </html>

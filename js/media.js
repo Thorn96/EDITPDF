@@ -103,6 +103,7 @@ $('sigcancel').onclick = () => $('sigdlg').close();
 $('sigok').onclick = () => {
   if (!addSig(pad)) return $('sigmsg').textContent = tr("Signe d'abord dans le cadre ✍");
   $('sigdlg').close();
+  track('signature');
   toast('Signature enregistrée : glisse-la sur le document');
 };
 // Signature photographiée : le papier devient transparent, l'encre reste

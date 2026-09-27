@@ -32,7 +32,7 @@ a { color: var(--pen); }
 h1 { margin: 0 0 18px; font: 400 clamp(36px, 5vw, 58px)/1.08 var(--display); letter-spacing: -.02em; }
 .lead { margin: 0 0 28px; font-size: 19px; color: var(--ink-2); }
 .small { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
-.art svg { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
+.art svg { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; color: var(--ink); } /* flèches : couleur du texte, visibles dans les deux thèmes */
 section { padding: 8px 0 36px; }
 h2 { margin: 0 0 14px; font: 400 30px/1.2 var(--display); }
 p { margin: 0 0 14px; max-width: 68ch; }

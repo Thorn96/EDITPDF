@@ -41,6 +41,35 @@ ${lines([266, 288])}`),
 <path d="M126 196c10-8 30 8 60-6" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
 <g transform="translate(206 20)"><path d="M18 52a18 18 0 0 1 4-35 24 24 0 0 1 45 4 16 16 0 0 1 3 31z" fill="#fff" stroke="#6f6c78" stroke-width="3"/><path d="M8 8l72 58" stroke="#e2494f" stroke-width="5" stroke-linecap="round"/></g>
 <text x="40" y="350" font-family="Nothing You Could Do, cursive" font-size="21" fill="#e2494f">${T.local}</text></svg>`,
+  merge: `<svg viewBox="0 0 320 380" aria-hidden="true">
+<g transform="rotate(-8 90 115)"><rect x="30" y="40" width="120" height="150" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M50 70h70M50 88h80M50 106h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/></g>
+<g transform="rotate(7 230 115)"><rect x="170" y="40" width="120" height="150" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M190 70h70M190 88h80M190 106h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/></g>
+<path d="M160 96v40M140 116h40" stroke="#e2494f" stroke-width="6" stroke-linecap="round"/>
+<path d="M100 204v36m-14-14 14 14 14-14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="48" y="264" width="120" height="100" rx="5" fill="#15151f"/><rect x="40" y="256" width="120" height="100" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/>
+<path d="M58 282h80M58 298h70M58 314h84M58 330h50" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>
+<text x="178" y="318" font-family="Nothing You Could Do, cursive" font-size="22" fill="#e2494f">${T.merged}</text></svg>`,
+  compress: sheet(lines([98, 120, 142, 164, 186, 208]) + `<path d="M110 240l40 28 40-28M110 274l40 28 40-28" fill="none" stroke="#e2494f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="150" y="336" text-anchor="middle" font-family="Nothing You Could Do, cursive" font-size="22" fill="#e2494f">${T.lighter}</text>`),
+  photos: `<svg viewBox="0 0 320 380" aria-hidden="true">
+<rect x="24" y="70" width="104" height="196" rx="16" fill="#fff" stroke="#15151f" stroke-width="3"/><rect x="36" y="98" width="80" height="120" rx="4" fill="#fbf8f0" stroke="#15151f" stroke-width="2"/>
+<path d="M40 204l24-30 18 20 12-12 18 22z" fill="#b3baec"/><circle cx="96" cy="120" r="8" fill="#e2494f"/><circle cx="76" cy="246" r="8" fill="none" stroke="#15151f" stroke-width="2.5"/>
+<path d="M140 150h30m-12-12 12 12-12 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="190" y="62" width="112" height="150" rx="5" fill="#15151f"/><rect x="182" y="54" width="112" height="150" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/>
+<rect x="196" y="70" width="84" height="100" rx="3" fill="#fbf8f0" stroke="#15151f" stroke-width="1.5"/><path d="M200 162l22-26 16 18 10-10 16 18z" fill="#b3baec"/><circle cx="264" cy="88" r="6" fill="#e2494f"/>
+<rect x="196" y="178" width="40" height="16" rx="3" fill="#e2494f"/><text x="216" y="190" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="11" fill="#fff">PDF</text>
+<text x="160" y="320" text-anchor="middle" font-family="Nothing You Could Do, cursive" font-size="24" fill="#e2494f">${T.photos}</text></svg>`,
+  word: `<svg viewBox="0 0 320 380" aria-hidden="true">
+<rect x="20" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M38 100h80M38 118h70M38 136h84M38 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>
+<rect x="38" y="190" width="44" height="20" rx="4" fill="#e2494f"/><text x="60" y="204" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="12" fill="#fff">PDF</text>
+<path d="M148 150h26m-10-10 10 10-10 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="190" y="78" width="120" height="160" rx="5" fill="#15151f"/><rect x="182" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/>
+<path d="M200 100h80M200 118h70M200 136h84M200 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>
+<rect x="200" y="188" width="30" height="24" rx="4" fill="#1c2a8f"/><text x="215" y="205" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="15" fill="#fff">W</text>
+<text x="160" y="300" text-anchor="middle" font-family="Nothing You Could Do, cursive" font-size="23" fill="#e2494f">${T.word}</text></svg>`,
+  ocr: sheet(`<g opacity=".55">${lines([98, 120, 142])}</g><path d="M36 152v-14h14M264 138h14v14M278 204v14h-14M50 218H36v-14" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
+<text x="50" y="185" font-family="Schibsted Grotesk, sans-serif" font-size="18" fill="#15151f">${T.ocrLine}</text><g opacity=".55">${lines([246, 268, 290])}</g>
+<text x="60" y="334" font-family="Nothing You Could Do, cursive" font-size="21" fill="#e2494f">${T.ocrLbl}</text>`),
 });
 
 // ---------- Contenu ----------
@@ -94,6 +123,82 @@ const PAGES = [
       ['Et un PDF scanné ?', 'Sur une page scannée, le texte est une image. Rature reconnaît le texte (en français et en anglais), retrouve la police et la taille les plus proches, et te laisse corriger la ligne.']],
     faq: [{ q: 'Le texte modifié garde-t-il la même police ?', a: 'Oui quand le PDF contient la police, ce qui est le cas le plus courant. Sinon, Rature choisit la police libre la plus proche.' },
       { q: 'Et un PDF protégé par mot de passe ?', a: 'Il s’ouvre si tu connais son mot de passe.' }, SIGNED, FREE] },
+
+  { slug: 'ocr-pdf', art: 'ocr', q: '?outil=ocr', short: 'OCR : lire un scan',
+    title: 'OCR gratuit : rendre un PDF scanné modifiable · Rature',
+    desc: "Reconnais le texte d'un PDF scanné ou d'une photo de document (OCR), en français et en anglais, pour le corriger, le rechercher ou le copier. Gratuit, rien n'est envoyé.",
+    eyebrow: 'Un scan n’est qu’une image… pour l’instant', h1: 'Rendre un PDF scanné modifiable (OCR)',
+    lead: 'Le bouton « OCR » lit le texte de chaque page scannée. Tu peux ensuite le corriger comme un vrai texte, le rechercher et le copier.', cta: 'Lire mon scan',
+    steps: [OPEN,
+      { t: 'Clique sur « OCR »', d: 'Dans la barre d’outils. Rature lit toutes les pages scannées d’un coup. La première fois, le moteur de lecture se télécharge en quelques secondes, puis il reste sur ton appareil.' },
+      { t: 'Corrige et télécharge', d: 'Clique sur une ligne pour la réécrire, dans une police proche de l’originale, puis télécharge.' }],
+    body: [
+      ['Ce que l’OCR permet', 'Corriger une date, un nom ou un montant sur un document scanné ; rechercher un mot dans tout le document ; copier le texte ou l’exporter en Word. Le PDF téléchargé devient aussi cherchable.'],
+      ['Pour une bonne lecture', 'Un scan net et droit donne les meilleurs résultats. Pour une feuille prise en photo, passe par « Numériser » : la feuille est redressée et contrastée avant la lecture.'],
+      ['Tout se passe sur ton appareil', 'La lecture du texte se fait dans ton navigateur : tes documents ne sont envoyés à aucun service en ligne. Une fois le moteur téléchargé, ça marche même hors ligne.']],
+    faq: [{ q: 'Quelles langues sont reconnues ?', a: 'Le français et l’anglais, accents compris.' },
+      { q: 'Et l’écriture manuscrite ?', a: 'Elle est mal reconnue : l’OCR est fait pour le texte imprimé.' },
+      { q: 'Combien de temps ça prend ?', a: 'Quelques secondes par page sur un ordinateur récent, un peu plus sur un téléphone.' }, FREE] },
+
+  { slug: 'fusionner-pdf', art: 'merge', q: '', short: 'Fusionner des PDF',
+    title: 'Fusionner des PDF gratuitement, sans les envoyer · Rature',
+    desc: "Réunis plusieurs PDF (et des photos) en un seul fichier, remets les pages dans l'ordre, supprime celles en trop. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Plusieurs fichiers, un seul PDF', h1: 'Fusionner des PDF en un seul',
+    lead: 'Ouvre tes PDF d’un coup, range les pages dans le bon ordre, télécharge un seul fichier.', cta: 'Fusionner mes PDF',
+    steps: [{ t: 'Ouvre tous tes fichiers', d: 'Sélectionne plusieurs PDF à la fois (Ctrl ou Maj + clic), ou glisse-les ensemble sur la page. Les photos sont acceptées aussi : elles deviennent des pages.' },
+      { t: 'Range les pages', d: 'Dans le panneau des pages, glisse une page pour la déplacer. La vue en grille (touche G) montre tout le document : pivoter, dupliquer, supprimer.' },
+      { t: 'Télécharge', d: 'Clique sur « Télécharger » : un seul PDF, avec toutes tes pages.' }],
+    body: [
+      ['Ajouter un fichier en cours de route', 'Un document est déjà ouvert ? « PDF ou images », en bas du panneau des pages, ajoute d’autres fichiers à la suite. Tu peux aussi en glisser un sur la page : Rature te demande s’il faut remplacer, ajouter à la suite ou ouvrir un nouvel onglet.'],
+      ['Garder seulement certaines pages', 'Au téléchargement, choisis « Seulement » et indique les pages voulues (par exemple 1-3, 5). Pour faire l’inverse et couper un PDF en plusieurs fichiers : « Découper le PDF », dans « Plus d’outils ».'],
+      ['Tout reste sur ton appareil', 'Les fichiers ne sont envoyés nulle part : pratique pour réunir des pièces sensibles, comme un dossier de location ou des justificatifs.']],
+    faq: [{ q: 'Combien de fichiers puis-je réunir ?', a: 'Autant que tu veux : la seule limite est la mémoire de ton appareil.' },
+      { q: 'Puis-je mélanger PDF et photos ?', a: 'Oui : chaque photo devient une page, dans le sens de l’image.' },
+      { q: 'Et un document Word ?', a: 'Les fichiers .docx sont convertis en PDF à l’ouverture, puis réunis avec les autres.' }, FREE] },
+
+  { slug: 'compresser-pdf', art: 'compress', q: '?outil=compress', short: 'Compresser un PDF',
+    title: "Compresser un PDF gratuitement, sans l'envoyer · Rature",
+    desc: "Réduis le poids d'un PDF trop lourd pour un e-mail ou un formulaire en ligne : photos allégées, fichier nettoyé. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Trop lourd pour l’envoyer ?', h1: 'Compresser un PDF',
+    lead: 'Allège les photos et nettoie le fichier pour passer sous la limite d’un e-mail ou d’un site administratif.', cta: 'Compresser mon PDF',
+    steps: [OPEN,
+      { t: 'Coche « Réduire la taille »', d: 'Clique sur « Télécharger », puis coche « Réduire la taille du fichier ». Depuis ce guide, la case est déjà cochée.' },
+      { t: 'Télécharge', d: 'Le PDF allégé est enregistré sur ton appareil. Ton fichier d’origine n’est pas modifié.' }],
+    body: [
+      ['Ce qui est allégé', 'Les photos et les scans sont recompressés, et le fichier est nettoyé des éléments inutiles. Le texte reste net : il n’est pas transformé en image.'],
+      ['Encore trop lourd ?', 'Supprime les pages inutiles (vue en grille, touche G), ou télécharge seulement les pages demandées avec « Seulement ».'],
+      ['Un document à numériser ?', 'Au moment de la numérisation, choisis « Noir et blanc » : c’est le rendu le plus léger, et le plus lisible pour du texte.']],
+    faq: [{ q: 'De combien le fichier est-il réduit ?', a: 'Ça dépend de son contenu : un PDF plein de photos s’allège beaucoup, un PDF fait surtout de texte est souvent déjà léger.' },
+      { q: 'La qualité baisse-t-elle ?', a: 'Les photos sont un peu moins détaillées, sans différence visible à l’écran dans la plupart des cas. Le texte, lui, reste identique.' }, LOCAL, FREE] },
+
+  { slug: 'photos-en-pdf', art: 'photos', q: '', short: 'Photos en PDF',
+    title: 'Photos en PDF : transformer des images en PDF · Rature',
+    desc: "Transforme des photos ou des images (JPG, PNG) en un seul PDF, une page par image, depuis ton téléphone ou ton ordinateur. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'JPG, PNG, photos du téléphone', h1: 'Transformer des photos en PDF',
+    lead: 'Choisis tes photos : chacune devient une page, et tu télécharges un seul PDF. Sur téléphone, prends directement la feuille en photo.', cta: 'Choisir mes photos',
+    steps: [{ t: 'Choisis tes photos', d: 'Clique sur « Choisir un fichier » et sélectionne une ou plusieurs images. Chaque image devient une page A4, dans son sens.' },
+      { t: 'Range et complète', d: 'Remets les pages dans l’ordre, ajoute du texte ou ta signature si besoin.' },
+      { t: 'Télécharge', d: 'Un seul PDF, prêt à envoyer.' }],
+    body: [
+      ['Une feuille prise en photo ? Numérise-la', '« Numériser un document » ouvre l’appareil photo du téléphone : place les 4 coins sur les bords de la feuille, Rature la redresse et la met en noir et blanc, comme un scanner.'],
+      ['Rendre le texte de la photo modifiable', 'Une photo de document ne contient qu’une image. Le bouton « OCR » lit son texte : tu peux ensuite le corriger, le rechercher ou le copier.'],
+      ['Ajouter des photos à un PDF existant', 'Document déjà ouvert ? « PDF ou images », dans le panneau des pages, ajoute les photos comme nouvelles pages, ou pose-les sur la page affichée.']],
+    faq: [{ q: 'Quels formats d’image ?', a: 'JPG, PNG, WebP et les autres formats d’image que ton navigateur sait afficher.' },
+      { q: 'Les photos sont-elles envoyées ?', a: 'Non : la conversion se fait sur ton appareil.' }, FREE] },
+
+  { slug: 'pdf-en-word', art: 'word', q: '?outil=word', short: 'PDF en Word',
+    title: 'Convertir un PDF en Word (.docx) gratuitement · Rature',
+    desc: "Convertis un PDF en document Word modifiable, paragraphes et titres compris, même un scan grâce à l'OCR. Gratuit, sans inscription, le fichier n'est pas envoyé.",
+    eyebrow: 'Pour retravailler le texte dans Word', h1: 'Convertir un PDF en Word',
+    lead: 'Récupère le texte d’un PDF dans un fichier Word, avec ses paragraphes, ses titres, le gras et l’italique.', cta: 'Convertir mon PDF',
+    steps: [OPEN,
+      { t: 'Exporte en Word', d: 'Dans « Plus d’outils », choisis « Exporter en Word (.docx) ». Depuis ce guide, un bouton « Exporter en Word » apparaît dès l’ouverture.' },
+      { t: 'Ouvre-le dans Word', d: 'Le fichier .docx s’ouvre dans Word, LibreOffice ou Google Docs.' }],
+    body: [
+      ['Ce qui est gardé', 'Le texte, ses paragraphes, les titres, le gras, l’italique et la taille des caractères. Les images, les tableaux complexes et les mises en page en colonnes ne sont pas repris : pour garder l’apparence exacte, modifie plutôt le PDF directement avec « Corriger ».'],
+      ['Un PDF scanné ?', 'Lance d’abord le bouton « OCR » : le texte reconnu passe ensuite dans le fichier Word.'],
+      ['Et dans l’autre sens ?', 'Ouvre un document Word (.docx) dans Rature : il est converti en PDF, prêt à être rempli, signé ou envoyé.']],
+    faq: [{ q: 'Mes corrections sont-elles incluses ?', a: 'Oui : le fichier Word reprend le document avec tes modifications.' }, LOCAL, FREE] },
 
   { slug: 'dossier-de-location-pdf', art: 'rent', q: '?outil=text', short: 'Dossier de location',
     title: 'Dossier de location en PDF : remplir, signer, protéger · Rature',
@@ -151,11 +256,13 @@ const L = {
   fr: { lang: 'fr', root: '/', locale: 'fr_FR', steps: 'En 3 étapes', faq: 'Questions fréquentes', ready: 'Prêt ? Ça prend une minute.', more: 'Autres guides',
         open: 'Ouvrir l’éditeur', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
         footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers', coffee: 'Offrir un café ☕', coffeeTitle: 'Soutenir Rature',
-        art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici' } },
+        art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici',
+               merged: 'un seul PDF', lighter: 'plus léger', photos: 'photos → PDF', word: 'modifiable dans Word', ocrLine: 'Fait à Lyon, le 14 mars', ocrLbl: 'texte reconnu !' } },
   en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
         open: 'Open the editor', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
         footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it', coffee: 'Buy me a coffee ☕', coffeeTitle: 'Support Rature',
-        art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here' } },
+        art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here',
+               merged: 'one PDF', lighter: 'lighter', photos: 'photos → PDF', word: 'editable in Word', ocrLine: 'Signed on 14 March 2026', ocrLbl: 'text recognised!' } },
 };
 PAGES.forEach((p, i) => { p.L = L.fr; p.twin = EN_PAGES[i]; EN_PAGES[i].L = L.en; EN_PAGES[i].twin = p; });
 const url = p => `${p.L.root}${p.slug}/`;
@@ -274,7 +381,7 @@ function buildEnglishEditor() {
     return swap(text, encText);
   });
   // liens vers les guides (après la traduction : ils sont déjà en anglais)
-  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, `<p class="guides">Guides: ${EN_PAGES.filter(p => p.slug !== 'pdf-editor-no-upload').map(p => `<a href="${url(p)}">${p.short.toLowerCase()}</a>`).join(' · ')}</p>`);
+  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(EN_PAGES, 'Guides:'));
   fs.mkdirSync(path.join(ROOT, 'en'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'en', 'index.html'), html);
 
@@ -285,11 +392,33 @@ function buildEnglishEditor() {
   return [...missing].filter(t => html.includes(encText(t))); // seulement ce qui reste réellement en français
 }
 
+// ---------- Scripts et styles de l'éditeur : un seul fichier minifié chacun (moins d'octets, moins de requêtes) ----------
+// Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.min.js et css/rature.min.css (esbuild, via npx).
+// Ordre = ordre de chargement : les fichiers partagent leurs variables globales, comme des scripts séparés.
+const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'prefs', 'i18n', 'init'];
+function minifyAssets() {
+  const { execSync } = require('child_process');
+  const esbuild = (input, args) => execSync(`npx -y esbuild@0.24.2 --minify --legal-comments=none --log-level=error ${args}`, { input, cwd: ROOT, maxBuffer: 64 << 20 }).toString();
+  const js = JS.map(n => `// ${n}.js\n${fs.readFileSync(path.join(ROOT, 'js', n + '.js'), 'utf8')}`).join('\n;\n');
+  fs.writeFileSync(path.join(ROOT, 'js', 'rature.min.js'), esbuild(js, '--loader=js'));
+  fs.writeFileSync(path.join(ROOT, 'css', 'rature.min.css'), esbuild(fs.readFileSync(path.join(ROOT, 'css', 'rature.css'), 'utf8'), '--loader=css'));
+  const kb = f => Math.round(fs.statSync(path.join(ROOT, f)).size / 1024);
+  console.log(`js/rature.min.js ${kb('js/rature.min.js')} Ko (sources ${Math.round(js.length / 1024)} Ko), css/rature.min.css ${kb('css/rature.min.css')} Ko (source ${kb('css/rature.css')} Ko)`);
+}
+
 // ---------- Fabrication ----------
+minifyAssets();
 for (const [list, dir] of [[PAGES, ''], [EN_PAGES, 'en']]) for (const p of list) {
   if ([...p.title].length > 70) throw new Error(`Titre trop long (${[...p.title].length} > 70) : ${p.title}`); // tronqué par les moteurs de recherche
   fs.mkdirSync(path.join(ROOT, dir, p.slug), { recursive: true });
   fs.writeFileSync(path.join(ROOT, dir, p.slug, 'index.html'), page(p, list));
+}
+// liens vers les guides sur l'accueil français (index.html), tenus à jour ici
+const lowerFirst = s => /^[A-Z]{2}/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1); // « PDF en Word », « OCR » gardent leurs majuscules
+const guideLinks = (list, label) => `<p class="guides">${label} ${list.filter(p => p.art !== 'local').map(p => `<a href="${url(p)}">${lowerFirst(p.short)}</a>`).join(' · ')}</p>`;
+{
+  const f = path.join(ROOT, 'index.html'), src = fs.readFileSync(f, 'utf8'), out = src.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(PAGES, 'Guides :'));
+  if (out !== src) fs.writeFileSync(f, out);
 }
 const missing = buildEnglishEditor();
 const urls = [['/', '1.0'], ['/en/', '1.0'], ...[...PAGES, ...EN_PAGES].map(p => [url(p), '0.8'])];

@@ -76,6 +76,7 @@ $('stampok').onclick = () => {
   stamps.push({ id: 's' + Date.now(), text, ...stampDraft });
   saveStamps(); renderStamps();
   $('stampdlg').close();
+  track('tampon');
   toast('Tampon créé : clique dessus pour le poser');
 };
 // Tampon d'entreprise photographié : fond blanc retiré, comme pour une signature
@@ -89,5 +90,6 @@ $('stampimg').onchange = async e => {
   stamps.push({ id: 's' + Date.now(), src: c.toDataURL('image/png'), ratio: c.width / c.height });
   saveStamps(); renderStamps();
   $('stampdlg').close();
+  track('tampon');
   toast('Tampon créé : clique dessus pour le poser');
 };

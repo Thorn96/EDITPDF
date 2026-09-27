@@ -38,7 +38,9 @@ function setTool(t) {
   $('hint').innerHTML = (name ? `<em>1</em>${esc(tr('Outil'))} <b>${esc(name)}</b><em>2</em>` : '') + `${esc(tr(HINTS[t]))}<i></i><kbd>?</kbd> ${esc(tr('raccourcis'))}`;
   prefsChanged();
 }
+const toolsUsed = new Set(); // statistiques : chaque outil compté une fois par visite
 $('tools').onclick = e => {
+  const used = e.target.closest('button')?.dataset; if (used && pages.length && !toolsUsed.has(used.t || used.a)) { toolsUsed.add(used.t || used.a); track('outil', { nom: used.t || used.a }); }
   const b = e.target.closest('button');
   if (b?.dataset.a === 'image') return pages.length ? $('imgfile').click() : toast("Ouvre d'abord un PDF.", 'error');
   if (b?.dataset.a === 'ocr') return scanDocument();
