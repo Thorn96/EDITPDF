@@ -56,7 +56,8 @@ Tout se passe dans le navigateur : les PDF ne sont envoyés sur aucun serveur, e
 
 - `index.html` : la page ; `css/rature.css` : l'apparence.
 - `js/` : le code, par domaine (`core` utilitaires et historique, `document` pages et rendu, `items` éléments posés, `app` fabrication du PDF, `assist` profil, modèles, caviardage auto, liens et signets, `convert` Word, `tabs` onglets, `i18n` traduction anglaise…).
-- `guides/` : pages guides (signer, remplir, corriger, caviarder, dossier de location, sans envoi) ; les pages et `sitemap.xml` sont fabriquées par `node guides/build.js`, à relancer après chaque modification. Un guide ouvre l'éditeur avec l'outil déjà choisi : `/?outil=edit`, `redact`, `text`… (`sign` ouvre la signature).
+- `guides/` : `node guides/build.js` fabrique les pages guides (françaises à la racine, anglaises dans `/en/`, contenu anglais dans `guides/en.js`), l'éditeur anglais `/en/` (traduit depuis `index.html` avec le dictionnaire de `js/i18n.js`), `manifest-en.webmanifest` et `sitemap.xml`. À relancer après toute modification de `index.html`, de `js/i18n.js` ou des guides. Un guide ouvre l'éditeur avec l'outil déjà choisi : `/?outil=edit`, `redact`, `text`… (`sign` ouvre la signature).
+- Langues : `/` en français, `/en/` en anglais, chacune indexée à son adresse (balises hreflang). Les visiteurs vont à la version de leur navigateur, ou à celle choisie avec le bouton FR/EN ; les robots des moteurs de recherche ne sont jamais redirigés.
 - `lib/` : pdf.js, pdf-lib, fontkit, MuPDF.js, Tesseract.js ; `fonts/` : polices de l'interface et polices embarquées dans les PDF.
 
 ## Bibliothèques et polices

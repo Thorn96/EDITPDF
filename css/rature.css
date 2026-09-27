@@ -605,7 +605,7 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
   header { gap: 4px; } .actions { gap: 3px; } header .btn { height: 36px; padding: 0 9px; } header .btn.icon { width: 34px; padding: 0; }
 }
 @media (max-width: 1180px) { body:not(.loaded) #desk { --mx: 10px; } }
-.guides { margin: 0; font-size: 13.5px; color: var(--muted); }
+.guides { grid-column: 1 / -1; margin: 46px 0 0; text-align: center; font-size: 13.5px; color: var(--muted); }
 .guides a { color: var(--ink-2); }
-html[lang=en] .guides { display: none; } /* guides en français seulement pour l'instant */
-.en-wait header, .en-wait #empty { visibility: hidden; } /* visiteur anglophone : rien n'apparaît avant la traduction (voir index.html) */
+#langbtn b { font-size: 12.5px; letter-spacing: .04em; }
+@media (max-width: 640px) { #redo { display: none; } } /* place pour le bouton FR/EN ; rétablir reste possible depuis l'historique */

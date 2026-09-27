@@ -17,6 +17,7 @@ Object.assign(EN, {
   "PDF, document Word ou photos d'une feuille. Le fichier reste sur ton appareil.": 'PDF, Word document or photos of a sheet. The file stays on your device.',
   "Gratuit · sans inscription · rien n'est envoyé": 'Free · no sign-up · nothing is uploaded',
   'Offrir un café ☕': 'Buy me a coffee ☕', '☕ Soutenir Rature (offrir un café)': '☕ Support Rature (buy me a coffee)',
+  'EN': 'FR', 'English version': 'Version française',
   'Écrire': 'Write', 'Corriger': 'Edit text', 'Cocher': 'Tick', 'Signer': 'Sign', 'Image': 'Image', 'Signer le document': 'Sign the document',
   'Clique sur ta signature pour la poser sur la page.': 'Click your signature to place it on the page.',
   'Numériser un document': 'Scan a document', "avec l'appareil photo du téléphone": "with your phone's camera", 'Reprendre ton travail': 'Pick up where you left off',
@@ -164,7 +165,7 @@ Object.assign(EN, {
   'Langue, thème clair ou sombre, et cette visite si tu veux la revoir.': 'Language, light or dark theme, and this tour if you want to see it again.',
   "Quand c'est prêt : télécharge, partage, compresse ou protège ton PDF par mot de passe.": "When it's ready: download, share, compress or password-protect your PDF.",
   // Page, référencement
-  'Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF': 'Rature · Free online PDF editor: fill in, sign, edit a PDF',
+  'Rature · Éditeur PDF gratuit : remplir, signer, modifier': 'Rature · Free PDF editor: cross it out, fill it in, sign it',
   // Avant / après, signature électronique
   'Avant / après': 'Before / after', 'Avant': 'Before', 'Après': 'After', 'Retour': 'Back', 'Aucune page modifiée.': 'No page changed.',
   "Chaque page modifiée, telle qu'elle est et telle qu'elle sera téléchargée.": 'Each changed page, as it is now and as it will be downloaded.',

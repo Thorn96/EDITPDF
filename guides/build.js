@@ -1,5 +1,5 @@
-// Rature · fabrique les pages guides (une par besoin) et le sitemap. À relancer après chaque modification :  node guides/build.js
-// Chaque page : /<slug>/index.html, servie telle quelle par Vercel.
+// Rature · fabrique les pages du site : guides (fr et en), éditeur anglais /en/, sitemap. À relancer après chaque modification :  node guides/build.js
+// Chaque page : /<slug>/index.html ou /en/<slug>/index.html, servie telle quelle par Vercel. Contenu anglais des guides : guides/en.js.
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..'), SITE = 'https://rature.app';
 
@@ -8,40 +8,40 @@ const sheet = inner => `<svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>
 <path d="M48 58h150" stroke="#15151f" stroke-width="7" stroke-linecap="round"/>${inner}</svg>`;
 const lines = (ys, w = [200, 180, 205, 150]) => ys.map((y, i) => `<path d="M48 ${y}h${w[i % w.length]}" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>`).join('');
-const ART = {
+const ART = T => ({ // T : les quelques mots écrits sur les illustrations, dans la langue de la page
   sign: sheet(lines([98, 120, 142, 164, 186]) + `<path d="M48 290h170" stroke="#15151f" stroke-width="2" stroke-dasharray="5 5"/>
 <path d="M58 280c14-40 30-44 26-8-2 20 18-26 30-12 10 12 12 22 24 2 10-16 18 12 30 4 12-10 22-12 30 8 6 14 22-16 40-8" fill="none" stroke="#1c2a8f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="48" y="238" font-family="Nothing You Could Do, cursive" font-size="20" fill="#1c2a8f">Lu et approuvé</text>`),
-  fill: sheet(`<text x="48" y="104" font-family="Schibsted Grotesk, sans-serif" font-size="15" fill="#6f6c78">Nom :</text><path d="M96 108h150" stroke="#b3baec" stroke-width="2"/>
+<text x="48" y="238" font-family="Nothing You Could Do, cursive" font-size="20" fill="#1c2a8f">${T.approved}</text>`),
+  fill: sheet(`<text x="48" y="104" font-family="Schibsted Grotesk, sans-serif" font-size="15" fill="#6f6c78">${T.name}</text><path d="M96 108h150" stroke="#b3baec" stroke-width="2"/>
 <text x="100" y="102" font-family="Schibsted Grotesk, sans-serif" font-size="18" font-weight="600" fill="#1c2a8f">Camille MARTIN</text>
-<text x="48" y="146" font-family="Schibsted Grotesk, sans-serif" font-size="15" fill="#6f6c78">Né(e) le :</text><path d="M122 150h124" stroke="#b3baec" stroke-width="2"/>
+<text x="48" y="146" font-family="Schibsted Grotesk, sans-serif" font-size="15" fill="#6f6c78">${T.born}</text><path d="M122 150h124" stroke="#b3baec" stroke-width="2"/>
 <text x="126" y="144" font-family="Schibsted Grotesk, sans-serif" font-size="18" font-weight="600" fill="#1c2a8f">12/03/1994</text>
 <rect x="48" y="178" width="20" height="20" rx="3" fill="none" stroke="#15151f" stroke-width="2"/><path d="m52 188 5 5 9-11" fill="none" stroke="#e2494f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M80 188h120" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>
 <rect x="48" y="212" width="20" height="20" rx="3" fill="none" stroke="#15151f" stroke-width="2"/><path d="M80 222h100" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>
 ${lines([266, 288])}`),
-  edit: sheet(lines([98, 120]) + `<text x="48" y="176" font-family="Schibsted Grotesk, sans-serif" font-size="19" fill="#15151f">au titre de la</text>
-<text x="176" y="176" font-family="Schibsted Grotesk, sans-serif" font-size="19" fill="#15151f">caution</text><path d="M170 170c20-6 40 6 70-4" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
-<text x="172" y="140" font-family="Nothing You Could Do, cursive" font-size="22" fill="#e2494f">garantie</text>
+  edit: sheet(lines([98, 120]) + `<text x="48" y="176" font-family="Schibsted Grotesk, sans-serif" font-size="19" fill="#15151f">${T.before}</text>
+<text x="176" y="176" font-family="Schibsted Grotesk, sans-serif" font-size="19" fill="#15151f">${T.old}</text><path d="M170 170c20-6 40 6 70-4" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
+<text x="172" y="140" font-family="Nothing You Could Do, cursive" font-size="22" fill="#e2494f">${T.new}</text>
 <rect x="42" y="152" width="214" height="34" rx="5" fill="none" stroke="#e2494f" stroke-width="2" stroke-dasharray="6 5"/>${lines([214, 236, 258, 280])}`),
   rent: `<svg viewBox="0 0 320 380" aria-hidden="true"><g transform="rotate(-6 160 190)"><rect x="34" y="30" width="230" height="300" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>${lines([70, 92, 114], [150, 170, 120])}</g>
 <g><rect x="54" y="42" width="240" height="316" rx="6" fill="#15151f" transform="translate(8 8)"/><rect x="54" y="42" width="240" height="316" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>
 <path d="M80 86h140" stroke="#15151f" stroke-width="7" stroke-linecap="round"/>
-<text x="80" y="128" font-family="Schibsted Grotesk, sans-serif" font-size="14" fill="#6f6c78">Attestation de caution</text>
+<text x="80" y="128" font-family="Schibsted Grotesk, sans-serif" font-size="14" fill="#6f6c78">${T.form}</text>
 <path d="M80 156h180M80 178h160M80 200h170" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>
-<text x="174" y="270" font-family="Young Serif, serif" font-size="30" fill="#e2494f" opacity=".22" transform="rotate(-32 174 250)">DOSSIER</text>
+<text x="174" y="270" font-family="Young Serif, serif" font-size="30" fill="#e2494f" opacity=".22" transform="rotate(-32 174 250)">${T.wm}</text>
 <path d="M92 318c12-34 26-38 22-6-2 16 16-22 26-10 8 10 10 18 20 2 8-14 16 10 26 4" fill="none" stroke="#1c2a8f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
 <path d="M232 26v44a14 14 0 0 1-28 0V34a8 8 0 0 1 16 0v34" fill="none" stroke="#6f6c78" stroke-width="4" stroke-linecap="round"/></svg>`,
   redact: sheet(lines([98, 120]) + `<rect x="46" y="136" width="170" height="20" rx="2" fill="#15151f"/>${lines([176, 198])}
 <rect x="46" y="214" width="120" height="20" rx="2" fill="#15151f"/><path d="M180 224h66" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>${lines([254, 276, 298])}
-<text x="84" y="334" font-family="Nothing You Could Do, cursive" font-size="20" fill="#e2494f">effacé pour de bon</text>`),
+<text x="84" y="334" font-family="Nothing You Could Do, cursive" font-size="20" fill="#e2494f">${T.erased}</text>`),
   local: `<svg viewBox="0 0 320 380" aria-hidden="true"><rect x="38" y="96" width="244" height="168" rx="12" fill="#15151f" transform="translate(8 8)"/>
 <rect x="38" y="96" width="244" height="168" rx="12" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M14 280h292l-18 26H32z" fill="#fff" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/>
 <rect x="120" y="116" width="80" height="104" rx="4" fill="#fbf8f0" stroke="#15151f" stroke-width="2.5"/><path d="M134 140h52M134 156h40M134 172h48" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>
 <path d="M126 196c10-8 30 8 60-6" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
 <g transform="translate(206 20)"><path d="M18 52a18 18 0 0 1 4-35 24 24 0 0 1 45 4 16 16 0 0 1 3 31z" fill="#fff" stroke="#6f6c78" stroke-width="3"/><path d="M8 8l72 58" stroke="#e2494f" stroke-width="5" stroke-linecap="round"/></g>
-<text x="40" y="350" font-family="Nothing You Could Do, cursive" font-size="21" fill="#e2494f">rien ne sort d'ici</text></svg>`,
-};
+<text x="40" y="350" font-family="Nothing You Could Do, cursive" font-size="21" fill="#e2494f">${T.local}</text></svg>`,
+});
 
 // ---------- Contenu ----------
 const OPEN = { t: 'Ouvre ton PDF', d: "Glisse-le sur la page de Rature ou clique sur « Choisir un fichier ». Il s'ouvre dans ton navigateur : rien n'est envoyé." };
@@ -145,26 +145,46 @@ const PAGES = [
       { q: 'Et les gros fichiers ?', a: 'Rature ne dessine que les pages affichées : les gros documents restent fluides. La seule limite est la mémoire de ton appareil.' }] },
 ];
 
-// ---------- Page ----------
+// ---------- Deux langues : textes de l'interface des guides, liens entre traductions ----------
+const EN_PAGES = require('./en.js');
+const L = {
+  fr: { lang: 'fr', root: '/', locale: 'fr_FR', steps: 'En 3 étapes', faq: 'Questions fréquentes', ready: 'Prêt ? Ça prend une minute.', more: 'Autres guides',
+        open: 'Ouvrir l’éditeur', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
+        footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers',
+        art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici' } },
+  en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
+        open: 'Open the editor', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
+        footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it',
+        art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here' } },
+};
+PAGES.forEach((p, i) => { p.L = L.fr; p.twin = EN_PAGES[i]; EN_PAGES[i].L = L.en; EN_PAGES[i].twin = p; });
+const url = p => `${p.L.root}${p.slug}/`;
+const alternates = p => [p.L.lang === 'fr' ? p : p.twin, p.L.lang === 'en' ? p : p.twin]
+  .map(x => `<link rel="alternate" hreflang="${x.L.lang}" href="${SITE}${url(x)}">`).join('\n') + `\n<link rel="alternate" hreflang="x-default" href="${SITE}${url(p.L.lang === 'fr' ? p : p.twin)}">`;
+
+// ---------- Page guide ----------
 const attr = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const LOGO = '<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="5" width="30" height="32" rx="3" fill="#fff" stroke="#15151f" stroke-width="2.4"/><path d="M9 15h18M9 22h13" stroke="#15151f" stroke-width="2.4" stroke-linecap="round"/><path d="M7 23C14 18 24 27 36 16" fill="none" stroke="#e2494f" stroke-width="3.4" stroke-linecap="round"/></svg>';
-const page = p => `<!doctype html>
-<html lang="fr">
+const page = (p, all) => { const t = p.L; return `<!doctype html>
+<html lang="${t.lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${attr(p.title)}</title>
 <meta name="description" content="${attr(p.desc)}">
-<link rel="canonical" href="${SITE}/${p.slug}/">
+<link rel="canonical" href="${SITE}${url(p)}">
+${alternates(p)}
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Rature">
-<meta property="og:locale" content="fr_FR">
-<meta property="og:url" content="${SITE}/${p.slug}/">
+<meta property="og:locale" content="${t.locale}">
+<meta property="og:url" content="${SITE}${url(p)}">
 <meta property="og:title" content="${attr(p.title)}">
 <meta property="og:description" content="${attr(p.desc)}">
-<meta property="og:image" content="${SITE}/og-image.jpg">
+<meta property="og:image" content="${SITE}/${t.lang === 'en' ? 'og-image-en.jpg' : 'og-image.jpg'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#fbf8f0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
@@ -173,51 +193,109 @@ const page = p => `<!doctype html>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><a class="brand" href="/">${LOGO}Rature</a><a class="btn" href="/">Ouvrir l’éditeur</a></header>
+<header class="top"><a class="brand" href="${t.root}">${LOGO}Rature</a><a class="btn" href="${t.root}">${t.open}</a></header>
 <main>
 <section class="hero">
   <div>
     <p class="eyebrow">${p.eyebrow}</p>
     <h1>${p.h1}</h1>
     <p class="lead">${p.lead}</p>
-    <a class="cta" href="/${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
-    <p class="small">Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+    <a class="cta" href="${t.root}${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
+    <p class="small">${t.small}</p>
   </div>
-  <div class="art">${ART[p.art]}</div>
+  <div class="art">${ART(t.art)[p.art]}</div>
 </section>
 <section>
-  <h2>En 3 étapes</h2>
+  <h2>${t.steps}</h2>
   <ol class="steps">${p.steps.map(s => `\n    <li><b>${s.t}</b><span>${s.d}</span></li>`).join('')}
   </ol>
 </section>
-<section>${p.body.map(([h, t]) => `\n  <div class="card"><h2>${h}</h2><p>${t}</p></div>`).join('')}
+<section>${p.body.map(([h, x]) => `\n  <div class="card"><h2>${h}</h2><p>${x}</p></div>`).join('')}
 </section>
 <section>
-  <h2>Questions fréquentes</h2>${p.faq.map(f => `\n  <details><summary>${f.q}</summary><p>${f.a}</p></details>`).join('')}
+  <h2>${t.faq}</h2>${p.faq.map(f => `\n  <details><summary>${f.q}</summary><p>${f.a}</p></details>`).join('')}
 </section>
 <section class="end">
-  <h2>Prêt ? Ça prend une minute.</h2>
-  <a class="cta" href="/${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
+  <h2>${t.ready}</h2>
+  <a class="cta" href="${t.root}${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
 </section>
-<nav class="more" aria-label="Autres guides">
-  <h2>Autres guides</h2>
-  <ul>${PAGES.filter(o => o !== p).map(o => `<li><a href="/${o.slug}/">${o.short}</a></li>`).join('')}</ul>
+<nav class="more" aria-label="${t.more}">
+  <h2>${t.more}</h2>
+  <ul>${all.filter(o => o !== p).map(o => `<li><a href="${url(o)}">${o.short}</a></li>`).join('')}</ul>
 </nav>
 </main>
-<footer>Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers · <a href="/">Ouvrir l’éditeur</a> · <a href="https://github.com/Thorn96/EDITPDF">Code source</a></footer>
+<footer>${t.footer} · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a> · <a href="https://github.com/Thorn96/EDITPDF">${t.source}</a></footer>
 </div>
 </body>
 </html>
-`;
+`; };
 
-for (const p of PAGES) {
-  fs.mkdirSync(path.join(ROOT, p.slug), { recursive: true });
-  fs.writeFileSync(path.join(ROOT, p.slug, 'index.html'), page(p));
+// ---------- Éditeur en anglais (/en/) : la page française traduite avec le dictionnaire de l'appli (js/i18n.js) ----------
+// Chaque langue a ainsi sa propre adresse, lisible par les moteurs de recherche sans exécuter le JavaScript.
+function buildEnglishEditor() {
+  const src = fs.readFileSync(path.join(ROOT, 'js/i18n.js'), 'utf8'), start = src.indexOf('Object.assign(EN, ') + 'Object.assign(EN, '.length;
+  const EN = new Function(`return ${src.slice(start, src.indexOf('\n});', start) + 2)}`)();
+  const dec = s => s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  const encText = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;'), encAttr = s => encText(s).replace(/"/g, '&quot;');
+  const missing = new Set(), SAME = new Set(['Rature', 'B', 'I', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
+  const swap = (s, enc) => { const raw = dec(s), t = raw.trim(); if (!t) return s; if (EN[t] === undefined) { if (hasLetters(t) && !SAME.has(t)) missing.add(t); return s; } return enc(raw.replace(t, EN[t])); };
+
+  let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const once = (from, to) => { if (!html.includes(from)) throw new Error(`index.html : introuvable « ${from.slice(0, 60)} »`); html = html.replace(from, to); };
+  // en-tête : adresse, textes de partage, données structurées (tout le reste est traduit plus bas)
+  once('<html lang="fr">', '<html lang="en" data-root="../">');
+  html = html.replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="Fill in, sign, edit the text, redact, merge and convert your PDFs for free, without signing up. Everything happens in your browser: your files are never uploaded.">')
+    .replace(/<meta name="keywords" content="[^"]*">/, '<meta name="keywords" content="free PDF editor, edit PDF, fill in PDF, sign PDF, edit PDF text, redact PDF, merge PDF, PDF to Word, OCR, no upload">')
+    .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · PDF editor","url":"${SITE}/en/","image":"${SITE}/og-image-en.jpg",
+ "description":"Free PDF editor in your browser: fill in forms, sign, edit the existing text, redact, merge, convert to Word, text recognition (OCR). Cross it out, fill it in, sign it.",
+ "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"A recent browser (Chrome, Edge, Firefox, Safari)",
+ "inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
+ "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}
+</script>`);
+  once(`<link rel="canonical" href="${SITE}/">`, `<link rel="canonical" href="${SITE}/en/">`);
+  once('<meta property="og:locale" content="fr_FR">\n<meta property="og:locale:alternate" content="en_GB">', '<meta property="og:locale" content="en_GB">\n<meta property="og:locale:alternate" content="fr_FR">');
+  once(`<meta property="og:url" content="${SITE}/">`, `<meta property="og:url" content="${SITE}/en/">`);
+  html = html.replace(/<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="Rature · Free PDF editor: cross it out, fill it in, sign it">')
+    .replace(/<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="Fill in, sign and fix your PDFs for free, without signing up. Everything happens in your browser.">')
+    .replace(/<meta property="og:image:alt" content="[^"]*">/, '<meta property="og:image:alt" content="Rature, free PDF editor: fill in, sign and fix your PDFs">')
+    .replace(/<meta name="twitter:title" content="[^"]*">/, '<meta name="twitter:title" content="Rature · Free PDF editor">')
+    .replace(/<meta name="twitter:description" content="[^"]*">/, '<meta name="twitter:description" content="Fill in, sign and fix your PDFs for free, right in your browser.">')
+    .replaceAll(`${SITE}/og-image.jpg`, `${SITE}/og-image-en.jpg`);
+  once('<link rel="manifest" href="manifest.webmanifest">', '<link rel="manifest" href="manifest-en.webmanifest">');
+  once('aria-label="English version" lang="en">', 'aria-label="English version" lang="fr">'); // bouton de langue : il propose le français ici
+  // chemins relatifs : la page est un dossier plus bas
+  html = html.replace(/ (src|href)="(?!https?:|\/|#|data:|mailto:)([^"]+)"/g, ' $1="../$2"');
+  // traduction : textes entre les balises et attributs lisibles, hors scripts, styles et dessins
+  html = html.replace(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>)|(<[^>]+>)|([^<]+)/g, (m, skip, tag, text) => {
+    if (skip) return skip;
+    if (tag) return tag.replace(/ (title|placeholder|aria-label|data-tip|alt|data-wm|data-s)="([^"]*)"/g, (_, a, v) => ` ${a}="${swap(v, encAttr)}"`);
+    return swap(text, encText);
+  });
+  // liens vers les guides (après la traduction : ils sont déjà en anglais)
+  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, `<p class="guides">Guides: ${EN_PAGES.filter(p => p.slug !== 'pdf-editor-no-upload').map(p => `<a href="${url(p)}">${p.short.toLowerCase()}</a>`).join(' · ')}</p>`);
+  fs.mkdirSync(path.join(ROOT, 'en'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'en', 'index.html'), html);
+
+  const man = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
+  Object.assign(man, { name: 'Rature · PDF editor', description: 'Fill in, sign and fix PDFs for free, right in your browser.', lang: 'en', start_url: './en/' });
+  man.file_handlers = man.file_handlers?.map(h => ({ ...h, action: './en/' }));
+  fs.writeFileSync(path.join(ROOT, 'manifest-en.webmanifest'), JSON.stringify(man, null, 2) + '\n');
+  return [...missing].filter(t => html.includes(encText(t))); // seulement ce qui reste réellement en français
 }
-const urls = [['/', '1.0'], ...PAGES.map(p => [`/${p.slug}/`, '0.8'])];
+
+// ---------- Fabrication ----------
+for (const [list, dir] of [[PAGES, ''], [EN_PAGES, 'en']]) for (const p of list) {
+  if ([...p.title].length > 70) throw new Error(`Titre trop long (${[...p.title].length} > 70) : ${p.title}`); // tronqué par les moteurs de recherche
+  fs.mkdirSync(path.join(ROOT, dir, p.slug), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, dir, p.slug, 'index.html'), page(p, list));
+}
+const missing = buildEnglishEditor();
+const urls = [['/', '1.0'], ['/en/', '1.0'], ...[...PAGES, ...EN_PAGES].map(p => [url(p), '0.8'])];
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, pr]) => `  <url><loc>${SITE}${u}</loc><changefreq>weekly</changefreq><priority>${pr}</priority></url>`).join('\n')}
 </urlset>
 `);
-console.log(`${PAGES.length} guides + sitemap.xml`);
+console.log(`${PAGES.length} guides fr + ${EN_PAGES.length} guides en + /en/ + sitemap.xml (${urls.length} adresses)`);
+if (missing.length) console.log(`Textes de l'éditeur sans traduction anglaise (restés en français dans /en/) :\n  ${missing.join('\n  ')}`);

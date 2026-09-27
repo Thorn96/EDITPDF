@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rature · Free PDF editor: cross it out, fill it in, sign it</title>
+<meta name="description" content="Fill in, sign, edit the text, redact, merge and convert your PDFs for free, without signing up. Everything happens in your browser: your files are never uploaded.">
+<meta name="keywords" content="free PDF editor, edit PDF, fill in PDF, sign PDF, edit PDF text, redact PDF, merge PDF, PDF to Word, OCR, no upload">
+<link rel="canonical" href="https://rature.app/en/">
+<link rel="alternate" hreflang="fr" href="https://rature.app/">
+<link rel="alternate" hreflang="en" href="https://rature.app/en/">
+<link rel="alternate" hreflang="x-default" href="https://rature.app/">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Rature">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:url" content="https://rature.app/en/">
+<meta property="og:title" content="Rature · Free PDF editor: cross it out, fill it in, sign it">
+<meta property="og:description" content="Fill in, sign and fix your PDFs for free, without signing up. Everything happens in your browser.">
+<meta property="og:image" content="https://rature.app/og-image-en.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rature, free PDF editor: fill in, sign and fix your PDFs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rature · Free PDF editor">
+<meta name="twitter:description" content="Fill in, sign and fix your PDFs for free, right in your browser.">
+<meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · PDF editor","url":"https://rature.app/en/","image":"https://rature.app/og-image-en.jpg",
+ "description":"Free PDF editor in your browser: fill in forms, sign, edit the existing text, redact, merge, convert to Word, text recognition (OCR). Cross it out, fill it in, sign it.",
+ "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"A recent browser (Chrome, Edge, Firefox, Safari)",
+ "inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
+ "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}
+</script>
+<meta name="theme-color" content="#fbf8f0">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" href="../icon-96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="manifest" href="../manifest-en.webmanifest">
+<script>/* avant le premier affichage : thème choisi, et page dans la bonne langue.
+   Langue voulue : celle choisie avec le bouton FR/EN, sinon celle du navigateur. Les robots des moteurs de recherche ne sont jamais
+   redirigés : chacun des deux adresses (/ en français, /en/ en anglais) doit pouvoir être lue et indexée telle quelle. */
+try { var P = JSON.parse(localStorage.prefs || '{}'); } catch (e) { P = {}; }
+if (P.theme === 'light' || P.theme === 'dark') document.documentElement.dataset.theme = P.theme;
+var PAGE = document.documentElement.lang, NAV = /^fr/i.test(navigator.language || '') ? 'fr' : 'en';
+var BOT = /bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent);
+var WANT = P.lang || (BOT ? PAGE : NAV);
+if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentElement.dataset.root || './') + location.search);</script>
+<link rel="preload" href="../fonts/ui/YoungSerif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/ui/SchibstedGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts/ui/fonts.css">
+<link rel="stylesheet" href="../fonts/pdf/fonts.css">
+<link rel="stylesheet" href="../css/rature.css">
+<!-- Vercel Web Analytics : visites comptées sans cookie, rien sur le contenu des PDF -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body data-tool="text">
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="logo" viewBox="0 0 40 40"><rect x="3" y="5" width="30" height="32" rx="3" fill="#fff" stroke="#15151f" stroke-width="2.4"/><path d="M9 15h18M9 22h13" stroke="#15151f" stroke-width="2.4" stroke-linecap="round"/><path d="M7 23C14 18 24 27 36 16" fill="none" stroke="#e2494f" stroke-width="3.4" stroke-linecap="round"/></symbol>
+</svg>
+
+<header>
+  <div class="brand"><svg><use href="#logo"/></svg><b>Rature</b><small>PDF editor</small></div>
+  <button id="btnPages" class="btn icon ghost drawer-btn" title="Pages"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="11" height="14" rx="1.5"/><path d="M9 21h9.5a1.5 1.5 0 0 0 1.5-1.5V8"/></svg></button>
+  <div class="doc">
+    <label class="btn" title="Open a PDF or images (Ctrl+O)">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>
+      <span class="lbl">Open</span><input type="file" id="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+    </label>
+    <span id="fname">No file</span>
+    <div id="tabbar" class="tabbar" hidden></div>
+    <span id="saved">✓ Saved</span>
+  </div>
+  <div class="actions">
+    <button id="install" class="btn ghost" hidden title="Install Rature as an app">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 3v11M7 9.5l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg><span class="lbl">Install</span>
+    </button>
+    <button id="findbtn" class="btn icon ghost" title="Find and replace (Ctrl+F)">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/></svg></button>
+    <button id="decobtn" class="btn icon ghost" title="Watermark, page numbers, header">
+      <svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 7h8M9 17h6"/><path d="m8.5 14 7-5" opacity=".6"/></svg></button>
+    <button id="toolsbtn" class="btn icon ghost" title="More tools">
+      <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></svg></button>
+    <button id="langbtn" class="btn icon ghost" title="Version française" aria-label="Version française" lang="fr"><b>FR</b></button>
+    <button id="themebtn" class="btn icon ghost" title="Theme"><svg class="i" viewBox="0 0 24 24"></svg></button>
+    <button id="settingsbtn" class="btn icon ghost" title="Settings">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <button id="help" class="btn icon ghost" title="Keyboard shortcuts (?)"><b style="font-size:16px">?</b></button>
+    <button id="btnSigs" class="btn icon ghost drawer-btn" title="My signatures"><svg class="i" viewBox="0 0 24 24"><path d="M3 17c3-1 4-6 6-6s1 5 3 5 3-3 4-3 1.5 2 5 2"/></svg></button>
+    <span class="sep"></span>
+    <button id="undo" class="btn icon" title="Undo (Ctrl+Z)" disabled>
+      <svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+    <button id="redo" class="btn icon" title="Redo (Ctrl+Y)" disabled>
+      <svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+    <button id="histbtn" class="btn icon ghost" title="Change history">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 4v4.6h4.6M12 8v4l3 2"/></svg></button>
+    <span class="sep"></span>
+    <button id="save" class="btn primary" title="Download or share the edited PDF (Ctrl+S)">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="spin"></span><span class="lbl">Download</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <aside class="side left">
+    <div class="side-head"><h2>Pages</h2><span id="pcount" class="count"></span></div>
+    <div id="thumbs"></div>
+    <div class="side-actions">
+      <label class="btn add" title="Append the pages of a PDF, or images as new pages">
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>PDF or images
+        <input type="file" id="addfile" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+      </label>
+      <label class="btn add" for="scanfile" title="Photograph a sheet and add it as a page">
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>Scan
+      </label>
+    </div>
+  </aside>
+
+  <section id="desk">
+    <div id="empty">
+      <div class="welcome">
+        <div class="pitch">
+          <p class="eyebrow">Who needs a <s>printer<svg viewBox="0 0 520 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 34C120 18 300 46 514 22"/></svg></s></p>
+          <h1>Fill in and sign your PDF.</h1>
+          <p>Fill in a form, fix the text, sign by hand, then download. It all happens in your browser.</p>
+          <ul>
+            <li>Write and fix the real text</li>
+            <li>Sign with the mouse or your finger</li>
+            <li>Erase for good what must go</li>
+            <li>Merge and reorder pages</li>
+          </ul>
+          <div class="alt">
+            <label class="btn" for="scanfile">
+              <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
+              Scan a document
+            </label>
+            <span>with your phone's camera</span>
+          </div>
+        </div>
+        <div class="dropwrap">
+          <label class="drop" for="file" tabindex="0">
+            <svg class="down" viewBox="0 0 84 96" aria-hidden="true"><path d="M8 6h46l22 22v62H8z" fill="var(--paper)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M54 6v22h22" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M42 40v30M30 58l12 12 12-12" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <strong>Drop your PDF here</strong>
+            <span class="or">or</span>
+            <span class="cta"><svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>Choose a file</span>
+            <small>PDF, Word document or photos of a sheet. The file stays on your device.</small>
+            <svg class="fly" viewBox="0 0 104 128" aria-hidden="true"><path d="M6 6h62l30 30v86H6z" fill="#fff" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M68 6v30h30" fill="none" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M18 50h58M18 62h40" stroke="#c9c3b4" stroke-width="5" stroke-linecap="round"/><rect x="18" y="80" width="46" height="22" rx="4" fill="#e2494f"/><text x="41" y="96" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="14" fill="#fff">PDF</text></svg>
+          </label>
+          <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>right here!</span></div>
+        </div>
+        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a pdf</a> · <a href="/en/fill-pdf/">fill in a pdf</a> · <a href="/en/edit-pdf-text/">edit pdf text</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a pdf</a></p>
+        <div id="resume" class="resume" hidden>
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div><b>Pick up where you left off</b><small id="resumeinfo"></small></div>
+          <button id="resumego" class="btn primary">Resume</button>
+          <button id="resumedel" class="btn icon ghost" title="Forget this work"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="scanfile" accept="image/*" capture="environment" hidden>
+
+    <div id="pages"></div>
+
+    <nav id="tools" class="float" aria-label="Tools">
+      <button data-t="text" class="on" data-tip="Add text · T" aria-label="Add text">
+        <svg class="i" viewBox="0 0 24 24"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg><span>Write</span></button>
+      <button data-t="edit" data-tip="Fix the PDF's text · E" aria-label="Fix the PDF's text">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 7V5h10v2M8 5v12M6 17h4"/><path d="M14 20.5l.8-3.3 5.3-5.3 2.5 2.5-5.3 5.3z"/></svg><span>Edit text</span></button>
+      <button data-t="stamp" data-tip="Tick, date, standard phrases · S" aria-label="Symbols and phrases">
+        <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg><span>Tick</span></button>
+      <button data-a="sign" data-tip="Sign the document" aria-label="Sign the document">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 17c3-1 4-6 6-6s1 5 3 5 3-3 4-3 1.5 2 5 2"/></svg><span>Sign</span></button>
+      <hr>
+      <button data-t="highlight" data-tip="Highlight · H" aria-label="Highlight">
+        <svg class="i" viewBox="0 0 24 24"><path d="m9 15-4 4h5l1.5-1.5"/><path d="M8.5 12.5 16 5l3 3-7.5 7.5z"/></svg><span>Highlight</span></button>
+      <button data-t="draw" data-tip="Freehand drawing · D" aria-label="Draw">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 17c2.5-2 4-7 6-7s1 6 3.5 6S16 9 18 9s2 3 3 4"/></svg><span>Draw</span></button>
+      <div class="tgroup">
+        <button data-t="rect" id="shapebtn" aria-label="Shapes"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg><span>Shapes</span><i></i></button>
+        <div class="flyout">
+          <button data-t="rect" data-tip="Rectangle · R" aria-label="Rectangle"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></button>
+          <button data-t="ellipse" data-tip="Circle · C" aria-label="Circle"><svg class="i" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="7"/></svg></button>
+          <button data-t="line" data-tip="Line · L" aria-label="Line"><svg class="i" viewBox="0 0 24 24"><path d="M5 19 19 5"/></svg></button>
+          <button data-t="arrow" data-tip="Arrow · A" aria-label="Arrow"><svg class="i" viewBox="0 0 24 24"><path d="M5 19 19 5M10 5h9v9"/></svg></button>
+          <button data-t="link" data-tip="Clickable link · K" aria-label="Link"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+        </div>
+      </div>
+      <button data-t="note" data-tip="Sticky note · N" aria-label="Note">
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5V14l-6 6H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M14 20v-4.5a1.5 1.5 0 0 1 1.5-1.5H20M8 9h8M8 12.5h4"/></svg><span>Note</span></button>
+      <button data-t="field" data-tip="Form field · F" aria-label="Form field">
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 10.5v3M10 12h7" opacity=".7"/></svg><span>Field</span></button>
+      <hr>
+      <button data-t="redact" data-tip="Redact (erase for good) · X" aria-label="Redact">
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="8.5" width="18" height="7" rx="1.5" fill="currentColor"/></svg><span>Redact</span></button>
+      <button data-a="image" data-tip="Insert an image · I" aria-label="Insert an image">
+        <svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg><span>Image</span></button>
+      <button data-t="move" data-tip="Select, move · V" aria-label="Move">
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span>Move</span></button>
+    </nav>
+    <input type="file" id="imgfile" accept="image/*" hidden>
+
+    <div id="props" class="float">
+      <div class="prop" data-for="stamp">
+        <div class="kinds" id="kinds">
+          <button data-k="check" class="on" title="Tick">✓</button><button data-k="cross" title="Cross">✗</button>
+          <button data-k="dot" title="Dot">●</button><button data-k="date" class="txt-k" title="Today's date">Date</button><i></i>
+          <button data-k="lu" class="txt-k">Read and approved</button><button data-k="bon" class="txt-k">Approved</button>
+          <button data-k="fait" class="txt-k" title="Signed at … on (today's date)">Signed at… on…</button>
+        </div>
+      </div>
+      <div class="prop" data-for="text edit stamp highlight draw rect ellipse line arrow note seal">
+        <div id="swatches" style="display:flex;gap:7px">
+          <button class="sw on" style="--c:#000000" data-c="#000000" title="Black"></button>
+          <button class="sw" style="--c:#1d3fbf" data-c="#1d3fbf" title="Pen blue"></button>
+          <button class="sw" style="--c:#c62828" data-c="#c62828" title="Red"></button>
+          <button class="sw" style="--c:#2e7d32" data-c="#2e7d32" title="Green"></button>
+          <button class="sw" style="--c:#ffd84d" data-c="#ffd84d" title="Highlighter yellow"></button>
+          <span id="favs" style="display:contents"></span>
+          <label class="sw custom" title="Other colour"><input type="color" id="color" value="#000000"></label>
+        </div>
+      </div>
+      <div class="prop" data-for="text edit seal">
+        <select id="font" class="sel-font" title="Font">
+          <option value="orig" hidden>Original font</option>
+        </select>
+        <button class="tog" id="bold" title="Bold"><b>B</b></button>
+        <button class="tog" id="italic" title="Italic"><i style="font-family:Georgia,serif">I</i></button>
+      </div>
+      <div class="prop" data-for="text edit stamp note seal">
+        <span>Size</span>
+        <div class="stepper"><button data-target="size" data-step="-1" aria-label="Smaller">−</button><input id="size" aria-label="Size" type="number" value="11" min="4" max="96" step="0.5"><button data-target="size" data-step="1" aria-label="Larger">+</button></div>
+      </div>
+      <div class="prop" data-for="draw rect ellipse line arrow">
+        <span>Thickness</span>
+        <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Thinner">−</button><input id="width" type="number" value="1.5" min="0.5" max="12" step="0.5"><button data-target="width" data-step="0.5" aria-label="Thicker">+</button></div>
+      </div>
+      <div class="prop" data-for="rect ellipse"><button class="tog" id="fill" title="Shape filled with the colour">▮ Filled</button></div>
+      <div class="prop" data-for="link"><input id="linkto" class="mini wide" placeholder="https://… or page no." title="Link target"></div>
+      <div class="prop" data-for="field">
+        <select id="fldkind" class="sel-font" title="Field type">
+          <option value="text">Text</option><option value="multi">Multi-line text</option><option value="check">Checkbox</option><option value="list">Drop-down list</option>
+        </select>
+        <input id="fldname" class="mini" placeholder="Field name" title="Field name">
+        <span id="fldoptsbox"><input id="fldopts" class="mini wide" placeholder="Choices separated by commas" title="List choices"></span>
+      </div>
+      <div class="prop" data-for="text note seal img">
+        <span>Rotation</span>
+        <div class="stepper"><button data-target="rot" data-step="-15" aria-label="Rotate left">↺</button><input id="rot" aria-label="Rotation" type="number" value="0" min="-180" max="180" step="1"><button data-target="rot" data-step="15" aria-label="Rotate right">↻</button></div>
+      </div>
+      <div class="prop" data-for="text edit note seal stamp highlight draw rect ellipse line arrow img">
+        <span>Opacity</span><input type="range" id="opacity" aria-label="Opacity" min="10" max="100" value="100">
+      </div>
+      <div class="prop info" data-for="redact">▮ Whatever is under the area will be erased for good when downloading</div>
+      <div class="prop info" data-for="img">Drag the bottom-right corner to resize</div>
+      <div class="prop" data-for="sel"><button id="allpages" class="btn" title="Copy the selection to the same spot on every page (initials…)">⧉ All pages</button></div>
+    </div>
+
+    <div id="find" class="float" hidden>
+      <div class="frow">
+        <input id="fq" placeholder="Search the PDF" autocomplete="off">
+        <span id="fcount"></span>
+        <button id="fprev" title="Previous (Shift+Enter)"><svg class="i" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg></button>
+        <button id="fnext" title="Next (Enter)"><svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button id="frepbtn" title="Replace (Ctrl+H)"><svg class="i" viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></button>
+        <button id="fclose" title="Close (Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="frow" id="frep" hidden>
+        <input id="fr" placeholder="Replace with" autocomplete="off">
+        <button id="fone" class="btn">Replace</button><button id="fall" class="btn">All</button>
+      </div>
+    </div>
+
+    <div id="grid" hidden>
+      <div class="gridbar">
+        <b id="gridsel"></b>
+        <div class="gridacts">
+          <button data-g="left" class="btn icon" title="Rotate left">↺</button><button data-g="right" class="btn icon" title="Rotate right">↻</button>
+          <button data-g="dup" class="btn">Duplicate</button><button data-g="blank" class="btn">Blank page</button>
+          <button data-g="extract" class="btn">Download</button><button data-g="png" class="btn">As images</button>
+          <button data-g="del" class="btn danger">Delete</button>
+        </div>
+        <button id="gridclose" class="btn primary">Done</button>
+      </div>
+      <p class="gridtip">Click: select · Ctrl/Shift+click: several · drag: reorder · double-click: open the page</p>
+      <div id="gridcards"></div>
+    </div>
+
+    <div id="hint" class="float"></div>
+    <div id="zoom" class="float">
+      <button id="zout" title="Zoom out (Ctrl −)"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+      <button id="zoomval" title="Fit to width (Ctrl 0)">100 %</button>
+      <button id="zin" title="Zoom in (Ctrl +)"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+  </section>
+
+  <aside class="side right">
+    <div>
+      <h2>My signatures</h2>
+      <p>Saved in this browser</p>
+    </div>
+    <button id="signew" class="btn">
+      <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New signature
+    </button>
+    <label id="sigphotobtn" class="btn ghost" title="Sign on a white sheet and take a photo: the background is removed">
+      <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      From a photo<input type="file" id="sigphoto" accept="image/*" hidden>
+    </label>
+    <div id="sigempty">
+      <svg class="i" viewBox="0 0 64 32"><path d="M4 24c6-2 8-16 13-16s1 16 7 16 6-10 10-10 3 8 8 8 6-6 9-6 4 3 9 3"/></svg>
+      No signature yet.
+    </div>
+    <div id="siglist"></div>
+    <div class="side-sec">
+      <h2>My stamps</h2>
+      <p>"Paid", "Received on…", company stamp</p>
+    </div>
+    <button id="stampnew" class="btn"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New stamp</button>
+    <div id="stamplist"></div>
+    <p class="tip">Drag a signature onto the page, or click it to place it on the page shown. For initials on every page: place them, then "⧉ All pages".</p>
+  </aside>
+</main>
+
+<dialog id="sigdlg">
+  <div class="dlg-head">
+    <h3>New signature</h3>
+    <p>Sign on the line with a mouse, touchpad or stylus.</p>
+  </div>
+  <div class="padwrap"><canvas id="sigpad"></canvas></div>
+  <div class="dlg-ink">Ink
+    <button class="sw on" style="--c:#000000" data-ink="#000000" title="Black"></button>
+    <button class="sw" style="--c:#1d3fbf" data-ink="#1d3fbf" title="Pen blue"></button>
+  </div>
+  <div id="sigmsg" class="dlg-msg"></div>
+  <div class="dlg-foot">
+    <button id="sigclear" class="btn grow">Clear</button>
+    <button id="sigcancel" class="btn">Cancel</button><button id="sigok" class="btn primary">Save</button>
+  </div>
+</dialog>
+
+<dialog id="expdlg">
+  <div class="dlg-head">
+    <h3>Download the PDF</h3>
+    <p>Your changes are applied to the downloaded file.</p>
+  </div>
+  <label class="fld">File name<input id="expname" class="txt" autocomplete="off"></label>
+  <div class="fld">Pages
+    <label class="choice"><input type="radio" name="exppages" value="all" checked> All pages</label>
+    <label class="choice"><input type="radio" name="exppages" value="some"> Only<input id="exprange" class="txt" placeholder="e.g. 1-3, 5"></label>
+  </div>
+  <label class="chk"><input type="checkbox" id="expcompress"> Reduce the file size <small>(lighter photos, clean-up)</small></label>
+  <label class="chk"><input type="checkbox" id="expa4"> Make every page A4</label>
+  <label class="chk"><input type="checkbox" id="exppw"> Protect with a password</label>
+  <div class="fld" id="exppwbox" hidden><input id="exppass" class="txt" type="password" placeholder="Password to open" autocomplete="new-password"></div>
+  <p id="expsigned" class="warnline" hidden>This PDF is digitally signed: the edited file will no longer carry a valid signature.</p>
+  <div id="expmsg" class="dlg-msg"></div>
+  <div class="dlg-foot">
+    <button id="expcancel" class="btn grow">Cancel</button>
+    <button id="expprev" class="btn"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14" rx="1.5"/><rect x="13" y="5" width="8" height="14" rx="1.5"/></svg>Before / after</button>
+    <button id="expshare" class="btn" hidden><svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>Share</button>
+    <button id="expgo" class="btn primary"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</button>
+  </div>
+</dialog>
+
+<div id="palette" hidden>
+  <div class="pal" role="dialog" aria-label="Command palette">
+    <input id="palq" placeholder="What do you want to do? (tool, action, page…)" autocomplete="off" spellcheck="false">
+    <div id="pallist" role="listbox"></div>
+  </div>
+</div>
+
+<dialog id="prevdlg" class="wide">
+  <div class="dlg-head">
+    <h3>Before / after</h3>
+    <p>Each changed page, as it is now and as it will be downloaded.</p>
+  </div>
+  <div id="prevpages" class="prevpages"></div>
+  <div class="dlg-foot">
+    <button id="prevback" class="btn grow">Back</button>
+    <button id="prevgo" class="btn primary"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</button>
+  </div>
+</dialog>
+
+<dialog id="decodlg">
+  <div class="dlg-head">
+    <h3>Layout</h3>
+    <p>Added to every page of the downloaded PDF.</p>
+  </div>
+  <div class="fld">Watermark
+    <input id="dwm" class="txt" placeholder="e.g. COPY" autocomplete="off">
+    <div class="chips" id="dwmchips">
+      <button data-wm="COPY">COPY</button><button data-wm="CONFIDENTIAL">CONFIDENTIAL</button>
+      <button data-wm="For rental application only">For rental application only</button>
+      <button data-wm="Non-binding document">Non-binding document</button><button data-wm="">None</button>
+    </div>
+    <div class="row" id="dwmcolors">Colour
+      <button class="sw on" style="--c:#c62828" data-c="#c62828" title="Red"></button>
+      <button class="sw" style="--c:#555555" data-c="#555555" title="Grey"></button>
+      <button class="sw" style="--c:#1d3fbf" data-c="#1d3fbf" title="Blue"></button>
+      Intensity <input type="range" id="dwmop" min="5" max="45" value="15">
+    </div>
+  </div>
+  <div class="fld">Page numbers
+    <div class="row">
+      <select id="dnum"><option value="">None</option><option value="{n}">1</option><option value="Page {n}">Page 1</option><option value="Page {n} / {N}">Page 1 / 3</option><option value="{n} / {N}">1 / 3</option></select>
+      <select id="dnumpos"><option value="bc">Bottom centre</option><option value="br">Bottom right</option><option value="tr">Top right</option></select>
+    </div>
+  </div>
+  <label class="fld">Header<input id="dhead" class="txt" placeholder="e.g. Rental application · {date}" autocomplete="off"></label>
+  <label class="fld">Footer<input id="dfoot" class="txt" placeholder="e.g. John Smith · 07700 900123" autocomplete="off"></label>
+  <p class="hintline">{date} becomes today's date.</p>
+  <div class="dlg-foot">
+    <button id="decocancel" class="btn">Cancel</button><button id="decook" class="btn primary">Apply</button>
+  </div>
+</dialog>
+
+<dialog id="scandlg" class="wide">
+  <div class="dlg-head">
+    <h3>Scan</h3>
+    <p>Put the 4 corners on the edges of the sheet: it will be straightened.</p>
+  </div>
+  <div class="scanstage" id="scanstage">
+    <canvas id="scanimg"></canvas><svg id="scansvg"></svg>
+    <div class="hdl"></div><div class="hdl"></div><div class="hdl"></div><div class="hdl"></div>
+  </div>
+  <div class="scanbar">Look
+    <div class="seg" id="scanmode"><button data-m="color">Colour</button><button data-m="gray">Grey</button><button data-m="bw" class="on">Black and white</button></div>
+  </div>
+  <div id="scanmsg" class="dlg-msg"></div>
+  <div class="dlg-foot">
+    <button id="scancancel" class="btn grow">Cancel</button>
+    <label class="btn" for="scanfile">Retake the photo</label>
+    <button id="scanok" class="btn primary"><span class="spin"></span>Add the page</button>
+  </div>
+</dialog>
+
+<dialog id="stampdlg">
+  <div class="dlg-head"><h3>New stamp</h3><p>Framed text, placed in one click. {date} becomes today's date.</p></div>
+  <label class="fld">Text<input id="stamptext" class="txt" placeholder="e.g. PAID" autocomplete="off"></label>
+  <div class="fld"><div class="chips" id="stampchips">
+    <button data-s="PAID">PAID</button><button data-s="RECEIVED ON {date}">RECEIVED ON {date}</button><button data-s="CERTIFIED TRUE COPY">CERTIFIED TRUE COPY</button>
+    <button data-s="URGENT">URGENT</button><button data-s="CANCELLED">CANCELLED</button><button data-s="SEEN AND CHECKED">SEEN AND CHECKED</button>
+  </div></div>
+  <div class="fld">Style
+    <div class="row">
+      <span id="stampcolors" style="display:flex;gap:7px">
+        <button class="sw on" style="--c:#c62828" data-c="#c62828" title="Red"></button><button class="sw" style="--c:#1d3fbf" data-c="#1d3fbf" title="Blue"></button>
+        <button class="sw" style="--c:#2e7d32" data-c="#2e7d32" title="Green"></button><button class="sw" style="--c:#222222" data-c="#222222" title="Black"></button>
+      </span>
+      <div class="seg" id="stampframe"><button data-f="rect" class="on">Framed</button><button data-f="round">Rounded</button><button data-f="double">Double</button></div>
+    </div>
+  </div>
+  <div class="stamppreview"><span id="stampprev">PAID</span></div>
+  <div class="dlg-foot">
+    <label class="btn grow" title="Photo or image of a company stamp: the white background is removed">From an image<input type="file" id="stampimg" accept="image/*" hidden></label>
+    <button id="stampcancel" class="btn">Cancel</button><button id="stampok" class="btn primary">Create</button>
+  </div>
+</dialog>
+
+<dialog id="splitdlg">
+  <div class="dlg-head"><h3>Split the PDF</h3><p>Several files, bundled in a ZIP archive.</p></div>
+  <div class="fld">
+    <label class="choice"><input type="radio" name="splitmode" value="each" checked> One page per file</label>
+    <label class="choice"><input type="radio" name="splitmode" value="every"> Every<input id="splitn" class="txt small" type="number" min="1" value="2">pages</label>
+    <label class="choice"><input type="radio" name="splitmode" value="at"> New file at pages<input id="splitat" class="txt" placeholder="e.g. 3, 7"></label>
+  </div>
+  <div id="splitmsg" class="dlg-msg"></div>
+  <div class="dlg-foot"><button id="splitcancel" class="btn">Cancel</button><button id="splitgo" class="btn primary"><span class="spin"></span>Split</button></div>
+</dialog>
+
+<dialog id="batchdlg">
+  <div class="dlg-head"><h3>Batch processing</h3><p>The same settings applied to several PDFs, returned in a ZIP archive.</p></div>
+  <div class="fld"><label class="btn">Choose the PDFs<input type="file" id="batchfiles" accept="application/pdf,.pdf" multiple hidden></label> <span id="batchlist" class="muted"></span></div>
+  <label class="chk"><input type="checkbox" id="batchdeco"> Current watermark, numbers, header and footer <small>(Layout menu)</small></label>
+  <label class="chk"><input type="checkbox" id="batchcompress" checked> Reduce the size</label>
+  <label class="chk"><input type="checkbox" id="batcha4"> A4 format</label>
+  <label class="chk"><input type="checkbox" id="batchpw"> Protect with a password</label>
+  <div class="fld" id="batchpwbox" hidden><input id="batchpass" class="txt" type="password" placeholder="Password" autocomplete="new-password"></div>
+  <div id="batchmsg" class="dlg-msg"></div>
+  <div class="dlg-foot"><button id="batchcancel" class="btn">Close</button><button id="batchgo" class="btn primary"><span class="spin"></span>Start</button></div>
+</dialog>
+
+<dialog id="profdlg">
+  <div class="dlg-head"><h3>My profile</h3><p>Kept only in this browser. Used to fill in forms in one click.</p></div>
+  <div class="profgrid" id="profgrid"></div>
+  <div class="dlg-foot"><button id="profclose" class="btn grow">Close</button><button id="profsave" class="btn primary">Save</button></div>
+</dialog>
+
+<dialog id="filldlg" class="wide">
+  <div class="dlg-head"><h3>Fill in with my profile</h3><p id="fillinfo"></p></div>
+  <div id="filllist" class="checklist"></div>
+  <div class="dlg-foot"><button id="fillprof" class="btn grow">Edit my profile</button><button id="fillclose" class="btn">Cancel</button><button id="fillgo" class="btn primary">Fill in</button></div>
+</dialog>
+
+<dialog id="tpldlg">
+  <div class="dlg-head"><h3>My templates</h3><p>Documents ready to reuse, kept in this browser.</p></div>
+  <div id="tpllist" class="checklist"></div>
+  <div class="dlg-foot"><button id="tplclose" class="btn grow">Close</button><button id="tplsave" class="btn primary">Save the document as a template</button></div>
+</dialog>
+
+<dialog id="redactdlg">
+  <div class="dlg-head"><h3>Automatic redaction</h3><p>Information found in the document text will be masked, then truly erased on download.</p></div>
+  <div id="redactlist" class="checklist"></div>
+  <div id="redactmsg" class="dlg-msg"></div>
+  <div class="dlg-foot"><button id="redactclose" class="btn grow">Cancel</button><button id="redactgo" class="btn primary">Redact</button></div>
+</dialog>
+
+<dialog id="bmdlg">
+  <div class="dlg-head"><h3>Bookmarks</h3><p>The table of contents shown next to the PDF in readers.</p></div>
+  <div id="bmlist" class="checklist"></div>
+  <div class="dlg-foot"><button id="bmauto" class="btn grow">Suggest from headings</button><button id="bmadd" class="btn">Add</button><button id="bmclose" class="btn primary">Done</button></div>
+</dialog>
+
+<dialog id="textdlg" class="wide">
+  <div class="dlg-head"><h3>Document's text</h3><p id="textinfo"></p></div>
+  <div class="fld"><textarea id="textout" class="area" readonly></textarea></div>
+  <div class="dlg-foot">
+    <button id="textocr" class="btn grow" hidden><span class="spin"></span>Recognise the scanned pages</button>
+    <button id="textclose" class="btn">Close</button><button id="textcopy" class="btn">Copy</button><button id="textdl" class="btn primary">Download (.txt)</button>
+  </div>
+</dialog>
+
+<dialog id="cmpdlg" class="wide">
+  <div class="dlg-head"><h3>Compare two PDFs</h3><p>The open document (with your changes) compared to another PDF, page by page.</p></div>
+  <div class="fld"><label class="btn primary">Choose the PDF to compare<input type="file" id="cmpfile" accept="application/pdf,.pdf" hidden></label> <span id="cmpname" class="muted"></span></div>
+  <div id="cmpout"></div>
+  <div class="dlg-foot"><button id="cmpclose" class="btn">Close</button></div>
+</dialog>
+
+<dialog id="reportdlg">
+  <div class="dlg-head"><h3>Report a problem</h3><p>Describe what doesn't work or what's missing. No document is sent, only this message.</p></div>
+  <label class="fld">Message<textarea id="repmsg" class="area short" placeholder="What happened? What did you expect?"></textarea></label>
+  <label class="fld">Your email <small>(optional, so we can reply)</small><input id="repmail" class="txt" type="email" autocomplete="email"></label>
+  <label class="chk"><input type="checkbox" id="repinfo" checked> Include technical info (browser, screen, language)</label>
+  <div id="repmsgbox" class="dlg-msg"></div>
+  <div class="dlg-foot"><button id="repcancel" class="btn">Cancel</button><button id="repgo" class="btn primary"><span class="spin"></span>Send</button></div>
+</dialog>
+
+<dialog id="askdlg">
+  <div class="dlg-head"><h3 id="asktitle"></h3><p id="asktext"></p></div>
+  <div id="askbody"></div>
+  <div id="askfoot" class="dlg-foot"></div>
+</dialog>
+
+<div id="menu" class="menu" hidden></div>
+<div id="tour" hidden>
+  <div class="tour-hole"></div>
+  <div class="tour-tip"><p id="tourtext"></p><div class="tour-foot"><span id="tourstep"></span><button id="tourskip" class="btn ghost">Skip</button><button id="tournext" class="btn primary">Next</button></div></div>
+</div>
+<div id="toasts" aria-live="polite"></div>
+
+<!-- scripts différés, exécutés dans l'ordre une fois la page affichée ; les bibliothèques PDF sont chargées ensuite par core.js -->
+<script defer src="../js/core.js"></script>
+<script defer src="../js/fonts.js"></script>
+<script defer src="../js/ui.js"></script>
+<script defer src="../js/document.js"></script>
+<script defer src="../js/items.js"></script>
+<script defer src="../js/text.js"></script>
+<script defer src="../js/media.js"></script>
+<script defer src="../js/app.js"></script>
+<script defer src="../js/menu.js"></script>
+<script defer src="../js/pagetools.js"></script>
+<script defer src="../js/stamps.js"></script>
+<script defer src="../js/tools.js"></script>
+<script defer src="../js/assist.js"></script>
+<script defer src="../js/convert.js"></script>
+<script defer src="../js/tabs.js"></script>
+<script defer src="../js/report.js"></script>
+<script defer src="../js/prefs.js"></script>
+<script defer src="../js/i18n.js"></script>
+<script defer src="../js/init.js"></script>
+</body>
+</html>

@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier un PDF</title>
+<title>Rature · Éditeur PDF gratuit : remplir, signer, modifier</title>
 <meta name="description" content="Remplir, signer, modifier le texte, caviarder, fusionner et convertir vos PDF gratuitement, sans inscription. Tout se passe dans votre navigateur : vos fichiers ne sont envoyés nulle part.">
 <meta name="keywords" content="éditeur PDF gratuit, modifier PDF, remplir PDF, signer PDF, modifier texte PDF, caviarder PDF, fusionner PDF, PDF en Word, OCR">
 <link rel="canonical" href="https://rature.app/">
+<link rel="alternate" hreflang="fr" href="https://rature.app/">
+<link rel="alternate" hreflang="en" href="https://rature.app/en/">
+<link rel="alternate" hreflang="x-default" href="https://rature.app/">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Rature">
@@ -27,17 +30,24 @@
 {"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · Éditeur PDF","url":"https://rature.app/","image":"https://rature.app/og-image.jpg",
  "description":"Éditeur PDF gratuit dans le navigateur : remplir des formulaires, signer, modifier le texte existant, caviarder, fusionner, convertir en Word, reconnaissance de texte (OCR).",
  "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"Navigateur récent (Chrome, Edge, Firefox, Safari)",
- "inLanguage":["fr","en"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
+ "inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
  "featureList":["Remplir un formulaire PDF","Signer un PDF","Modifier le texte d'un PDF","Caviarder","Fusionner et réorganiser les pages","Convertir un PDF en Word","Reconnaissance de texte (OCR)","Aucun fichier envoyé sur Internet"]}
 </script>
 <meta name="theme-color" content="#fbf8f0">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<script>/* avant le premier affichage : thème choisi, et page masquée le temps de la traduire si elle s'affichera en anglais (évite un saut) */
+<script>/* avant le premier affichage : thème choisi, et page dans la bonne langue.
+   Langue voulue : celle choisie avec le bouton FR/EN, sinon celle du navigateur. Les robots des moteurs de recherche ne sont jamais
+   redirigés : chacun des deux adresses (/ en français, /en/ en anglais) doit pouvoir être lue et indexée telle quelle. */
 try { var P = JSON.parse(localStorage.prefs || '{}'); } catch (e) { P = {}; }
 if (P.theme === 'light' || P.theme === 'dark') document.documentElement.dataset.theme = P.theme;
-if ((P.lang || ((navigator.language || '').toLowerCase().slice(0, 2) === 'fr' ? 'fr' : 'en')) !== 'fr') document.documentElement.classList.add('en-wait');</script>
+var PAGE = document.documentElement.lang, NAV = /^fr/i.test(navigator.language || '') ? 'fr' : 'en';
+var BOT = /bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent);
+var WANT = P.lang || (BOT ? PAGE : NAV);
+if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentElement.dataset.root || './') + location.search);</script>
 <link rel="preload" href="fonts/ui/YoungSerif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/ui/SchibstedGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts/ui/fonts.css">
@@ -75,6 +85,7 @@ if ((P.lang || ((navigator.language || '').toLowerCase().slice(0, 2) === 'fr' ? 
       <svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 7h8M9 17h6"/><path d="m8.5 14 7-5" opacity=".6"/></svg></button>
     <button id="toolsbtn" class="btn icon ghost" title="Plus d'outils">
       <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></svg></button>
+    <button id="langbtn" class="btn icon ghost" title="English version" aria-label="English version" lang="en"><b>EN</b></button>
     <button id="themebtn" class="btn icon ghost" title="Thème"><svg class="i" viewBox="0 0 24 24"></svg></button>
     <button id="settingsbtn" class="btn icon ghost" title="Réglages">
       <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -129,7 +140,6 @@ if ((P.lang || ((navigator.language || '').toLowerCase().slice(0, 2) === 'fr' ? 
             </label>
             <span>avec l'appareil photo du téléphone</span>
           </div>
-          <p class="guides">Guides : <a href="/signer-un-pdf/">signer</a> · <a href="/remplir-un-pdf/">remplir</a> · <a href="/modifier-texte-pdf/">corriger le texte</a> · <a href="/caviarder-un-pdf/">caviarder</a> · <a href="/dossier-de-location-pdf/">dossier de location</a></p>
         </div>
         <div class="dropwrap">
           <label class="drop" for="file" tabindex="0">
@@ -142,6 +152,7 @@ if ((P.lang || ((navigator.language || '').toLowerCase().slice(0, 2) === 'fr' ? 
           </label>
           <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>c'est ici !</span></div>
         </div>
+        <p class="guides">Guides : <a href="/signer-un-pdf/">signer</a> · <a href="/remplir-un-pdf/">remplir</a> · <a href="/modifier-texte-pdf/">corriger le texte</a> · <a href="/caviarder-un-pdf/">caviarder</a> · <a href="/dossier-de-location-pdf/">dossier de location</a></p>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <div><b>Reprendre ton travail</b><small id="resumeinfo"></small></div>

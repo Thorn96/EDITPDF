@@ -1,0 +1,100 @@
+// Rature · contenu des guides en anglais (même ordre que les guides français : chaque guide est lié à sa traduction)
+const OPEN = { t: 'Open your PDF', d: 'Drop it on the Rature page or click “Choose a file”. It opens in your browser: nothing is uploaded.' };
+const FREE = { q: 'Is it really free?', a: 'Yes: no sign-up, no document limit, and no watermark added.' };
+const LOCAL = { q: 'Is my document sent over the Internet?', a: 'No. Everything happens in your browser: the file never leaves your device, and Rature even works offline once opened.' };
+const SIGNED = { q: 'What if the PDF is already digitally signed?', a: 'Rature warns you: changing the file invalidates the existing digital signature.' };
+
+module.exports = [
+  { slug: 'sign-pdf', art: 'sign', q: '?outil=sign', short: 'Sign a PDF',
+    title: 'Sign a PDF for free, without printing it · Rature',
+    desc: 'Sign a PDF with your mouse, finger or stylus, for free and without signing up. The file never leaves your device. Your signature is kept for next time.',
+    eyebrow: 'No more print, sign, scan', h1: 'Sign a PDF without printing it',
+    lead: 'Draw your signature once, place it on the document, download. On a computer or a phone, no account needed.', cta: 'Sign my PDF',
+    steps: [OPEN,
+      { t: 'Create your signature', d: 'Click “Sign” in the toolbar, then sign with your mouse, finger or stylus. You can also take a photo of your signature on white paper: the background is removed.' },
+      { t: 'Place it and download', d: 'Drag the signature where it belongs, adjust its size, then click “Download”.' }],
+    body: [
+      ['Your signature is kept for next time', 'It is saved in your browser, on your device only. Next time, one click is enough. For initials at the bottom of every page, place them once and choose “All pages”.'],
+      ['Add “Read and approved”, the date, or a tick', 'The “Tick” tool offers common marks: tick, cross, today’s date, “Read and approved”, “Approved”. To write anything else, the “Write” tool puts text wherever you want.'],
+      ['Is a signature placed on a PDF valid?', 'For most everyday documents (forms, rental applications, permission slips, purchase orders), a handwritten signature added to a PDF is usually accepted. For an important contract signed remotely, such as an employment contract or a lease, an advanced electronic signature with identity checks and a certificate gives much stronger proof: it goes through a specialised service. If in doubt, ask the recipient what they accept.']],
+    faq: [FREE, LOCAL, { q: 'Does it work on a phone?', a: 'Yes. Sign with your finger right on the screen, then download or share the signed PDF.' }, SIGNED] },
+
+  { slug: 'fill-pdf', art: 'fill', q: '?outil=text', short: 'Fill in a PDF',
+    title: 'Fill in a PDF form online, for free · Rature',
+    desc: 'Fill in any PDF form, even one that isn’t fillable: type anywhere, tick boxes, add the date and sign. Free, no sign-up, the file is never uploaded.',
+    eyebrow: 'Even when the PDF isn’t “fillable”', h1: 'Fill in a PDF, box by box',
+    lead: 'Type right on the document, tick the boxes, add the date and your signature, then download a clean PDF.', cta: 'Fill in my PDF',
+    steps: [OPEN,
+      { t: 'Type anywhere', d: 'With the “Write” tool, click where you want and type. If the PDF has real form fields, they are ready to fill: just click into them.' },
+      { t: 'Tick, date, sign', d: 'The “Tick” tool adds ✓, ✗ or today’s date. Finish with your signature, then click “Download”.' }],
+    body: [
+      ['Fill in with your profile, in one click', 'Name, address, date of birth: save them once in “My profile”. Rature then offers them in the form fields, or right after printed labels like “Name: ………”. Your profile stays in your browser.'],
+      ['A form you fill in often?', 'Save it as a template: it will be ready to complete next time.'],
+      ['A photo or scan of the sheet?', 'Open photos directly: they become PDF pages. With “Scan”, Rature straightens the sheet and turns it black and white, like a scanner.']],
+    faq: [{ q: 'The PDF has no fields, can I still type on it?', a: 'Yes: the “Write” tool puts text anywhere on the page, in the size and font you choose.' },
+      { q: 'Does the downloaded PDF stay fillable?', a: 'The original form fields remain fields. You can also create some with the “Field” tool so someone else can fill in the PDF.' },
+      { q: 'Is my data sent anywhere?', a: 'No. The document and your profile stay on your device.' }, FREE] },
+
+  { slug: 'edit-pdf-text', art: 'edit', q: '?outil=edit', short: 'Edit PDF text',
+    title: 'Edit the text of a PDF for free · Rature',
+    desc: 'Fix a typo, change a date or an amount right in the text of a PDF, in its original font. Free, no sign-up, the file is never uploaded.',
+    eyebrow: 'Not a white box on top: the real text', h1: 'Edit the text of a PDF',
+    lead: 'Click a line, fix it, done. The old text is really replaced, in the document’s own font.', cta: 'Edit my PDF',
+    steps: [OPEN,
+      { t: 'Choose “Edit text”', d: 'In the toolbar, click “Edit text”: the lines of text in the document become clickable.' },
+      { t: 'Rewrite and download', d: 'Click into the paragraph, change the text as in a word processor, then download.' }],
+    body: [
+      ['Why it’s different', 'Many free tools put a white box over the old text and write on top: the old text stays in the file and shows up again when selected. Rature really removes it and writes the new text with the font embedded in the PDF, in the same place and with the same spacing. What you don’t touch stays identical.'],
+      ['Find and replace across the document', 'A name or a date to change everywhere? “Find and replace” (Ctrl+F) does it on every page, with the same real removal.'],
+      ['What about a scanned PDF?', 'On a scanned page, the text is an image. Rature recognises the text (in English and French), finds the closest font and size, and lets you fix the line.']],
+    faq: [{ q: 'Does the edited text keep the same font?', a: 'Yes when the PDF contains the font, which is the most common case. Otherwise Rature picks the closest free font.' },
+      { q: 'What about a password-protected PDF?', a: 'It opens if you know its password.' }, SIGNED, FREE] },
+
+  { slug: 'rental-application-pdf', art: 'rent', q: '?outil=text', short: 'Rental application',
+    title: 'Rental application in PDF: fill in, sign, protect · Rature',
+    desc: 'Fill in and sign your rental application documents, add a watermark against fraud and combine everything into one light PDF. Free, and nothing is uploaded.',
+    eyebrow: 'For the landlord or the agency', h1: 'Prepare your rental application as a PDF',
+    lead: 'Fill in and sign each document, add a watermark against fraud, combine it all into one light file.', cta: 'Prepare my application',
+    steps: [{ t: 'Open the documents', d: 'Drop all your PDFs and photos at once: ID, payslips, guarantor form. Photos become pages.' },
+      { t: 'Fill in and sign', d: 'Complete the forms with “Write”, add “Read and approved” and your signature.' },
+      { t: 'Protect and download', d: 'Add a watermark, reduce the size if the agency limits file weight, then download one single PDF.' }],
+    body: [
+      ['A watermark, simple protection', 'A watermark such as “For rental application only” on every page makes your documents much less reusable by a fraudster. In Rature: “More tools”, then “Watermark, page numbers, header”.'],
+      ['The guarantor form', 'Your guarantor or co-signer can fill in and sign their form right on the PDF, with a finger or a stylus on a phone or tablet if needed.'],
+      ['Hide what the agency doesn’t need', 'On a bank statement or a payslip, you can hide some details with “Redact”: they are erased from the file for good, not just covered. Don’t hide what the agency needs to check.']],
+    faq: [{ q: 'How do I reduce the size of the file?', a: 'When downloading, tick “Reduce the file size”: photos are made lighter. You can also put every page in A4 format.' },
+      { q: 'Can I combine several PDFs into one?', a: 'Yes: open them together, or add them with “PDF or images” in the pages panel, then reorder the pages by dragging them.' },
+      { q: 'Are my documents uploaded?', a: 'No, everything stays on your device. That matters for documents this sensitive.' }, FREE] },
+
+  { slug: 'redact-pdf', art: 'redact', q: '?outil=redact', short: 'Redact a PDF',
+    title: 'Redact a PDF: remove sensitive information for good · Rature',
+    desc: 'Permanently remove a name, a number or a bank account from a PDF: what’s under the box is really erased from the file. Automatic redaction of sensitive data. Free.',
+    eyebrow: 'A black box isn’t always enough', h1: 'Redact a PDF for good',
+    lead: 'Hide a name, an address, a number: what’s under the box is erased from the file, impossible to copy and paste back.', cta: 'Redact my PDF',
+    steps: [OPEN,
+      { t: 'Draw the boxes', d: 'Choose “Redact” and drag over what must disappear. You can move or remove a box until you download.' },
+      { t: 'Download', d: 'When you download, the text and images under each box are removed from the file.' }],
+    body: [
+      ['Why a plain black box is risky', 'A box drawn on top in a drawing or word-processing app hides the text on screen, but the text often stays in the file: it can be selected, copied or found with a search. Rature really removes what’s under the box.'],
+      ['Automatic redaction', '“More tools”, then “Automatic redaction” finds emails, phone numbers, IBANs, social security and card numbers in the text. You tick what must go, Rature places the boxes.'],
+      ['For which documents?', 'Bank statements, tax notices, payslips, attachments to an application, documents shared online: anything you want to send without revealing everything.']],
+    faq: [{ q: 'Can redacted text be recovered?', a: 'No: it is removed from the downloaded file, not just covered. Keep the original if you still need it.' },
+      { q: 'Does it work on a scanned PDF?', a: 'Yes: the part of the image covered by the box is erased too.' }, LOCAL, FREE] },
+
+  { slug: 'pdf-editor-no-upload', art: 'local', q: '', short: 'No file upload',
+    title: 'A PDF editor that doesn’t upload your files · Rature',
+    desc: 'An alternative to iLovePDF and Smallpdf where everything happens in your browser: fill in, sign, edit, redact and merge a PDF without ever sending it to a server.',
+    eyebrow: 'Your documents never leave your device', h1: 'A PDF editor that uploads nothing',
+    lead: 'Fill in, sign, edit, redact, merge: it all happens in your browser. No file is uploaded, not even temporarily.', cta: 'Open Rature',
+    steps: [{ t: 'Open your PDF', d: 'The file is read by your browser, on your device.' },
+      { t: 'Edit it', d: 'Every tool works locally: no server ever sees your document.' },
+      { t: 'Download', d: 'The edited PDF is built by your browser and saved straight to your device.' }],
+    body: [
+      ['Why it matters', 'Many online PDF services process files on their servers, even if they delete them afterwards. For an ID card, a tax notice or a contract, you’d probably rather they went nowhere. With Rature, they go nowhere.'],
+      ['How to check', 'Open Rature, then turn off your Internet connection: everything keeps working. And the <a href="https://github.com/Thorn96/EDITPDF">code is public</a>: anyone can check what it does.'],
+      ['Everything you need, for free', 'Fill in forms, sign, edit the original text, redact, merge and reorder pages, reduce the size, protect with a password, convert to Word, recognise the text of a scan.']],
+    faq: [{ q: 'How can Rature be free?', a: 'The site costs almost nothing to run, since your device does the work. If Rature helps you, you can <a href="https://buymeacoffee.com/leonardguik">buy the developer a coffee</a>.' },
+      { q: 'Do I need to install anything?', a: 'No. You can still install it as an app (the “Install” button) to open it offline.' },
+      { q: 'Is there any visitor tracking?', a: 'Only an anonymous visit count, without cookies. The content of your PDFs is never involved.' },
+      { q: 'What about large files?', a: 'Rature only draws the pages on screen: large documents stay smooth. The only limit is your device’s memory.' }] },
+];

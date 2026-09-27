@@ -16,8 +16,7 @@ function prefsChanged() {
   }, 300);
 }
 function applyPrefs() {
-  lang = prefs.lang || (navigator.language?.toLowerCase().startsWith('fr') ? 'fr' : 'en');
-  document.documentElement.lang = lang;
+  lang = document.documentElement.lang === 'en' ? 'en' : 'fr'; // la langue est celle de la page : / en français, /en/ en anglais (chacune indexée à son adresse)
   penColor = prefs.pen; hlColor = prefs.hl;
   $('size').value = prefs.size;
   $('width').value = prefs.width;
@@ -74,19 +73,15 @@ function addFavColor(c) {
 }
 
 // ---------- Langue ----------
-function setLang(l) {
-  prefs.lang = lang = l;
+// Chaque langue a sa propre adresse : changer de langue ouvre l'autre page, et le travail en cours y est repris
+async function setLang(l) {
+  prefs.lang = l;
   savePrefs();
-  document.documentElement.lang = l;
-  translateDOM();
-  setTool(tool === 'crop' ? 'move' : tool);
-  setTheme(prefs.theme);
-  renderSigs();
-  renderStamps();
-  renderFavs();
-  mount();
-  pages.forEach(p => { const b = p.wrap.querySelector('.ocr'); b.lastChild.textContent = tr('Page scannée · Reconnaître le texte'); });
+  if (l === lang) return;
+  if (pages.length) await autosave();
+  location.href = here(l === 'en' ? 'en/' : '') + (pages.length ? '?reprendre' : '');
 }
+$('langbtn').onclick = () => setLang(lang === 'en' ? 'fr' : 'en');
 
 // ---------- Visite guidée ----------
 const TOUR = [
