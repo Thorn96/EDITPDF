@@ -150,11 +150,11 @@ const EN_PAGES = require('./en.js');
 const L = {
   fr: { lang: 'fr', root: '/', locale: 'fr_FR', steps: 'En 3 étapes', faq: 'Questions fréquentes', ready: 'Prêt ? Ça prend une minute.', more: 'Autres guides',
         open: 'Ouvrir l’éditeur', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
-        footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers',
+        footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers', coffee: 'Offrir un café ☕', coffeeTitle: 'Soutenir Rature',
         art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici' } },
   en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
         open: 'Open the editor', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
-        footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it',
+        footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it', coffee: 'Buy me a coffee ☕', coffeeTitle: 'Support Rature',
         art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here' } },
 };
 PAGES.forEach((p, i) => { p.L = L.fr; p.twin = EN_PAGES[i]; EN_PAGES[i].L = L.en; EN_PAGES[i].twin = p; });
@@ -226,6 +226,7 @@ ${alternates(p)}
 </main>
 <footer>${t.footer} · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a> · <a href="https://github.com/Thorn96/EDITPDF">${t.source}</a></footer>
 </div>
+<a class="coffee" href="https://buymeacoffee.com/leonardguik" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>
 </body>
 </html>
 `; };

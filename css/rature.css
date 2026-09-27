@@ -255,7 +255,7 @@ input.field[type=checkbox], input.field[type=radio] { border: 0; background: non
 
 /* ---------- Aide, zoom, recherche ---------- */
 #hint { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); padding: 8px 16px; border-radius: 999px;
-        font-size: 13px; color: var(--ink-2); white-space: nowrap; max-width: calc(100% - 300px); overflow: hidden; text-overflow: ellipsis;
+        font-size: 13px; color: var(--ink-2); white-space: nowrap; max-width: calc(100% - 390px); overflow: hidden; text-overflow: ellipsis;
         background: var(--panel); }
 #hint em { display: inline-grid; place-items: center; width: 20px; height: 20px; margin: 0 7px 0 0; border-radius: 50%; vertical-align: 1px;
            background: var(--accent); color: #fff; font: 700 11.5px/1 var(--ui); font-style: normal; }
@@ -609,3 +609,8 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .guides a { color: var(--ink-2); }
 #langbtn b { font-size: 12.5px; letter-spacing: .04em; }
 @media (max-width: 640px) { #redo { display: none; } } /* place pour le bouton FR/EN ; rétablir reste possible depuis l'historique */
+/* soutien : toujours visible en bas à gauche du bureau (accueil compris) */
+#coffee { position: absolute; left: 14px; bottom: 16px; z-index: 4; padding: 6px 13px; border: 1.5px solid var(--hard); border-radius: 999px;
+          background: var(--panel); color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap;
+          box-shadow: 2px 2px 0 var(--hard); transition: background .15s, transform .15s; }
+#coffee:hover { background: #ffdd00; color: #15151f; transform: translate(-1px, -1px); }

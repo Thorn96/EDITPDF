@@ -60,3 +60,8 @@ footer { padding: 30px 0 40px; color: var(--muted); font-size: 14px; }
   .steps { grid-template-columns: minmax(0, 1fr); }
   .top .btn { display: none; }
 }
+/* soutien : toujours visible en bas à gauche */
+.coffee { position: fixed; left: 14px; bottom: 16px; z-index: 5; padding: 6px 13px; border: 1.5px solid var(--hard); border-radius: 999px;
+          background: var(--panel); color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; box-shadow: 2px 2px 0 var(--hard); }
+.coffee:hover { background: #ffdd00; color: #15151f; }
+footer { padding-bottom: 72px; } /* le bouton ne recouvre pas le bas de page */
