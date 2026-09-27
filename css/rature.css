@@ -168,7 +168,7 @@ body[data-tool=move] svg.shape > * { cursor: move; }
 .box .grip { position: absolute; top: 50%; right: calc(-4px / var(--z)); width: calc(7px / var(--z)); height: calc(20px / var(--z));
              transform: translateY(-50%); border-radius: 99px; background: var(--sel); opacity: 0; cursor: ew-resize; transition: opacity .15s; }
 .box:hover .grip, .box.sel .grip { opacity: 1; }
-.img { position: absolute; resize: horizontal; overflow: hidden; min-width: 12px; cursor: move; border-radius: 2px;
+.img { position: absolute; min-width: 12px; cursor: move; border-radius: 2px;
        outline: calc(1px / var(--z)) dashed color-mix(in srgb, var(--sel) 55%, transparent); }
 .img:hover, .img.sel { outline-style: solid; outline-color: var(--sel); box-shadow: 0 0 0 calc(3px / var(--z)) var(--sel-soft); }
 .img img { display: block; width: 100%; height: 100%; pointer-events: none; }
@@ -643,3 +643,13 @@ body.scanning #hint { display: block !important; max-width: calc(100% - 24px); }
   .phonebody { grid-template-columns: minmax(0, 1fr); }
   .phonesteps { grid-template-columns: minmax(0, 1fr); } .phonesteps li { flex-direction: row; text-align: left; } .phonesteps svg { max-width: 90px; }
 }
+/* loupe du recadrage : zone agrandie au-dessus du doigt */
+#scanloupe { position: absolute; z-index: 3; width: 132px; height: 132px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 8px 22px #000b; pointer-events: none; }
+/* images posées (signatures, tampons, photos) : poignée ronde dans le coin, proportions gardées */
+.img .rsz { position: absolute; right: calc(-8px / var(--z)); bottom: calc(-8px / var(--z)); width: calc(16px / var(--z)); height: calc(16px / var(--z));
+            border-radius: 50%; background: var(--sel); border: calc(2px / var(--z)) solid #fff; box-shadow: 0 1px 4px #0006; cursor: nwse-resize; opacity: 0; transition: opacity .15s; }
+.img:hover .rsz, .img.sel .rsz { opacity: 1; }
+.img.locked .rsz { display: none; }
+@media (pointer: coarse) { .img .rsz { width: calc(26px / var(--z)); height: calc(26px / var(--z)); right: calc(-13px / var(--z)); bottom: calc(-13px / var(--z)); } }
+/* au doigt : on déplace l'élément touché au lieu de faire défiler la page */
+.box, .img, .fieldbox, svg.shape > * { touch-action: none; }

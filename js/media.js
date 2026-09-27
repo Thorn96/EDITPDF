@@ -118,17 +118,28 @@ $('sigphoto').onchange = async e => {
 };
 
 // ---------- Numériser avec l'appareil photo ----------
-let scan = null; // { photo: canvas, pts: 4 coins [x, y] dans la photo, mode }
-// trois entrées photo : l'accueil et les panneaux, « Reprendre la photo » (dans la fenêtre), l'écran téléphone → ordinateur (dans sa fenêtre)
-for (const id of ['scanfile', 'scanretake', 'relaycam']) $(id).onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) startScan(f); };
-async function startScan(f) {
+let scan = null; // { photo: canvas, pts: 4 coins [x, y] dans la photo, mode, purpose : 'page' (feuille) ou 'stamp' (tampon d'entreprise) }
+// entrées photo : l'accueil et les panneaux, « Reprendre la photo » (même usage), l'écran téléphone → ordinateur, la création de tampon
+const scanInput = (id, purpose) => { $(id).onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) startScan(f, purpose || scan?.purpose); }; };
+scanInput('scanfile', 'page'); scanInput('relaycam', 'page'); scanInput('stampimg', 'stamp'); scanInput('scanretake');
+const SCAN_TEXT = { page: ['Numériser', 'Place les 4 coins sur les bords de la feuille : elle sera redressée.', 'Ajouter la page'],
+                    stamp: ['Recadrer le tampon', 'Place les 4 coins autour du tampon : le fond blanc sera retiré.', 'Créer le tampon'] };
+async function startScan(f, purpose = 'page') {
   const im = await normImage(f, 2400);
   if (!im) return toast('Image illisible.', 'error');
-  scan = { photo: im.canvas, pts: detectCorners(im.canvas), mode: scan?.mode || 'bw' };
+  const stamp = purpose === 'stamp';
+  // tampon : cadre de départ au centre (la détection cherche une feuille entière, pas un tampon)
+  scan = { photo: im.canvas, pts: stamp ? [[.2, .3], [.8, .3], [.8, .7], [.2, .7]].map(([a, b]) => [a * im.w, b * im.h]) : detectCorners(im.canvas),
+           mode: stamp ? 'color' : scan?.purpose === 'page' ? scan.mode : 'bw', purpose };
   const v = $('scanimg');
   v.width = im.w; v.height = im.h;
   v.getContext('2d').drawImage(im.canvas, 0, 0);
   $('scanmsg').textContent = '';
+  const [title, help, ok] = SCAN_TEXT[purpose];
+  $('scandlg').querySelector('.dlg-head h3').textContent = tr(title);
+  $('scandlg').querySelector('.dlg-head p').textContent = tr(help);
+  $('scanok').lastChild.textContent = tr(ok);
+  $('scandlg').querySelector('.scanbar').hidden = stamp; // un tampon garde ses couleurs
   if (!$('scandlg').open) $('scandlg').showModal();
   document.querySelectorAll('#scanmode button').forEach(b => b.classList.toggle('on', b.dataset.m === scan.mode));
   requestAnimationFrame(layoutScan);
@@ -182,16 +193,42 @@ function layoutScan() {
   $('scansvg').innerHTML = `<polygon points="${P.map(p => p.join(',')).join(' ')}" fill="#e2494f22" stroke="#e2494f" stroke-width="2"/>`;
 }
 addEventListener('resize', () => { if ($('scandlg').open) layoutScan(); });
+// Loupe : au doigt, le coin est caché sous le doigt ; on montre la zone agrandie au-dessus, avec une croix de visée et les bords de la feuille
+const LOUPE = 132, LOUPE_ZOOM = 3;
+function drawLoupe(i) {
+  const L = $('scanloupe'), r = $('scanimg').getBoundingClientRect(), st = $('scanstage').getBoundingClientRect(), s = r.width / scan.photo.width;
+  const [px, py] = scan.pts[i], hx = r.left - st.left + px * s, hy = r.top - st.top + py * s, dpr = devicePixelRatio || 1, W = Math.round(LOUPE * dpr);
+  if (L.width !== W) L.width = L.height = W;
+  const g = L.getContext('2d'), k = LOUPE_ZOOM * s * dpr, a = scan.pts[(i + 3) % 4], b = scan.pts[(i + 1) % 4];
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.fillStyle = '#111'; g.fillRect(0, 0, W, W);
+  g.setTransform(k, 0, 0, k, W / 2 - px * k, W / 2 - py * k); // la photo agrandie, centrée sur le coin
+  g.drawImage(scan.photo, 0, 0);
+  g.lineWidth = 2.5 / k * dpr; g.strokeStyle = '#e2494f';
+  g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(px, py); g.lineTo(b[0], b[1]); g.stroke(); // bords vers les deux coins voisins
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  for (const [w, col] of [[4 * dpr, '#fff'], [1.5 * dpr, '#e2494f']]) { // croix de visée
+    g.lineWidth = w; g.strokeStyle = col;
+    g.beginPath(); g.moveTo(W / 2 - 14 * dpr, W / 2); g.lineTo(W / 2 + 14 * dpr, W / 2); g.moveTo(W / 2, W / 2 - 14 * dpr); g.lineTo(W / 2, W / 2 + 14 * dpr); g.stroke();
+  }
+  // au-dessus du doigt ; sans la place (coin du haut), sur le côté, vers le centre : jamais en dessous, là où est la main
+  const above = hy - LOUPE - 40, side = hx < st.width / 2 ? hx + 44 : hx - 44 - LOUPE;
+  const [lx, ly] = above >= 0 ? [hx - LOUPE / 2, above] : [side, hy - LOUPE / 2];
+  Object.assign(L.style, { left: clamp(lx, 0, st.width - LOUPE) + 'px', top: clamp(ly, 0, st.height - LOUPE) + 'px' });
+  L.hidden = false;
+}
 document.querySelectorAll('.hdl').forEach((h, i) => {
   h.onpointerdown = e => {
     h.setPointerCapture(e.pointerId);
+    drawLoupe(i);
     h.onpointermove = ev => {
       const r = $('scanimg').getBoundingClientRect(), s = r.width / scan.photo.width;
       scan.pts[i] = [clamp((ev.clientX - r.left) / s, 0, scan.photo.width), clamp((ev.clientY - r.top) / s, 0, scan.photo.height)];
       layoutScan();
+      drawLoupe(i);
     };
   };
-  h.onpointerup = () => h.onpointermove = null;
+  h.onpointerup = h.onpointercancel = () => { h.onpointermove = null; $('scanloupe').hidden = true; };
 });
 $('scanmode').onclick = e => {
   const m = e.target.dataset.m;
@@ -237,14 +274,17 @@ $('scanok').onclick = async () => {
     const jpg = new Uint8Array(await (await new Promise(r => photo.toBlob(r, 'image/jpeg', .95))).arrayBuffer());
     const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
     const W0 = Math.max(dist(pts[0], pts[1]), dist(pts[3], pts[2])), H0 = Math.max(dist(pts[0], pts[3]), dist(pts[1], pts[2]));
+    const stamp = scan.purpose === 'stamp';
     let ratio = H0 / W0;
-    if (Math.abs(ratio - Math.SQRT2) < .12) ratio = Math.SQRT2; // presque une feuille A4 : on cale sur l'A4
-    const OW = 1654, OH = Math.min(5000, Math.round(OW * ratio)); // 1654 px = A4 à 200 ppp
+    if (!stamp && Math.abs(ratio - Math.SQRT2) < .12) ratio = Math.SQRT2; // presque une feuille A4 : on cale sur l'A4
+    // feuille : 1654 px de large (A4 à 200 ppp) ; tampon : sa taille réelle dans la photo, au plus 1200 px
+    const OW = stamp ? Math.round(clamp(W0, 60, 1200)) : 1654, OH = Math.min(5000, Math.round(OW * ratio));
     const out = new mupdf.Image(jpg).toPixmap().warp(pts, OW, OH), px = out.getPixels(), n = px.length / (OW * OH);
     const c = Object.assign(document.createElement('canvas'), { width: OW, height: OH }), g = c.getContext('2d'), id = g.createImageData(OW, OH), o = id.data;
     for (let i = 0, j = 0; i < OW * OH; i++, j += n) { o[i * 4] = px[j]; o[i * 4 + 1] = px[j + (n > 2 ? 1 : 0)]; o[i * 4 + 2] = px[j + (n > 2 ? 2 : 0)]; o[i * 4 + 3] = 255; }
-    filterScan(o, OW, OH, mode);
+    if (!stamp) filterScan(o, OW, OH, mode);
     g.putImageData(id, 0, 0);
+    if (stamp) { $('scandlg').close(); return saveImageStamp(c); } // tampon : couleurs gardées, fond blanc retiré
     const type = mode === 'bw' ? 'image/png' : 'image/jpeg', blob = await new Promise(r => c.toBlob(r, type, .85));
     const pdf = await PDFLib.PDFDocument.create(), bytes = new Uint8Array(await blob.arrayBuffer());
     const e = type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes), W = 595.28, H = W * OH / OW;

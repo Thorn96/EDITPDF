@@ -462,6 +462,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
   <div class="scanstage" id="scanstage">
     <canvas id="scanimg"></canvas><svg id="scansvg"></svg>
     <div class="hdl"></div><div class="hdl"></div><div class="hdl"></div><div class="hdl"></div>
+    <canvas id="scanloupe" hidden></canvas>
   </div>
   <div class="scanbar">Look
     <div class="seg" id="scanmode"><button data-m="color">Colour</button><button data-m="gray">Grey</button><button data-m="bw" class="on">Black and white</button></div>
@@ -492,7 +493,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
   </div>
   <div class="stamppreview"><span id="stampprev">PAID</span></div>
   <div class="dlg-foot">
-    <label class="btn grow" title="Photo or image of a company stamp: the white background is removed">From an image<input type="file" id="stampimg" accept="image/*" hidden></label>
+    <label class="btn grow" title="Photograph the stamp on white paper: you crop it, the background is removed"><svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>From a photo<input type="file" id="stampimg" accept="image/*" hidden></label>
     <button id="stampcancel" class="btn">Cancel</button><button id="stampok" class="btn primary">Create</button>
   </div>
 </dialog>

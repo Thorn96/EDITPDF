@@ -79,17 +79,13 @@ $('stampok').onclick = () => {
   track('tampon');
   toast('Tampon créé : clique dessus pour le poser');
 };
-// Tampon d'entreprise photographié : fond blanc retiré, comme pour une signature
-$('stampimg').onchange = async e => {
-  const f = e.target.files[0];
-  e.target.value = '';
-  if (!f) return;
-  const im = await normImage(f, 1200);
-  const c = im && trimCanvas(transparentize(im.canvas));
-  if (!c) return toast('Image illisible.', 'error');
+// Tampon d'entreprise photographié (recadré dans l'écran de numérisation, media.js) : fond blanc retiré, comme pour une signature
+function saveImageStamp(canvas) {
+  const c = trimCanvas(transparentize(canvas));
+  if (!c) return toast('Aucun tampon trouvé dans ce cadre.', 'error');
   stamps.push({ id: 's' + Date.now(), src: c.toDataURL('image/png'), ratio: c.width / c.height });
   saveStamps(); renderStamps();
   $('stampdlg').close();
-  track('tampon');
+  track('tampon', { depuis: 'photo' });
   toast('Tampon créé : clique dessus pour le poser');
-};
+}

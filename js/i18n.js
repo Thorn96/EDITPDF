@@ -21,6 +21,10 @@ Object.assign(EN, {
   'OCR': 'OCR', "Lire le texte d'un PDF scanné (OCR)": 'Read the text of a scanned PDF (OCR)', 'Lire le texte (OCR)': 'Read the text (OCR)',
   'Passer en clair': 'Switch to light', 'Passer en sombre': 'Switch to dark',
   'Document prêt à convertir.': 'Document ready to convert.', 'Exporter en Word': 'Export to Word',
+  'Taille · {x}': 'Size · {x}', 'Recadrer le tampon': 'Crop the stamp', 'Créer le tampon': 'Create the stamp',
+  'Place les 4 coins autour du tampon : le fond blanc sera retiré.': 'Place the 4 corners around the stamp: the white background will be removed.',
+  'Aucun tampon trouvé dans ce cadre.': 'No stamp found in this frame.',
+  'Photographie le tampon sur une feuille blanche : tu le recadres, le fond est retiré': 'Photograph the stamp on white paper: you crop it, the background is removed',
   // Numériser avec le téléphone
   'Numériser avec mon téléphone': 'Scan with my phone', 'Numériser avec mon téléphone…': 'Scan with my phone…', 'Numériser avec ton téléphone': 'Scan with your phone',
   "Pas de câble, pas d'application à installer.": 'No cable, no app to install.', "Scanne ce code avec l'appareil photo de ton téléphone": "Scan this code with your phone's camera",

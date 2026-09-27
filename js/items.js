@@ -31,7 +31,7 @@ function makeEl(it) {
   } else if (it.type === 'img') {
     it.el = document.createElement('div');
     it.el.className = 'img';
-    it.el.innerHTML = `<img src="${it.src}" alt="">`;
+    it.el.innerHTML = `<img src="${it.src}" alt=""><i class="rsz"></i>`; // poignée : redimensionner à la souris ou au doigt
     it.el.style.aspectRatio = it.ratio; // largeur seule redimensionnable, proportions conservées
     it.host = it.el;
   } else if (it.type === 'field') { // champ de formulaire à créer dans le PDF
@@ -431,15 +431,14 @@ function down(e, pg) {
     const b = it.wrapW;
     onMove = ev => { it.wrapW = Math.max(20, pos(ev)[0] - it.x); draw(it); };
     onUp = () => { const a = it.wrapW; if (a !== b) record(() => setWrap(it, b), () => setWrap(it, a)); };
-  } else if (cl.contains('img') && !t.item.rot && e.offsetX > t.clientWidth - 16 && e.offsetY > t.clientHeight - 16) { // poignée native de redimensionnement
-    it = t.item;
+  } else if (cl.contains('rsz')) { // poignée d'une image : largeur (proportions gardées), à la souris ou au doigt, même pivotée
+    it = t.parentElement.item;
+    if (it.lock) return;
     select(it);
-    const b = it.width;
-    addEventListener('pointerup', () => {
-      const a = t.offsetWidth;
-      if (Math.abs(a - b) > .5) { it.width = a; record(() => setWidth(it, b), () => setWidth(it, a)); }
-    }, { once: true });
-    return;
+    e.preventDefault();
+    const b = it.width, a = (it.rot || 0) * Math.PI / 180;
+    onMove = ev => { const [x, y] = pos(ev); setWidth(it, Math.max(12, b + (x - sx) * Math.cos(a) + (y - sy) * Math.sin(a))); };
+    onUp = () => { const w = it.width; if (Math.abs(w - b) > .5) record(() => setWidth(it, b), () => setWidth(it, w), tr('Taille · {x}', { x: tr(itemName(it)) })); };
   } else if (t.item && (tool === 'move' || cl.contains('box') || cl.contains('img') || cl.contains('mark') || cl.contains('fieldbox'))) { // déplacer
     it = t.item;
     if (e.shiftKey) { select(it, true); e.preventDefault(); return; } // Maj+clic : ajoute / retire de la sélection
