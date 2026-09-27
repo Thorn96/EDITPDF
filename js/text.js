@@ -125,23 +125,30 @@ $('decook').onclick = () => {
 };
 
 // ---------- Reconnaissance de texte (OCR) des pages scannées ----------
-async function ocrPage(pg, btn = document.createElement('button'), quiet) {
+// Moteur de reconnaissance (~8 Mo, téléchargé à la première utilisation puis gardé pour le hors-ligne) ; say(texte) affiche l'avancement
+async function ocrWorker(say) {
+  say(tr('Chargement de la reconnaissance…'));
+  await loadScript(here('lib/tesseract/tesseract.min.js'));
+  // les deux langues : celle du document n'est pas forcément celle de l'interface (accents perdus sinon)
+  const worker = await Tesseract.createWorker(lang === 'en' ? 'eng+fra' : 'fra+eng', 1, {
+    workerPath: here('lib/tesseract/worker.min.js'), corePath: here('lib/tesseract/'), langPath: here('lib/tesseract/lang'),
+    logger: m => { if (m.status === 'recognizing text') say(tr('Lecture du texte… {p} %', { p: Math.round(m.progress * 100) }), m.progress); },
+  });
+  return worker;
+}
+// worker : moteur partagé quand on lit tout le document (sinon il est créé et fermé pour cette page)
+async function ocrPage(pg, btn = document.createElement('button'), quiet, shared) {
   const label = btn.innerHTML;
   btn.disabled = true;
   try {
-    btn.textContent = tr('Chargement de la reconnaissance…');
-    await loadScript(here('lib/tesseract/tesseract.min.js'));
-    // les deux langues : celle du document n'est pas forcément celle de l'interface (accents perdus sinon)
-    const worker = await Tesseract.createWorker(lang === 'en' ? 'eng+fra' : 'fra+eng', 1, {
-      workerPath: here('lib/tesseract/worker.min.js'), corePath: here('lib/tesseract/'), langPath: here('lib/tesseract/lang'),
-      logger: m => { if (m.status === 'recognizing text') btn.textContent = tr('Lecture du texte… {p} %', { p: Math.round(m.progress * 100) }); },
-    });
+    const worker = shared || await ocrWorker(t => { btn.textContent = t; });
     // 400 ppp (moins sur un très grand format, pour rester sous la taille de dessin permise par les téléphones) : accents bien lus
     const k = Math.min(400 / 72, Math.sqrt(15e6 / (pg.vp.width * pg.vp.height))), vp = pg.pdfPage.getViewport({ scale: k, rotation: pg.vp.rotation }), c = document.createElement('canvas');
     c.width = vp.width; c.height = vp.height;
-    await pg.pdfPage.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+    // « print » : dessin sans attendre l'affichage (sinon bloqué si l'onglet passe en arrière-plan)
+    await pg.pdfPage.render({ canvasContext: c.getContext('2d'), viewport: vp, intent: 'print' }).promise;
     const { data } = await worker.recognize(c);
-    await worker.terminate();
+    if (!shared) await worker.terminate();
     pg.ocr = [];
     for (const l of data.lines) {
       const str = l.text.trim(), b = l.bbox;
@@ -163,6 +170,42 @@ async function ocrPage(pg, btn = document.createElement('button'), quiet) {
   } finally {
     btn.disabled = false;
     btn.innerHTML = label;
+  }
+}
+// Bouton « OCR » : lit d'un coup le texte de toutes les pages scannées, puis passe en « Corriger » pour le modifier
+let scanning = false;
+async function scanDocument() {
+  if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
+  if (scanning) return;
+  const list = pages.filter(p => p.wrap.classList.contains('scan') && !p.ocr);
+  if (!list.length) return toast(pages.some(p => p.ocr) ? 'Le texte de ce PDF est déjà reconnu : clique sur une ligne pour la corriger.' : 'Ce PDF contient déjà du vrai texte : choisis « Corriger » pour le modifier.');
+  scanning = true;
+  const btn = document.querySelector('#tools [data-a=ocr]'), label = btn.innerHTML, hint = $('hint').innerHTML;
+  let worker, lines = 0, step = '';
+  const say = t => { $('hint').textContent = step + t; }; // avancement dans la consigne du bas
+  document.body.classList.add('scanning');
+  btn.classList.add('busy');
+  try {
+    track('ocr', { pages: list.length });
+    worker = await ocrWorker(say);
+    for (const [k, pg] of list.entries()) {
+      step = list.length > 1 ? tr('Page {k} sur {n}', { k: k + 1, n: list.length }) + ' · ' : '';
+      pg.wrap.scrollIntoView({ block: 'nearest' });
+      await ocrPage(pg, undefined, true, worker);
+      lines += pg.ocr?.length || 0;
+    }
+    setTool('edit');
+    toast(lines ? plural(lines, '{n} ligne reconnue : clique dessus pour la corriger.', '{n} lignes reconnues : clique sur une ligne pour la corriger.') : 'Aucun texte reconnu dans ce PDF.', lines ? '' : 'error');
+  } catch (e) {
+    console.error(e);
+    toast('La reconnaissance du texte a échoué.', 'error');
+  } finally {
+    await worker?.terminate();
+    scanning = false;
+    document.body.classList.remove('scanning');
+    btn.classList.remove('busy');
+    btn.innerHTML = label;
+    if (!lines) $('hint').innerHTML = hint;
   }
 }
 

@@ -2,6 +2,8 @@
 // Tout est hébergé sur le site (lib/, fonts/) : rien n'est demandé à un autre serveur
 // Chemins des fichiers du site, même depuis une page dans un sous-dossier (/en/ déclare data-root="../")
 const here = p => new URL((document.documentElement.dataset.root || '') + p, document.baseURI).href;
+// Statistiques d'usage anonymes (Vercel Web Analytics) : seulement le nom d'une action et un chiffre, jamais le contenu des documents
+const track = (name, data) => { try { window.va?.('event', { name, data }); } catch {} };
 // Bibliothèques PDF (1,6 Mo) : chargées 1 s après l'affichage de la page, ou dès qu'on ouvre un fichier si c'est plus tôt.
 // Tout ce qui lit ou fabrique un PDF commence par « await libsReady() ».
 const LIBS = ['lib/pdfjs/pdf.min.js', 'lib/pdf-lib/pdf-lib.min.js', 'lib/pdf-lib/fontkit.umd.min.js'];

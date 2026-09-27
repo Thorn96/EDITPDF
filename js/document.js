@@ -100,7 +100,7 @@ async function openSources(list, mode, quiet, at) {
       if (!quiet) toast(plural(all.length, '{n} page ajoutée', '{n} pages ajoutées'));
     }
     changed();
-    if (first) setTimeout(() => OUTIL === 'sign' ? document.querySelector('#tools [data-a=sign]').click() : maybeTour(), 600);
+    if (first) setTimeout(afterOpen, 600);
     return all;
   } catch (e) {
     console.error(e);
@@ -535,4 +535,13 @@ function setField(src, k, v, from) {
     if (el.type === 'checkbox' || el.type === 'radio') el.checked = el.value === v; else el.value = v;
   }
   changed();
+}
+// Premier document ouvert : action demandée par un guide (rature.app/?outil=…, une seule fois), sinon proposition de lire un scan, sinon visite guidée
+function afterOpen() {
+  const act = !afterOpen.done && { sign: () => document.querySelector('#tools [data-a=sign]').click(), ocr: scanDocument, word: exportDocx,
+                                   compress: () => { openExport(); $('expcompress').checked = true; } }[OUTIL];
+  if (act) { afterOpen.done = true; return act(); }
+  if (pages.some(p => p.wrap.classList.contains('scan') && !p.ocr))
+    return toast('Ce PDF est scanné : son texte n’est pas encore modifiable.', '', { label: 'Lire le texte (OCR)', fn: scanDocument }, 12000);
+  maybeTour();
 }

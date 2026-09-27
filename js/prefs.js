@@ -39,19 +39,21 @@ async function resetPrefs() {
 }
 
 // ---------- Thème ----------
-const THEME_ICON = {
-  auto: '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>',
-  light: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  dark: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
-};
+// Bouton soleil / lune : bascule directement entre clair et sombre (« Automatique » reste dans les Réglages)
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+const MOON = '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>';
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => prefs.theme === 'dark' || (prefs.theme === 'auto' && systemDark.matches);
 function setTheme(t) {
-  prefs.theme = THEME_ICON[t] ? t : 'auto';
+  prefs.theme = ['light', 'dark'].includes(t) ? t : 'auto';
   savePrefs();
   if (prefs.theme === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = prefs.theme;
-  $('themebtn').querySelector('svg').innerHTML = THEME_ICON[prefs.theme];
-  $('themebtn').title = tr({ auto: 'Thème : automatique', light: 'Thème : clair', dark: 'Thème : sombre' }[prefs.theme]);
+  // l'icône montre ce qu'on obtient en cliquant : le soleil en sombre, la lune en clair
+  $('themebtn').querySelector('svg').innerHTML = isDark() ? SUN : MOON;
+  $('themebtn').title = tr(isDark() ? 'Passer en clair' : 'Passer en sombre');
 }
-$('themebtn').onclick = () => setTheme({ auto: 'light', light: 'dark', dark: 'auto' }[prefs.theme]);
+$('themebtn').onclick = () => setTheme(isDark() ? 'light' : 'dark');
+systemDark.addEventListener('change', () => { if (prefs.theme === 'auto') setTheme('auto'); }); // l'appareil change de thème
 
 // ---------- Couleurs favorites (choisies avec la palette libre) ----------
 const PRESETS = ['#000000', '#1d3fbf', '#c62828', '#2e7d32', '#ffd84d'];

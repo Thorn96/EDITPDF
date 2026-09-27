@@ -241,7 +241,7 @@ function buildEnglishEditor() {
   const missing = new Set(), SAME = new Set(['Rature', 'B', 'I', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
   const swap = (s, enc) => { const raw = dec(s), t = raw.trim(); if (!t) return s; if (EN[t] === undefined) { if (hasLetters(t) && !SAME.has(t)) missing.add(t); return s; } return enc(raw.replace(t, EN[t])); };
 
-  let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n'); // fins de ligne Windows ou Unix
   const once = (from, to) => { if (!html.includes(from)) throw new Error(`index.html : introuvable « ${from.slice(0, 60)} »`); html = html.replace(from, to); };
   // en-tête : adresse, textes de partage, données structurées (tout le reste est traduit plus bas)
   once('<html lang="fr">', '<html lang="en" data-root="../">');

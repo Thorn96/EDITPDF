@@ -325,7 +325,7 @@ body:not(.loaded) .side { display: none !important; }
 .here { position: absolute; left: -150px; bottom: -34px; width: 190px; pointer-events: none; }
 .here svg { display: block; width: 150px; height: 96px; overflow: visible; }
 .here path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 300; animation: strike-a .9s 2.2s cubic-bezier(.6,0,.2,1) both; }
-.here span { position: absolute; left: -44px; bottom: -6px; font: 30px/1 var(--hand); color: var(--accent); transform: rotate(-4deg); white-space: nowrap; animation: rise .5s 2.6s both; }
+.here span { position: absolute; right: calc(100% + 6px); bottom: 4px; font: 30px/1 var(--hand); color: var(--accent); transform: rotate(-4deg); white-space: nowrap; animation: rise .5s 2.6s both; }
 @keyframes strike { from { stroke-dashoffset: 520; } to { stroke-dashoffset: 0; } }
 @keyframes strike-a { from { stroke-dashoffset: 300; } to { stroke-dashoffset: 0; } }
 @keyframes nudge { 50% { transform: translateY(5px); } }
@@ -611,7 +611,12 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 @media (max-width: 640px) { #redo { display: none; } } /* place pour le bouton FR/EN ; rétablir reste possible depuis l'historique */
 /* soutien : toujours visible en bas à gauche du bureau (accueil compris) */
 #coffee { position: absolute; left: 14px; bottom: 16px; z-index: 4; padding: 6px 13px; border: 1.5px solid var(--hard); border-radius: 999px;
-          background: var(--panel); color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap;
+          background: #ffdd00; color: #15151f; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap;
           box-shadow: 2px 2px 0 var(--hard); transition: background .15s, transform .15s; }
-#coffee:hover { background: #ffdd00; color: #15151f; transform: translate(-1px, -1px); }
+#coffee:hover { background: #ffe94d; transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--hard); }
 body:not(.loaded) #btnPages, body:not(.loaded) #btnSigs { display: none !important; } /* panneaux affichés seulement avec un document */
+/* lecture d'un scan en cours : bouton qui pulse, avancement dans la consigne du bas (affichée aussi sur petit écran) */
+#tools button.busy { pointer-events: none; animation: pulse .9s ease-in-out infinite alternate; }
+@keyframes pulse { to { background: var(--accent-soft); color: var(--accent); } }
+body.scanning #hint { display: block !important; max-width: calc(100% - 24px); }
+@media (max-height: 760px) { #tools > button, #tools .tgroup > button { height: 34px; } #tools hr { margin: 2px 6px; } }

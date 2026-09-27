@@ -41,6 +41,7 @@ function setTool(t) {
 $('tools').onclick = e => {
   const b = e.target.closest('button');
   if (b?.dataset.a === 'image') return pages.length ? $('imgfile').click() : toast("Ouvre d'abord un PDF.", 'error');
+  if (b?.dataset.a === 'ocr') return scanDocument();
   if (b?.dataset.a === 'sign') { // pas de signature : on la crée ; sinon on montre où elles sont
     if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
     if (!$('siglist').children.length) return $('signew').click();
