@@ -4,7 +4,7 @@
 const V = 'rature-v5';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png',
-  './css/rature.css', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
+  './css/rature.min.css', './js/rature.min.js', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
   './lib/pdfjs/pdf.min.js', './lib/pdfjs/pdf.worker.min.js', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
 ];
 // Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes (~19 Mo) : téléchargés en arrière-plan seulement
