@@ -34,6 +34,7 @@ Outil gratuit pour remplir, signer et corriger des PDF directement dans le navig
 - **Vue en grille** : réorganiser, pivoter, dupliquer, supprimer, insérer une page blanche, extraire.
 - **Recadrer** une page, **découper** le PDF en plusieurs fichiers (ZIP), **fusionner** plusieurs PDF, **photos → PDF**, **page → image**.
 - **Numériser avec le téléphone** : coins détectés, feuille redressée, couleur / gris / noir et blanc.
+- **Du téléphone à l'ordinateur** : un QR code affiché sur l'ordinateur relie le téléphone ; les pages photographiées arrivent directement sur l'écran (connexion directe chiffrée, PeerJS sert seulement à la mise en relation).
 - **Filigrane**, **numéros de page**, **en-tête et pied de page**.
 - **Extraire le texte**, **comparer deux PDF** (texte et image, page par page).
 - **Convertir** : PDF → Word (.docx) avec paragraphes et titres ; document Word (.docx) → PDF.
@@ -62,5 +63,5 @@ Tout se passe dans le navigateur : les PDF ne sont envoyés sur aucun serveur, e
 
 ## Bibliothèques et polices
 
-[pdf.js](https://mozilla.github.io/pdf.js/) (Apache 2.0), [pdf-lib](https://pdf-lib.js.org/) et fontkit (MIT), [MuPDF.js](https://mupdf.readthedocs.io/) (AGPL 3.0), [Tesseract.js](https://tesseract.projectnaptha.com/) (Apache 2.0).
+[pdf.js](https://mozilla.github.io/pdf.js/) (Apache 2.0), [pdf-lib](https://pdf-lib.js.org/) et fontkit (MIT), [PeerJS](https://peerjs.com/) et qrcode-generator (MIT), [MuPDF.js](https://mupdf.readthedocs.io/) (AGPL 3.0), [Tesseract.js](https://tesseract.projectnaptha.com/) (Apache 2.0).
 Polices libres : Liberation, Carlito, Caladea, Selawik, Lato (SIL OFL), DejaVu (licence libre DejaVu), Young Serif, Schibsted Grotesk et Nothing You Could Do (SIL OFL). Les licences sont dans les dossiers `lib/` et `fonts/`.

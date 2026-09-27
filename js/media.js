@@ -119,10 +119,9 @@ $('sigphoto').onchange = async e => {
 
 // ---------- Numériser avec l'appareil photo ----------
 let scan = null; // { photo: canvas, pts: 4 coins [x, y] dans la photo, mode }
-$('scanfile').onchange = async e => {
-  const f = e.target.files[0];
-  e.target.value = '';
-  if (!f) return;
+// trois entrées photo : l'accueil et les panneaux, « Reprendre la photo » (dans la fenêtre), l'écran téléphone → ordinateur (dans sa fenêtre)
+for (const id of ['scanfile', 'scanretake', 'relaycam']) $(id).onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) startScan(f); };
+async function startScan(f) {
   const im = await normImage(f, 2400);
   if (!im) return toast('Image illisible.', 'error');
   scan = { photo: im.canvas, pts: detectCorners(im.canvas), mode: scan?.mode || 'bw' };
@@ -133,7 +132,7 @@ $('scanfile').onchange = async e => {
   if (!$('scandlg').open) $('scandlg').showModal();
   document.querySelectorAll('#scanmode button').forEach(b => b.classList.toggle('on', b.dataset.m === scan.mode));
   requestAnimationFrame(layoutScan);
-};
+}
 // Coins de la feuille : plus grande zone claire de la photo (seuil d'Otsu), ses 4 points extrêmes
 function detectCorners(c) {
   const k = 300 / Math.max(c.width, c.height), w = Math.round(c.width * k), h = Math.round(c.height * k);
@@ -251,7 +250,9 @@ $('scanok').onclick = async () => {
     const e = type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes), W = 595.28, H = W * OH / OW;
     pdf.addPage([W, H]).drawImage(e, { x: 0, y: 0, width: W, height: H });
     $('scandlg').close();
-    if (await openSources([{ bytes: await pdf.save(), name: 'Numérisation.pdf', made: true }], pages.length ? 'append' : 'replace', true)) {
+    const made = await pdf.save();
+    if (sendToDesk(made)) return; // téléphone relié à un ordinateur : la page part sur son écran
+    if (await openSources([{ bytes: made, name: 'Numérisation.pdf', made: true }], pages.length ? 'append' : 'replace', true)) {
       $('pages').scrollTo({ top: $('pages').scrollHeight, behavior: 'smooth' });
       toast('Page numérisée ajoutée', '', { label: 'Photo suivante', fn: () => $('scanfile').click() });
     }

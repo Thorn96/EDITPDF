@@ -620,3 +620,26 @@ body:not(.loaded) #btnPages, body:not(.loaded) #btnSigs { display: none !importa
 @keyframes pulse { to { background: var(--accent-soft); color: var(--accent); } }
 body.scanning #hint { display: block !important; max-width: calc(100% - 24px); }
 @media (max-height: 760px) { #tools > button, #tools .tgroup > button { height: 34px; } #tools hr { margin: 2px 6px; } }
+
+/* ---------- Numériser avec le téléphone ---------- */
+@media (pointer: coarse) { .phone-btn { display: none !important; } } /* sur téléphone, on numérise directement */
+.phonebody { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 22px; align-items: center; padding: 14px 26px 0; }
+.phonesteps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; counter-reset: st; }
+.phonesteps li { counter-increment: st; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font-size: 13px; color: var(--ink-2); }
+.phonesteps svg { width: 100%; max-width: 130px; color: var(--ink); }
+.phonesteps span::before { content: counter(st); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 6px; border-radius: 50%;
+                           background: var(--accent); color: #fff; font-weight: 700; font-size: 11.5px; vertical-align: 1px; }
+.phoneqrbox { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+#phoneqr { width: 210px; height: 210px; padding: 8px; background: #fff; border: 1.5px solid var(--hard); border-radius: 12px; box-shadow: 4px 4px 0 var(--hard); }
+#phoneqr:empty { background: repeating-linear-gradient(45deg, #fff 0 8px, #f3efe4 8px 16px); }
+#phoneqr svg { display: block; width: 100%; height: 100%; }
+#phonestatus { margin: 0; min-height: 40px; font-size: 13px; text-align: center; color: var(--ink-2); }
+.relaystatus { margin: 14px 26px 0; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); font-size: 14px; }
+.relaystatus.err { background: var(--accent-soft); color: var(--accent); }
+.relayacts { display: flex; flex-direction: column; gap: 10px; padding: 16px 26px 0; }
+.relayacts .btn { height: 48px; }
+.relaybig { height: 64px !important; font-size: 17px; }
+@media (max-width: 720px) {
+  .phonebody { grid-template-columns: minmax(0, 1fr); }
+  .phonesteps { grid-template-columns: minmax(0, 1fr); } .phonesteps li { flex-direction: row; text-align: left; } .phonesteps svg { max-width: 90px; }
+}

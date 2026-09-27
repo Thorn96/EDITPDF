@@ -244,9 +244,10 @@ const PAGES = [
       ['Pourquoi c’est important', 'Beaucoup de services PDF en ligne traitent les fichiers sur leurs serveurs, même s’ils les suppriment ensuite. Pour une pièce d’identité, un avis d’imposition ou un contrat, tu préfères sans doute qu’ils ne partent nulle part. Avec Rature, ils ne partent nulle part.'],
       ['Comment le vérifier', 'Ouvre Rature, puis coupe ta connexion Internet : tout continue de fonctionner. Et le <a href="https://github.com/Thorn96/EDITPDF">code est public</a> : n’importe qui peut vérifier ce qu’il fait.'],
       ['Tout ce qu’il faut, gratuitement', 'Remplir des formulaires, signer, corriger le texte d’origine, caviarder, réunir et réorganiser les pages, réduire la taille, protéger par mot de passe, convertir en Word, reconnaître le texte d’un scan.']],
-    faq: [{ q: 'Comment Rature peut-il être gratuit ?', a: 'Le site ne coûte presque rien à faire tourner, puisque c’est ton appareil qui fait le travail. Si Rature te rend service, tu peux <a href="https://buymeacoffee.com/leonardguik">offrir un café</a> à son développeur.' },
+    faq: [{ q: 'Comment Rature peut-il être gratuit ?', a: 'Le site ne coûte presque rien à faire tourner, puisque c’est ton appareil qui fait le travail. Si Rature te rend service, tu peux <a href="https://buymeacoffee.com/leonardguido">offrir un café</a> à son développeur.' },
       { q: 'Faut-il installer quelque chose ?', a: 'Non. Tu peux quand même l’installer comme une application (bouton « Installer ») pour l’ouvrir hors ligne.' },
       { q: 'Y a-t-il des statistiques de visite ?', a: 'Seulement un comptage anonyme des visites, sans cookie. Le contenu de tes PDF n’est jamais concerné.' },
+      { q: 'Et la numérisation avec le téléphone ?', a: 'La page photographiée passe directement du téléphone à ton ordinateur, chiffrée. Un service de mise en relation (PeerJS) aide seulement les deux appareils à se trouver : il ne voit jamais le document.' },
       { q: 'Et les gros fichiers ?', a: 'Rature ne dessine que les pages affichées : les gros documents restent fluides. La seule limite est la mémoire de ton appareil.' }] },
 ];
 
@@ -333,7 +334,7 @@ ${alternates(p)}
 </main>
 <footer>${t.footer} · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a> · <a href="https://github.com/Thorn96/EDITPDF">${t.source}</a></footer>
 </div>
-<a class="coffee" href="https://buymeacoffee.com/leonardguik" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>
+<a class="coffee" href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>
 </body>
 </html>
 `; };
@@ -395,7 +396,7 @@ function buildEnglishEditor() {
 // ---------- Scripts et styles de l'éditeur : un seul fichier minifié chacun (moins d'octets, moins de requêtes) ----------
 // Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.min.js et css/rature.min.css (esbuild, via npx).
 // Ordre = ordre de chargement : les fichiers partagent leurs variables globales, comme des scripts séparés.
-const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'prefs', 'i18n', 'init'];
+const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'prefs', 'i18n', 'init'];
 function minifyAssets() {
   const { execSync } = require('child_process');
   const esbuild = (input, args) => execSync(`npx -y esbuild@0.24.2 --minify --legal-comments=none --log-level=error ${args}`, { input, cwd: ROOT, maxBuffer: 64 << 20 }).toString();

@@ -169,8 +169,9 @@ module.exports = [
       ['Why it matters', 'Many online PDF services process files on their servers, even if they delete them afterwards. For an ID card, a tax notice or a contract, you’d probably rather they went nowhere. With Rature, they go nowhere.'],
       ['How to check', 'Open Rature, then turn off your Internet connection: everything keeps working. And the <a href="https://github.com/Thorn96/EDITPDF">code is public</a>: anyone can check what it does.'],
       ['Everything you need, for free', 'Fill in forms, sign, edit the original text, redact, merge and reorder pages, reduce the size, protect with a password, convert to Word, recognise the text of a scan.']],
-    faq: [{ q: 'How can Rature be free?', a: 'The site costs almost nothing to run, since your device does the work. If Rature helps you, you can <a href="https://buymeacoffee.com/leonardguik">buy the developer a coffee</a>.' },
+    faq: [{ q: 'How can Rature be free?', a: 'The site costs almost nothing to run, since your device does the work. If Rature helps you, you can <a href="https://buymeacoffee.com/leonardguido">buy the developer a coffee</a>.' },
       { q: 'Do I need to install anything?', a: 'No. You can still install it as an app (the “Install” button) to open it offline.' },
       { q: 'Is there any visitor tracking?', a: 'Only an anonymous visit count, without cookies. The content of your PDFs is never involved.' },
+      { q: 'What about scanning with my phone?', a: 'The photographed page goes straight from your phone to your computer, encrypted. A connection service (PeerJS) only helps the two devices find each other: it never sees the document.' },
       { q: 'What about large files?', a: 'Rature only draws the pages on screen: large documents stay smooth. The only limit is your device’s memory.' }] },
 ];

@@ -84,6 +84,7 @@ function toolsEntries() {
     { label: 'Vue en grille des pages', key: 'G', fn: openGrid, disabled: none },
     { label: 'Insérer une page blanche', fn: () => insertBlank(pg), disabled: none },
     { label: 'Recadrer la page affichée', fn: () => startCrop(pg), disabled: none },
+    { label: 'Numériser avec mon téléphone…', fn: openPhoneScan },
     { label: 'Découper le PDF en plusieurs fichiers…', fn: openSplit, disabled: none },
     { head: 'Remplir' },
     { label: 'Remplir avec mon profil…', fn: openFill, disabled: none },

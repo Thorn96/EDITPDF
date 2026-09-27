@@ -134,7 +134,11 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
             <li>Fusionner et réorganiser les pages</li>
           </ul>
           <div class="alt">
-            <label class="btn" for="scanfile">
+            <button id="phonebtn" class="btn phone-btn" type="button">
+              <svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/><path d="M3 8V5.5A1.5 1.5 0 0 1 4.5 4H5M21 8V5.5A1.5 1.5 0 0 0 19.5 4H19" opacity=".6"/></svg>
+              Numériser avec mon téléphone
+            </button>
+            <label class="btn scan-here" for="scanfile">
               <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
               Numériser un document
             </label>
@@ -292,7 +296,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     </div>
 
     <div id="hint" class="float"></div>
-    <a id="coffee" href="https://buymeacoffee.com/leonardguik" target="_blank" rel="noopener" title="Soutenir Rature">Offrir un café ☕</a>
+    <a id="coffee" href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener" title="Soutenir Rature">Offrir un café ☕</a>
     <div id="zoom" class="float">
       <button id="zout" title="Dézoomer (Ctrl −)"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
       <button id="zoomval" title="Ajuster à la largeur (Ctrl 0)">100 %</button>
@@ -420,6 +424,36 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
   </div>
 </dialog>
 
+<dialog id="phonedlg" class="wide">
+  <div class="dlg-head"><h3>Numériser avec ton téléphone</h3><p>Pas de câble, pas d'application à installer.</p></div>
+  <div class="phonebody">
+    <ol class="phonesteps">
+      <li><svg viewBox="0 0 120 90" aria-hidden="true"><rect x="8" y="10" width="76" height="50" rx="4" fill="var(--panel)" stroke="currentColor" stroke-width="2.5"/><path d="M2 66h88l-6 8H8z" fill="var(--panel)" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M34 22h8v8h-8zM50 22h8v8h-8zM34 38h8v8h-8zM50 38h3M55 42h3v4" fill="none" stroke="currentColor" stroke-width="2"/><rect x="88" y="30" width="24" height="44" rx="4" fill="var(--panel)" stroke="var(--accent)" stroke-width="2.5" transform="rotate(-12 100 52)"/><path d="M84 40l-12-6" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3"/></svg>
+        <span>Scanne ce code avec l'appareil photo de ton téléphone</span></li>
+      <li><svg viewBox="0 0 120 90" aria-hidden="true"><rect x="14" y="40" width="58" height="42" rx="2" fill="#fff" stroke="currentColor" stroke-width="2" transform="rotate(-6 43 61)"/><path d="M24 54h30M24 62h36M24 70h22" stroke="#c9c3b4" stroke-width="3" stroke-linecap="round" transform="rotate(-6 43 61)"/><rect x="66" y="6" width="32" height="56" rx="5" fill="var(--panel)" stroke="var(--accent)" stroke-width="2.5"/><circle cx="82" cy="52" r="3" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M62 30l-12 14M60 30l-2 2" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3"/></svg>
+        <span>Prends la feuille en photo : elle est redressée toute seule</span></li>
+      <li><svg viewBox="0 0 120 90" aria-hidden="true"><rect x="18" y="10" width="84" height="54" rx="4" fill="var(--panel)" stroke="currentColor" stroke-width="2.5"/><path d="M12 70h96l-6 8H18z" fill="var(--panel)" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><rect x="46" y="16" width="28" height="40" rx="1.5" fill="#fff" stroke="currentColor" stroke-width="1.5"/><path d="M51 24h18M51 30h14M51 36h16" stroke="#c9c3b4" stroke-width="2.5" stroke-linecap="round"/><circle cx="80" cy="48" r="10" fill="var(--accent)"/><path d="m75 48 3.5 3.5L85 45" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>La page apparaît ici, sur l'ordinateur</span></li>
+    </ol>
+    <div class="phoneqrbox">
+      <div id="phoneqr" aria-label="QR code à scanner avec le téléphone"></div>
+      <p id="phonestatus" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="hintline">La page passe directement du téléphone à l'ordinateur, chiffrée. Un service de mise en relation (PeerJS) aide seulement les deux appareils à se trouver : il ne voit pas tes documents.</p>
+  <div class="dlg-foot"><button id="phoneclose" class="btn primary">Terminé</button></div>
+</dialog>
+
+<dialog id="relaydlg">
+  <div class="dlg-head"><h3>Envoyer vers l'ordinateur</h3><p>Ce que tu prends en photo ici apparaît sur l'écran de l'ordinateur.</p></div>
+  <p id="relaystatus" class="relaystatus" aria-live="polite"></p>
+  <div class="relayacts">
+    <label class="btn primary relaybig"><svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>Prendre la feuille en photo<input type="file" id="relaycam" accept="image/*" capture="environment" hidden></label>
+    <label class="btn">Envoyer un PDF ou une photo<input type="file" id="relayfile" accept="application/pdf,.pdf,image/*" multiple hidden></label>
+  </div>
+  <div class="dlg-foot"><button id="relayclose" class="btn ghost">Utiliser Rature sur ce téléphone</button></div>
+</dialog>
+
 <dialog id="scandlg" class="wide">
   <div class="dlg-head">
     <h3>Numériser</h3>
@@ -435,7 +469,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
   <div id="scanmsg" class="dlg-msg"></div>
   <div class="dlg-foot">
     <button id="scancancel" class="btn grow">Annuler</button>
-    <label class="btn" for="scanfile">Reprendre la photo</label>
+    <label class="btn">Reprendre la photo<input type="file" id="scanretake" accept="image/*" capture="environment" hidden></label>
     <button id="scanok" class="btn primary"><span class="spin"></span>Ajouter la page</button>
   </div>
 </dialog>

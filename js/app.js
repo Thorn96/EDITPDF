@@ -109,7 +109,7 @@ async function makePdf(o) {
   if (o.pw || o.compress) out = await finish(out, o);
   return out;
 }
-const DONATE = 'https://buymeacoffee.com/leonardguik'; // simple lien : aucun script de Buy Me a Coffee chargé sur le site
+const DONATE = 'https://buymeacoffee.com/leonardguido'; // simple lien : aucun script de Buy Me a Coffee chargé sur le site
 const donate = () => { track('cafe', { depuis: 'appli' }); open(DONATE, '_blank', 'noopener'); };
 $('coffee').addEventListener('click', () => track('cafe', { depuis: 'bouton' }));
 async function exportDoc(share, ready) {
