@@ -437,9 +437,9 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .keys { display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; margin: 14px 0 0; font-size: 13.5px; align-items: center; }
 .keys dt { text-align: right; white-space: nowrap; }
 .keys dd { margin: 0; color: var(--ink-2); }
-.scanstage { position: relative; margin: 14px 26px 0; height: min(56dvh, 540px); background: #111; border-radius: 14px; overflow: hidden;
+.scanstage { --sh: min(56dvh, 540px); position: relative; margin: 14px 26px 0; height: var(--sh); padding: 22px; box-sizing: border-box; background: #111; border-radius: 14px; overflow: hidden;
              display: grid; place-items: center; touch-action: none; }
-#scanimg { display: block; max-width: 100%; max-height: 100%; }
+#scanimg { display: block; max-width: 100%; max-height: calc(var(--sh) - 44px); } /* hauteur explicite : dans une grille, max-height: 100 % ne limite rien et le bas de la photo était coupé */
 #scansvg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .hdl { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; background: #fff;
        border: 3px solid var(--accent); box-shadow: 0 2px 8px #0009; cursor: grab; touch-action: none; }
@@ -653,3 +653,5 @@ body.scanning #hint { display: block !important; max-width: calc(100% - 24px); }
 @media (pointer: coarse) { .img .rsz { width: calc(26px / var(--z)); height: calc(26px / var(--z)); right: calc(-13px / var(--z)); bottom: calc(-13px / var(--z)); } }
 /* au doigt : on déplace l'élément touché au lieu de faire défiler la page */
 .box, .img, .fieldbox, svg.shape > * { touch-action: none; }
+@media (max-width: 640px) { .scanstage { --sh: min(50dvh, 470px); margin: 12px 12px 0; padding: 20px; } .scanbar { margin-top: 10px; } }
+@media (pointer: coarse) { .hdl { width: 36px; height: 36px; margin: -18px 0 0 -18px; } } /* coins plus faciles à attraper au doigt */
