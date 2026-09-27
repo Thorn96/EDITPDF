@@ -614,3 +614,4 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
           background: var(--panel); color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap;
           box-shadow: 2px 2px 0 var(--hard); transition: background .15s, transform .15s; }
 #coffee:hover { background: #ffdd00; color: #15151f; transform: translate(-1px, -1px); }
+body:not(.loaded) #btnPages, body:not(.loaded) #btnSigs { display: none !important; } /* panneaux affichés seulement avec un document */
