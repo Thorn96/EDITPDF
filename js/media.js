@@ -125,12 +125,12 @@ scanInput('scanfile', 'page'); scanInput('relaycam', 'page'); scanInput('stampim
 const SCAN_TEXT = { page: ['Numériser', 'Place les 4 coins sur les bords de la feuille : elle sera redressée.', 'Ajouter la page'],
                     stamp: ['Recadrer le tampon', 'Place les 4 coins autour du tampon : le fond blanc sera retiré.', 'Créer le tampon'] };
 async function startScan(f, purpose = 'page') {
-  const im = await normImage(f, 2400);
+  const im = await normImage(f, 4000); // pleine définition d'un téléphone : c'est elle qui fait la netteté du scan
   if (!im) return toast('Image illisible.', 'error');
   const stamp = purpose === 'stamp';
   // tampon : cadre de départ au centre (la détection cherche une feuille entière, pas un tampon)
   scan = { photo: im.canvas, pts: stamp ? [[.2, .3], [.8, .3], [.8, .7], [.2, .7]].map(([a, b]) => [a * im.w, b * im.h]) : detectCorners(im.canvas),
-           mode: stamp ? 'color' : scan?.purpose === 'page' ? scan.mode : 'bw', purpose };
+           mode: stamp ? 'color' : scan?.purpose === 'page' ? scan.mode : 'color', purpose }; // couleur par défaut : signatures bleues et tampons gardent leur couleur
   const v = $('scanimg');
   v.width = im.w; v.height = im.h;
   v.getContext('2d').drawImage(im.canvas, 0, 0);
@@ -237,32 +237,77 @@ $('scanmode').onclick = e => {
   document.querySelectorAll('#scanmode button').forEach(b => b.classList.toggle('on', b === e.target));
 };
 $('scancancel').onclick = () => $('scandlg').close();
+// Rendu « scanner », comme les applis de numérisation : l'éclairage du papier est estimé sur toute la photo puis retiré (ombres,
+// zones plus sombres, teinte jaune d'une lampe disparaissent : papier blanc), puis le contraste est réglé en douceur. Le noir et blanc
+// garde des bords de lettres lisses au lieu d'un seuil brutal (traits fins cassés, grain du papier en taches).
 function filterScan(o, w, h, mode) {
-  const N = w * h, lum = new Float32Array(N);
-  for (let i = 0; i < N; i++) lum[i] = o[i * 4] * .299 + o[i * 4 + 1] * .587 + o[i * 4 + 2] * .114;
-  if (mode === 'bw') { // seuil adaptatif : chaque pixel comparé à la moyenne de son voisinage (image intégrale)
-    const S = new Float64Array((w + 1) * (h + 1)), r = Math.round(w / 32);
-    for (let y = 0; y < h; y++) { let row = 0; for (let x = 0; x < w; x++) { row += lum[y * w + x]; S[(y + 1) * (w + 1) + x + 1] = S[y * (w + 1) + x + 1] + row; } }
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-      const x0 = Math.max(0, x - r), x1 = Math.min(w, x + r + 1), y0 = Math.max(0, y - r), y1 = Math.min(h, y + r + 1);
-      const mean = (S[y1 * (w + 1) + x1] - S[y0 * (w + 1) + x1] - S[y1 * (w + 1) + x0] + S[y0 * (w + 1) + x0]) / ((x1 - x0) * (y1 - y0));
-      const i = (y * w + x) * 4;
-      o[i] = o[i + 1] = o[i + 2] = lum[y * w + x] < mean * .88 ? 0 : 255;
-    }
-    return;
+  const N = w * h, B = 16, bw = Math.max(2, Math.ceil(w / B)), bh = Math.max(2, Math.ceil(h / B)), nb = bw * bh;
+  // 1. couleur du papier, canal par canal : moyenne par bloc de 16 px, puis maximum sur ~50 px (l'encre disparaît), puis lissage
+  let bg = [0, 1, 2].map(() => new Float32Array(nb));
+  const cnt = new Float32Array(nb);
+  for (let y = 0; y < h; y++) {
+    const row = Math.min(bh - 1, y / B | 0) * bw;
+    for (let x = 0, i = y * w * 4; x < w; x++, i += 4) { const b = row + Math.min(bw - 1, x / B | 0); bg[0][b] += o[i]; bg[1][b] += o[i + 1]; bg[2][b] += o[i + 2]; cnt[b]++; }
   }
-  // niveaux étirés : fond bien blanc, texte bien noir
-  const hist = new Uint32Array(256);
-  for (let i = 0; i < N; i++) hist[lum[i] | 0]++;
-  let lo = 0, hi = 255, acc = 0;
-  while (lo < 254 && (acc += hist[lo]) < N * .01) lo++;
-  acc = 0;
-  while (hi > lo + 1 && (acc += hist[hi]) < N * .05) hi--;
-  const k = 255 / (hi - lo);
-  for (let i = 0; i < N; i++) {
-    const j = i * 4;
-    if (mode === 'gray') o[j] = o[j + 1] = o[j + 2] = clamp((lum[i] - lo) * k, 0, 255);
-    else for (let c = 0; c < 3; c++) o[j + c] = clamp((o[j + c] - lo) * k, 0, 255);
+  const pass = (m, r, f) => { // filtre séparable (maximum ou moyenne) de rayon r blocs
+    const t = new Float32Array(nb), out = new Float32Array(nb);
+    for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) { let a = 0, n = 0; for (let k = Math.max(0, x - r); k <= Math.min(bw - 1, x + r); k++) { const v = m[y * bw + k]; a = f === 'max' ? Math.max(a, v) : a + v; n++; } t[y * bw + x] = f === 'max' ? a : a / n; }
+    for (let x = 0; x < bw; x++) for (let y = 0; y < bh; y++) { let a = 0, n = 0; for (let k = Math.max(0, y - r); k <= Math.min(bh - 1, y + r); k++) { const v = t[k * bw + x]; a = f === 'max' ? Math.max(a, v) : a + v; n++; } out[y * bw + x] = f === 'max' ? a : a / n; }
+    return out;
+  };
+  bg = bg.map(m => { for (let b = 0; b < nb; b++) m[b] = Math.max(1, m[b] / Math.max(1, cnt[b])); return pass(pass(pass(m, 3, 'max'), 2, 'avg'), 2, 'avg'); });
+  // 2. chaque pixel divisé par la couleur du papier sous lui (interpolée) : papier ≈ 1, encre < 1
+  const xs = new Int32Array(w), xw = new Float32Array(w);
+  for (let x = 0; x < w; x++) { const f = clamp((x + .5) / B - .5, 0, bw - 1.001); xs[x] = f | 0; xw[x] = f - xs[x]; }
+  const L = new Float32Array(N), hist = new Uint32Array(1024);
+  for (let y = 0; y < h; y++) {
+    const fy = clamp((y + .5) / B - .5, 0, bh - 1.001), y0 = fy | 0, wy = fy - y0, r0 = y0 * bw, r1 = r0 + bw;
+    for (let x = 0, i = y * w * 4, p = y * w; x < w; x++, i += 4, p++) {
+      const a = xs[x], wx = xw[x];
+      let l = 0;
+      for (let c = 0; c < 3; c++) {
+        const m = bg[c], top = m[r0 + a] + (m[r0 + a + 1] - m[r0 + a]) * wx, bot = m[r1 + a] + (m[r1 + a + 1] - m[r1 + a]) * wx;
+        const v = Math.min(1.2, o[i + c] / (top + (bot - top) * wy));
+        o[i + c] = Math.min(255, v * 212.5); // gardé en réserve (1,2 → 255) pour la couleur
+        l += v * (c === 0 ? .299 : c === 1 ? .587 : .114);
+      }
+      L[p] = l;
+    }
+  }
+  // netteté (masque flou, comme un scanner) : le contour des lettres ressort ; le grain du papier, lui, est lissé
+  { const T = new Float32Array(N), r = 2, n = 2 * r + 1;
+    for (let y = 0; y < h; y++) { const o0 = y * w; let a = 0; for (let x = -r; x <= r; x++) a += L[o0 + clamp(x, 0, w - 1)]; for (let x = 0; x < w; x++) { T[o0 + x] = a / n; a += L[o0 + Math.min(w - 1, x + r + 1)] - L[o0 + Math.max(0, x - r)]; } }
+    const col = new Float32Array(h);
+    for (let x = 0; x < w; x++) {
+      let a = 0; for (let y = -r; y <= r; y++) a += T[clamp(y, 0, h - 1) * w + x];
+      for (let y = 0; y < h; y++) { col[y] = a / n; a += T[Math.min(h - 1, y + r + 1) * w + x] - T[Math.max(0, y - r) * w + x]; }
+      for (let y = 0; y < h; y++) { const p = y * w + x, dv = L[p] - col[y]; L[p] = Math.abs(dv) < .1 ? col[y] : Math.max(0, L[p] + .7 * dv); } // zone unie (papier) lissée, contour renforcé
+    } }
+  for (let p = 0; p < N; p++) hist[Math.min(1023, L[p] * 852 | 0)]++; // 1,2 → 1023
+  // 3. niveaux : l'encre la plus foncée devient noire, tout ce qui ressemble au papier devient blanc
+  const at = q => { let acc = 0; for (let k = 0; k < 1024; k++) if ((acc += hist[k]) >= N * q) return k / 852; return 1.2; };
+  // point blanc : la teinte du papier (la majorité des pixels), moins une marge pour le grain → tout le papier devient blanc
+  const paper = at(.5), hi = clamp(paper - .07, .7, .95), lo = Math.min(hi - .25, at(.004));
+  const tone = v => Math.pow(clamp((v - lo) / (hi - lo), 0, 1), 1.25); // léger assombrissement des gris : texte plus lisible
+  let lut;
+  if (mode === 'bw') { // seuil d'Otsu sur l'image corrigée, avec une transition douce (anti-crénelage)
+    let sum = 0, sumB = 0, wB = 0, best = 0, t = .7;
+    for (let k = 0; k < 1024; k++) sum += k * hist[k];
+    for (let k = 0; k < 1024; k++) {
+      wB += hist[k]; const wF = N - wB; if (!wB || !wF) continue;
+      sumB += k * hist[k]; const v = wB * wF * (sumB / wB - (sum - sumB) / wF) ** 2;
+      if (v > best) { best = v; t = k / 852; }
+    }
+    t = clamp(lo + (t - lo) * .8, lo + .06, .8); // un peu sous le seuil d'Otsu : traits fins, lettres pas empâtées
+    lut = Float32Array.from({ length: 1024 }, (_, k) => 255 / (1 + Math.exp(-(k / 852 - t) / .03)));
+  } else lut = Float32Array.from({ length: 1024 }, (_, k) => 255 * tone(k / 852));
+  for (let p = 0, i = 0; p < N; p++, i += 4) {
+    const k = Math.min(1023, L[p] * 852 | 0), out = lut[k];
+    if (mode === 'color') { // luminosité du rendu gris + couleur d'origine ; les écarts de couleur trop faibles (bruit du capteur) sont retirés
+      const r = o[i] / 212.5, g = o[i + 1] / 212.5, b = o[i + 2] / 212.5, l0 = r * .299 + g * .587 + b * .114;
+      const ch = Math.max(Math.abs(r - l0), Math.abs(g - l0), Math.abs(b - l0)), keep = clamp((ch - .04) / .05, 0, 1) * 255 * 1.15;
+      o[i] = clamp(out + (r - l0) * keep, 0, 255); o[i + 1] = clamp(out + (g - l0) * keep, 0, 255); o[i + 2] = clamp(out + (b - l0) * keep, 0, 255);
+    } else o[i] = o[i + 1] = o[i + 2] = out;
   }
 }
 $('scanok').onclick = async () => {
@@ -277,15 +322,15 @@ $('scanok').onclick = async () => {
     const stamp = scan.purpose === 'stamp';
     let ratio = H0 / W0;
     if (!stamp && Math.abs(ratio - Math.SQRT2) < .12) ratio = Math.SQRT2; // presque une feuille A4 : on cale sur l'A4
-    // feuille : 1654 px de large (A4 à 200 ppp) ; tampon : sa taille réelle dans la photo, au plus 1200 px
-    const OW = stamp ? Math.round(clamp(W0, 60, 1200)) : 1654, OH = Math.min(5000, Math.round(OW * ratio));
+    // feuille : 2480 px de large (A4 à 300 ppp, comme un scanner) ; tampon : sa taille réelle dans la photo, au plus 1200 px
+    const OW = stamp ? Math.round(clamp(W0, 60, 1200)) : 2480, OH = Math.min(5000, Math.round(OW * ratio));
     const out = new mupdf.Image(jpg).toPixmap().warp(pts, OW, OH), px = out.getPixels(), n = px.length / (OW * OH);
     const c = Object.assign(document.createElement('canvas'), { width: OW, height: OH }), g = c.getContext('2d'), id = g.createImageData(OW, OH), o = id.data;
     for (let i = 0, j = 0; i < OW * OH; i++, j += n) { o[i * 4] = px[j]; o[i * 4 + 1] = px[j + (n > 2 ? 1 : 0)]; o[i * 4 + 2] = px[j + (n > 2 ? 2 : 0)]; o[i * 4 + 3] = 255; }
     if (!stamp) filterScan(o, OW, OH, mode);
     g.putImageData(id, 0, 0);
     if (stamp) { $('scandlg').close(); return saveImageStamp(c); } // tampon : couleurs gardées, fond blanc retiré
-    const type = mode === 'bw' ? 'image/png' : 'image/jpeg', blob = await new Promise(r => c.toBlob(r, type, .85));
+    const type = mode === 'bw' ? 'image/png' : 'image/jpeg', blob = await new Promise(r => c.toBlob(r, type, .9));
     const pdf = await PDFLib.PDFDocument.create(), bytes = new Uint8Array(await blob.arrayBuffer());
     const e = type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes), W = 595.28, H = W * OH / OW;
     pdf.addPage([W, H]).drawImage(e, { x: 0, y: 0, width: W, height: H });

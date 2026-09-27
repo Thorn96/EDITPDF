@@ -33,7 +33,7 @@ Outil gratuit pour remplir, signer et corriger des PDF directement dans le navig
 **Pages et document**
 - **Vue en grille** : réorganiser, pivoter, dupliquer, supprimer, insérer une page blanche, extraire.
 - **Recadrer** une page, **découper** le PDF en plusieurs fichiers (ZIP), **fusionner** plusieurs PDF, **photos → PDF**, **page → image**.
-- **Numériser avec le téléphone** : coins détectés, feuille redressée, couleur / gris / noir et blanc.
+- **Numériser avec le téléphone** : coins détectés (loupe pour les ajuster au doigt), feuille redressée, rendu « scanner » à 300 ppp : éclairage corrigé (ombres, teinte de la lampe), papier blanc, texte net ; couleur, gris ou noir et blanc.
 - **Du téléphone à l'ordinateur** : un QR code affiché sur l'ordinateur relie le téléphone ; les pages photographiées arrivent directement sur l'écran (connexion directe chiffrée, PeerJS sert seulement à la mise en relation).
 - **Filigrane**, **numéros de page**, **en-tête et pied de page**.
 - **Extraire le texte**, **comparer deux PDF** (texte et image, page par page).
