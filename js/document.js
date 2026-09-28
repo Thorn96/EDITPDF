@@ -57,9 +57,11 @@ async function imagesToPdf(files) {
 }
 
 async function openFiles(files, mode) {
+  // copie AVANT toute attente : la liste d'un champ fichier se vide quand l'appelant remet le champ à zéro, et celle d'un
+  // glisser-déposer quand l'événement se termine — sans cette copie, le fichier était perdu et rien ne s'ouvrait
+  files = [...files];
   try { await libsReady(); } // bibliothèques PDF pas encore chargées (connexion coupée…) : on le dit au lieu de ne rien faire
   catch (e) { console.error(e); return toast('Les outils PDF n’ont pas pu se charger : vérifie ta connexion, puis réessaie.', 'error'); }
-  files = [...files];
   const pdfs = files.filter(f => isPdf(f) || isDocx(f)), imgs = files.filter(isImg);
   if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word, ni une image.", 'error');
   if (!mode && pages.length) {
