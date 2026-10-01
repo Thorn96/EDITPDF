@@ -566,6 +566,40 @@ function sample(pg, x0, y0, x1, y1, scan) {
   if (grey(bg) && Math.min(...bg) > 232) bg = [255, 255, 255];
   return { ink: hex(ink), bg: hex(bg) };
 }
+// Couleur exacte d'un texte du PDF : la zone redessinée en haute résolution (indépendante du zoom et du dessin de la page à l'écran,
+// où un petit texte ne fait qu'un pixel et se mélange au blanc), puis teinte médiane du cœur des lettres, loin du mélange avec le fond
+// uniform : zone sans encre nette (aplat de couleur, fond) → sa teinte médiane plutôt que rien (pipette)
+async function inkColor(pg, [x0, y0, x1, y1], scan, uniform) {
+  const S = 4, ox = x0 * S - 2, oy = y0 * S - 2, W = Math.ceil((x1 - x0) * S) + 4, H = Math.ceil((y1 - y0) * S) + 4;
+  if (W < 4 || H < 4 || W * H > 4e6) return null;
+  const g = Object.assign(document.createElement('canvas'), { width: W, height: H }).getContext('2d', { willReadFrequently: true });
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+  await pg.pdfPage.render({ canvasContext: g, viewport: viewportOf(pg, S), transform: [1, 0, 0, 1, -ox, -oy], intent: 'print' }).promise;
+  const d = g.getImageData(0, 0, W, H).data, N = W * H, lum = new Float32Array(N);
+  for (let p = 0; p < N; p++) lum[p] = d[4 * p] * .3 + d[4 * p + 1] * .59 + d[4 * p + 2] * .11;
+  const sorted = Float32Array.from(lum).sort(), lo = sorted[0], bgL = sorted[Math.floor(N * .9)];
+  if (bgL - lo < 30) { // pas d'encre nette
+    if (!uniform) return null;
+    const ch = [[], [], []];
+    for (let p = 0; p < N; p++) for (let c = 0; c < 3; c++) ch[c].push(d[4 * p + c]);
+    return hex(ch.map(a => a.sort((u, v) => u - v)[a.length >> 1]));
+  }
+  const thr = lo + (bgL - lo) * .35, ch = [[], [], []];
+  for (let p = 0; p < N; p++) if (lum[p] <= thr) for (let c = 0; c < 3; c++) ch[c].push(d[4 * p + c]);
+  let ink = ch.map(a => a.sort((u, v) => u - v)[a.length >> 1]);
+  if (Math.max(...ink) - Math.min(...ink) < 24 && Math.max(...ink) < (scan ? 150 : 40)) ink = [0, 0, 0]; // noir (un scan l'éclaircit)
+  return hex(ink);
+}
+function refineColor(it, box, scan) {
+  inkColor(it.pg, box, scan).then(c => {
+    if (!c || it.color !== it.orig.color) return; // couleur changée entre-temps par l'utilisateur
+    if (it.needSample === 'color') it.needSample = 'bg'; // couleur définitive ; seul le fond reste à relever une fois la page dessinée
+    if (c === it.color) return;
+    it.color = it.orig.color = c;
+    draw(it);
+    if (current === it) reflect();
+  }, e => console.warn('Couleur du texte', e));
+}
 function resample(it) {
   const s = sample(it.pg, ...it.orig.box, it.orig.scan);
   if (!s) return;
@@ -580,6 +614,7 @@ function editRun(span, pg, text, focus = true) {
                    color: s?.ink || '#000000', bg: s?.bg || '#ffffff', needSample: s ? false : 'color', span, run: r, font,
                    orig: { x: r.x, top: r.top, w: r.w, h: r.px, scan: !!r.scan, box, raw: r.raw, str: r.str, fonts: r.scan ? [] : runFonts(pg, r) } }, focus);
   Object.assign(it.orig, { y0: it.y, color: it.color }); // position et couleur d'origine : tant qu'elles ne changent pas, ce qui n'a pas été retouché reste intact
+  refineColor(it, box, r.scan); // couleur exacte relevée en haute résolution (quelques dizaines de millisecondes)
   // ligne scannée : police, taille et espacement retrouvés d'après les pixels (quelques dixièmes de seconde)
   if (r.scan) matchScanFont(pg, r).then(m => {
     if (!m || it.font !== font) return; // police changée entre-temps
@@ -663,6 +698,7 @@ async function editPara(spans, pg) {
   // garde-fou : si notre mise en page ne retombe pas exactement sur les lignes d'origine, on n'édite que la ligne cliquée
   const got = layoutLines(it).map(l => l.t.trim().replace(/\s+/g, ' ')), want = rs.map(r => r.str.trim().replace(/\s+/g, ' '));
   if (got.join('\n') !== want.join('\n')) { detach(it); return null; }
+  refineColor(it, box, scan);
   recAdd(it);
   return it;
 }
@@ -691,6 +727,7 @@ function editRich(spans, pg) {
                    spans, runs: rs, orig: { x: r0.x, top: r0.top, w, h: size, box, str: text, segs: JSON.stringify(segs), fonts: [...new Set(rs.flatMap(r => r.fonts || []))],
                                             lines: rs.map(r => ({ x: r.x, top: r.top, w: r.w, str: r.str })) } }, false);
   Object.assign(it.orig, { y0: it.y, color: it.color });
+  refineColor(it, box, false);
   recAdd(it);
   return it;
 }

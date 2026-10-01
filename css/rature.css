@@ -655,3 +655,8 @@ body.scanning #hint { display: block !important; max-width: calc(100% - 24px); }
 .box, .img, .fieldbox, svg.shape > * { touch-action: none; }
 @media (max-width: 640px) { .scanstage { --sh: min(50dvh, 470px); margin: 12px 12px 0; padding: 20px; } .scanbar { margin-top: 10px; } }
 @media (pointer: coarse) { .hdl { width: 36px; height: 36px; margin: -18px 0 0 -18px; } } /* coins plus faciles à attraper au doigt */
+/* pipette : reprendre une couleur du document */
+.sw.pipette { display: grid; place-items: center; background: var(--panel); color: var(--ink); }
+.sw.pipette svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sw.pipette.on { box-shadow: 0 0 0 2px var(--accent); background: var(--accent-soft); }
+body.picking .page, body.picking .page * { cursor: crosshair !important; }

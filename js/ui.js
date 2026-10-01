@@ -154,6 +154,31 @@ const keepFocus = e => e.preventDefault(); // garde le curseur dans le texte en 
 $('swatches').onpointerdown = e => { if (e.target.dataset.c) keepFocus(e); };
 $('swatches').onclick = e => { if (e.target.dataset.c) setColor(e.target.dataset.c); };
 $('color').onchange = e => { addFavColor(e.target.value); setColor(e.target.value); };
+// Pipette : un clic sur le document reprend sa couleur (texte, trait ou aplat), lue en haute résolution à cet endroit
+let picking = false;
+const stopPicking = () => { picking = false; document.body.classList.remove('picking'); $('pipette').classList.remove('on'); };
+$('pipette').onpointerdown = keepFocus; // le texte en cours d'écriture garde le curseur et recevra la couleur
+$('pipette').onclick = () => {
+  if (picking) return stopPicking();
+  if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
+  picking = true;
+  document.body.classList.add('picking');
+  $('pipette').classList.add('on');
+  toast('Clique sur une couleur du document · Échap : annuler');
+};
+addEventListener('pointerdown', async e => {
+  if (!picking || e.target.closest('#pipette')) return;
+  const pg = pages.find(p => p.wrap.contains(e.target));
+  stopPicking();
+  if (!pg) return; // clic ailleurs : on abandonne
+  e.preventDefault(); e.stopImmediatePropagation(); // le clic ne sert qu'à prendre la couleur
+  const [x, y] = toBase(pg, e), c = await inkColor(pg, [x - 3, y - 3, x + 3, y + 3], pg.wrap.classList.contains('scan'), true);
+  if (!c) return;
+  addFavColor(c);
+  setColor(c);
+  toast(tr('Couleur reprise : {c}', { c }));
+}, true);
+addEventListener('keydown', e => { if (picking && e.key === 'Escape') stopPicking(); });
 document.querySelectorAll('.stepper button').forEach(b => {
   b.onpointerdown = keepFocus;
   b.onclick = () => {
