@@ -192,10 +192,24 @@ async function buildPage(pg) {
   // zones cliquables sur chaque ligne de texte du PDF (outil « Corriger le texte ») : les morceaux voisins de même police,
   // que le PDF découpe souvent au milieu d'un mot (« fil » + « s Léonard »), sont réunis ; une tabulation sépare deux zones
   // Le style (gras, italique) n'est connu qu'une fois la page dessinée : refineRuns sépare alors les styles différents.
-  const tc = await pg.pdfPage.getTextContent();
+  const [tc, ops] = await Promise.all([pg.pdfPage.getTextContent(), pg.pdfPage.getOperatorList()]);
+  const O = pdfjsLib.OPS, imgOps = [O.paintImageXObject, O.paintJpegXObject, O.paintInlineImageXObject], hasImg = ops.fnArray.some(f => imgOps.includes(f));
+  // Scan avec une couche de texte invisible (OCR de Google Drive, d'un scanner, d'un photocopieur) : ce texte n'a ni la police ni la place
+  // exacte du texte visible de l'image, et le corriger laissait l'ancien texte de l'image dessous. La page est alors traitée comme un scan :
+  // l'OCR de Rature mesure la police sur l'image et efface vraiment la ligne corrigée.
+  // invisible = mode de rendu 3 ou 7 (scanners, Tesseract) ou opacité nulle (Rature, certains outils) ; l'état est sauvé et restauré par q/Q
+  let st = { mode: 0, alpha: 1 }, shown = 0, hidden = 0;
+  const saved = [], showOps = [O.showText, O.showSpacedText, O.nextLineShowText, O.nextLineSetSpacingShowText];
+  ops.fnArray.forEach((f, i) => {
+    if (f === O.save) saved.push({ ...st }); else if (f === O.restore) st = saved.pop() ?? { mode: 0, alpha: 1 };
+    else if (f === O.setTextRenderingMode) st.mode = ops.argsArray[i][0];
+    else if (f === O.setGState) for (const [k, v] of ops.argsArray[i][0] || []) { if (k === 'ca') st.alpha = v; }
+    else if (showOps.includes(f)) st.mode % 4 === 3 || st.alpha === 0 ? hidden++ : shown++;
+  });
+  const ghostText = hasImg && hidden > 0 && !shown;
   let n = 0, cur = null, space = false;
   const flush = () => { if (cur) { addRun(pg, runOf(cur.parts, cur)); n++; } cur = null; };
-  for (const t of tc.items) {
+  for (const t of ghostText ? [] : tc.items) {
     if (!t.str) continue;
     const tx = pdfjsLib.Util.transform(pg.vp.transform, t.transform), px = Math.hypot(tx[2], tx[3]);
     if (Math.abs(tx[1]) > 0.01 * px || tx[0] <= 0) continue; // ponytail: texte penché, vertical ou à l'envers à l'écran ignoré
@@ -212,9 +226,8 @@ async function buildPage(pg) {
   }
   flush();
   pg.ocr?.forEach(r => addRun(pg, r));
-  // page « scannée » = sans texte mais avec une image (une page blanche n'en est pas une)
-  const O = pdfjsLib.OPS, imgOps = [O.paintImageXObject, O.paintJpegXObject, O.paintInlineImageXObject];
-  pg.wrap.classList.toggle('scan', !n && (await pg.pdfPage.getOperatorList()).fnArray.some(f => imgOps.includes(f)));
+  // page « scannée » = sans texte visible mais avec une image (une page blanche n'en est pas une)
+  pg.wrap.classList.toggle('scan', !n && hasImg);
   pg.wrap.classList.toggle('ocrdone', !!pg.ocr);
   await buildFields(pg);
   pg.built = true;

@@ -222,12 +222,24 @@ async function matchScanFont(pg, r) {
   const sc = canvas();
   sc.fillStyle = '#fff';
   sc.fillRect(0, 0, W, H);
-  await pg.pdfPage.render({ canvasContext: sc, viewport: viewportOf(pg, S), transform: [1, 0, 0, 1, -ox, -oy] }).promise;
+  await pg.pdfPage.render({ canvasContext: sc, viewport: viewportOf(pg, S), transform: [1, 0, 0, 1, -ox, -oy], intent: 'print' }).promise; // « print » : sans attendre l'affichage (onglet en arrière-plan)
   const sd = sc.getImageData(0, 0, W, H).data, lum = p => sd[4 * p] * .3 + sd[4 * p + 1] * .59 + sd[4 * p + 2] * .11;
   let lo = 255, hi = 0;
   for (let p = 0; p < W * H; p++) { const v = lum(p); lo = Math.min(lo, v); hi = Math.max(hi, v); }
   const ink = new Uint8Array(W * H);
   for (let p = 0; p < W * H; p++) ink[p] = lum(p) < (lo + hi) / 2;
+  // hauteur des minuscules mesurée sur les pixels de la ligne (celle de Tesseract est une moyenne par bloc, souvent la même pour
+  // des lignes de tailles différentes) : profil d'encre rangée par rangée ; la ligne de base est la plus forte chute d'encre en
+  // descendant, le haut des minuscules la plus forte hausse au-dessus. Ligne surtout en majuscules, ou mesure invraisemblable
+  // par rapport à la hauteur de la ligne : on garde la valeur de Tesseract.
+  const rows = new Float32Array(H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) rows[y] += ink[y * W + x];
+  let baseRow = -1, drop = 0, meanRow = -1, rise = 0;
+  for (let y = 0; y + 2 < H; y++) if (rows[y] - rows[y + 2] > drop) { drop = rows[y] - rows[y + 2]; baseRow = y + 1; }
+  for (let y = 0; y + 2 < baseRow - S; y++) if (rows[y + 2] - rows[y] > rise) { rise = rows[y + 2] - rows[y]; meanRow = y + 1; }
+  const lower = (r.str.match(/[a-zß-ÿ]/g) || []).length, letters = (r.str.match(/\p{L}/gu) || []).length, boxH = (Y1 - Y0) * S;
+  const measured = meanRow >= 0 ? baseRow - meanRow : 0;
+  const xh = lower >= letters * .6 && measured > .3 * boxH && measured < .75 * boxH ? measured / S : r.xh;
   const zones = words.map(w => [Math.max(0, Math.floor(w.b[0] * S - ox) - 2), Math.max(0, Math.floor(w.b[1] * S - oy) - 2),
                                 Math.min(W, Math.ceil(w.b[2] * S - ox) + 2), Math.min(H, Math.ceil(w.b[3] * S - oy) + 2)]);
   const base = (r.top + .85 * r.px) * S - oy, tc = canvas();
@@ -235,7 +247,7 @@ async function matchScanFont(pg, r) {
   const score = (key, bold) => { // mots redessinés, calés sur la largeur de chaque mot du scan ; ressemblance moins l'écart de largeur
     const fam = `${bold ? '700 ' : ''}%s "Plume ${key}"`;
     measure.font = fam.replace('%s', '100px');
-    const xr = measure.measureText('x').actualBoundingBoxAscent / 100, size = r.xh / xr;
+    const xr = measure.measureText('x').actualBoundingBoxAscent / 100, size = xh / xr;
     if (!(xr > 0)) return null;
     tc.setTransform(1, 0, 0, 1, 0, 0);
     tc.clearRect(0, 0, W, H);
@@ -260,7 +272,7 @@ async function matchScanFont(pg, r) {
   if (!best) return null;
   await document.fonts.load(`700 100px "Plume ${best.key}"`).catch(() => {});
   const bold = score(best.key, true);
-  if (bold && bold.score > best.score) best = bold;
+  if (bold && bold.score > best.score + .04) best = bold; // nettement mieux seulement : un scan épaissit un peu les traits et pousse vers le gras
   // taille : d'après la longueur de la ligne (les largeurs de lettres sont celles de la police d'origine, plus sûres que la hauteur
   // des minuscules, qui varie d'une police libre à l'autre), sans trop s'écarter de la hauteur ; puis espacement pour le reste :
   // l'encre de la nouvelle ligne commence et finit là où finissait l'ancienne

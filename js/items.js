@@ -562,7 +562,7 @@ function sample(pg, x0, y0, x1, y1, scan) {
   }
   // l'anticrénelage éclaircit le noir et fonce le blanc : on retrouve les vraies couleurs quand elles sont proches
   const grey = c => Math.max(...c) - Math.min(...c) < 24;
-  if (grey(ink) && Math.max(...ink) < 90) ink = [0, 0, 0];
+  if (grey(ink) && Math.max(...ink) < (scan ? 150 : 90)) ink = [0, 0, 0]; // scan : lettres adoucies (et page affichée en basse résolution) → gris moyen pour du noir
   if (grey(bg) && Math.min(...bg) > 232) bg = [255, 255, 255];
   return { ink: hex(ink), bg: hex(bg) };
 }

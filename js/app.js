@@ -157,7 +157,7 @@ $('expprev').onclick = async () => {
       const c = document.createElement('canvas'), k = Math.min(2, 900 / vp.width);
       const v = vp.clone({ scale: vp.scale * k });
       c.width = v.width; c.height = v.height;
-      await page.render({ canvasContext: c.getContext('2d'), viewport: v }).promise;
+      await page.render({ canvasContext: c.getContext('2d'), viewport: v, intent: 'print' }).promise;
       return c;
     };
     const blocks = [];
