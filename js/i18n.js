@@ -21,6 +21,7 @@ Object.assign(EN, {
   'OCR': 'OCR', "Lire le texte d'un PDF scanné (OCR)": 'Read the text of a scanned PDF (OCR)', 'Lire le texte (OCR)': 'Read the text (OCR)',
   'Passer en clair': 'Switch to light', 'Passer en sombre': 'Switch to dark',
   'Document prêt à convertir.': 'Document ready to convert.', 'Exporter en Word': 'Export to Word',
+  'Accueil': 'Home', 'Revenir à l’accueil': 'Back to home', 'Le document affiché pourra être repris depuis l’accueil. Les autres onglets seront fermés.': 'The document on screen can be resumed from the home page. The other tabs will be closed.',
   'Pipette : reprendre une couleur du document': 'Eyedropper: pick a colour from the document', 'Clique sur une couleur du document · Échap : annuler': 'Click a colour in the document · Esc: cancel', 'Couleur reprise : {c}': 'Colour picked: {c}',
   'Taille · {x}': 'Size · {x}', 'Recadrer le tampon': 'Crop the stamp', 'Créer le tampon': 'Create the stamp',
   'Place les 4 coins autour du tampon : le fond blanc sera retiré.': 'Place the 4 corners around the stamp: the white background will be removed.',

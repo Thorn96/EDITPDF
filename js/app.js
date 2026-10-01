@@ -49,6 +49,16 @@ function showHelp() {
 }
 $('help').onclick = showHelp;
 
+// ---------- Logo : retour à l'accueil ----------
+// le document affiché est sauvegardé juste avant et se reprend depuis l'accueil (« Reprendre ton travail ») ; seul celui-là peut l'être
+$('home').onclick = async e => {
+  e.preventDefault();
+  if (tabs.length > 1 && !await ask({ title: 'Revenir à l’accueil', text: 'Le document affiché pourra être repris depuis l’accueil. Les autres onglets seront fermés.',
+    buttons: [{ label: 'Annuler', value: false }, { label: 'Revenir à l’accueil', value: true, primary: true }] })) return;
+  if (pages.length) await autosave();
+  location.href = here(lang === 'en' ? 'en/' : './'); // adresse nue : sans ?outil=… ni ?reprendre
+};
+
 // ---------- Tiroirs (petits écrans) ----------
 $('btnPages').onclick = () => document.body.classList.toggle('show-left');
 $('btnSigs').onclick = () => document.body.classList.toggle('show-right');
