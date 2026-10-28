@@ -172,7 +172,11 @@ Object.assign(EN, {
   'Recadrer': 'Crop', 'Recadre la page avant de corriger son texte.': 'Crop the page before fixing its text.', '{n} page supprimée': '{n} page deleted', '{n} pages supprimées': '{n} pages deleted',
   // Raccourcis
   'Raccourcis clavier': 'Keyboard shortcuts', 'Compris': 'Got it', 'Écrire · Corriger · Cocher, mentions · Note': 'Write · Edit text · Tick, standard phrases · Note',
-  'Surligner · Dessiner · Champ de formulaire': 'Highlight · Draw · Form field', 'Rectangle · Cercle · Trait · Flèche': 'Rectangle · Circle · Line · Arrow', 'Caviarder · Image · Sélectionner': 'Redact · Image · Select',
+  'Surligner · Dessiner · Gomme · Champ de formulaire': 'Highlight · Draw · Eraser · Form field',
+  'Gomme (repeint de la couleur du fond) · B': 'Eraser (paints with the background colour) · B', 'Gomme': 'Eraser', 'gomme': 'eraser', 'Épaisseur de la gomme': 'Eraser size',
+  'Passe la gomme sur ce qui doit disparaître · un trait de gomme se sélectionne et se supprime comme un dessin': 'Rub out what should disappear · an eraser stroke can be selected and deleted like a drawing',
+  "Le texte gommé reste lisible par un copier-coller : pour l'effacer vraiment, caviarde": 'Erased text can still be copied and pasted: to really remove it, redact it',
+'Rectangle · Cercle · Trait · Flèche': 'Rectangle · Circle · Line · Arrow', 'Caviarder · Image · Sélectionner': 'Redact · Image · Select',
   'Vue en grille des pages': 'Page grid view', 'Annuler · Rétablir': 'Undo · Redo', 'Effacer · Dupliquer la sélection': 'Delete · Duplicate the selection', 'Suppr': 'Del', 'Maj+clic': 'Shift+click',
   'Sélection multiple · Tout sélectionner sur la page': 'Multiple selection · Select everything on the page', 'Copier · Couper · Coller (aussi une image)': 'Copy · Cut · Paste (an image too)',
   'Clic droit': 'Right-click', "Menu de l'élément ou de la page": 'Item or page menu', 'Flèches': 'Arrows', 'Ajuster la position (Maj : ×10)': 'Nudge (Shift: ×10)', 'Déplacer sans aimantation': 'Move without snapping',

@@ -5,6 +5,7 @@ const HINTS = {
   stamp: 'Choisis un symbole ou une mention, puis clique à l\'endroit voulu',
   highlight: 'Fais glisser sur le texte à surligner',
   draw: 'Dessine à main levée',
+  erase: 'Passe la gomme sur ce qui doit disparaître · un trait de gomme se sélectionne et se supprime comme un dessin',
   rect: 'Clique et fais glisser pour tracer un rectangle',
   link: 'Trace la zone cliquable, puis indique une adresse web ou un numéro de page',
   ellipse: 'Clique et fais glisser pour tracer un cercle',
@@ -16,10 +17,10 @@ const HINTS = {
   move: 'Clic : sélectionner · Maj+clic ou cadre : plusieurs · flèches : ajuster · Alt : sans aimantation',
   crop: 'Trace la zone de la page à garder · Échap : annuler',
 };
-const KEYS = { t: 'text', e: 'edit', s: 'stamp', h: 'highlight', d: 'draw', r: 'rect', c: 'ellipse', l: 'line', a: 'arrow', k: 'link', n: 'note', f: 'field', x: 'redact', v: 'move' };
+const KEYS = { t: 'text', e: 'edit', s: 'stamp', h: 'highlight', d: 'draw', b: 'erase', r: 'rect', c: 'ellipse', l: 'line', a: 'arrow', k: 'link', n: 'note', f: 'field', x: 'redact', v: 'move' };
 const SHAPES = ['rect', 'ellipse', 'line', 'arrow', 'link'];
 // Contexte d'un élément = liste d'options affichées pour lui dans la barre
-const ctxOf = it => it.orig ? 'edit' : it.note ? 'note' : it.frame ? 'seal' : ({ mark: 'stamp', hl: 'highlight', ink: 'draw' })[it.type] || it.type;
+const ctxOf = it => it.erase ? 'erase' : it.orig ? 'edit' : it.note ? 'note' : it.frame ? 'seal' : ({ mark: 'stamp', hl: 'highlight', ink: 'draw' })[it.type] || it.type;
 const TEXT_STAMPS = { date: () => today(), lu: () => tr('Lu et approuvé'), bon: () => tr('Bon pour accord'), fait: () => tr('Fait à  le {d}', { d: today() }) };
 
 function setTool(t) {
@@ -82,7 +83,8 @@ function reflect() {
   if (it) {
     if (it.color) showColor(it.color);
     if (it.type === 'text' || it.type === 'mark') $('size').value = Math.round(it.size * 2) / 2;
-    if (['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(it.type)) $('width').value = it.w;
+    if (it.erase) $('ewidth').value = it.w;
+    else if (['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(it.type)) $('width').value = it.w;
     if (it.type === 'text') showFont(it.font);
     if (it.type === 'mark') showKind(it.kind);
     if (it.type === 'rect' || it.type === 'ellipse') $('fill').classList.toggle('on', !!it.fill);
@@ -108,16 +110,17 @@ function richFont(it) {
   else styleRich(it, f => f.local ? { ...f, bold, italic, touched: f.touched || bold !== !!f.bold || italic !== !!f.italic } : { ...f, bold, italic });
   it.font = it.segs[0].f;
 }
-const PROP_NAMES = { color: 'Couleur', size: 'Taille', width: 'Épaisseur', font: 'Police', kind: 'Symbole', fill: 'Remplissage', rot: 'Rotation', op: 'Opacité', field: 'Champ' };
+const PROP_NAMES = { color: 'Couleur', size: 'Taille', width: 'Épaisseur', ewidth: 'Épaisseur', font: 'Police', kind: 'Symbole', fill: 'Remplissage', rot: 'Rotation', op: 'Opacité', field: 'Champ' };
 const PROP_OK = {
-  color: it => !['img', 'redact', 'field', 'link'].includes(it.type),
+  color: it => !['img', 'redact', 'field', 'link'].includes(it.type) && !it.erase,
   size: it => it.type === 'text' || it.type === 'mark',
-  width: it => ['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(it.type),
+  width: it => ['ink', 'rect', 'ellipse', 'line', 'arrow'].includes(it.type) && !it.erase,
+  ewidth: it => !!it.erase,
   font: it => it.type === 'text',
   kind: it => it.type === 'mark' && !TEXT_STAMPS[stampKind],
   fill: it => it.type === 'rect' || it.type === 'ellipse',
   rot: it => (it.type === 'text' && !it.orig) || it.type === 'img',
-  op: it => !['redact', 'field', 'link'].includes(it.type),
+  op: it => !['redact', 'field', 'link'].includes(it.type) && !it.erase,
   field: it => it.type === 'field',
 };
 function applyProps(kind) {
@@ -126,6 +129,7 @@ function applyProps(kind) {
     if (kind === 'color') it.color = $('color').value;
     if (kind === 'size') it.size = +$('size').value;
     if (kind === 'width') it.w = +$('width').value;
+    if (kind === 'ewidth') it.w = +$('ewidth').value;
     if (kind === 'font') { if (it.rich) richFont(it); else it.font = readFont(it.font); }
     if (kind === 'kind') it.kind = stampKind;
     if (kind === 'fill') it.fill = $('fill').classList.contains('on');
@@ -189,6 +193,7 @@ document.querySelectorAll('.stepper button').forEach(b => {
 });
 $('size').onchange = () => applyProps('size');
 $('width').onchange = () => applyProps('width');
+$('ewidth').onchange = () => applyProps('ewidth');
 $('rot').onchange = () => applyProps('rot');
 $('fill').onclick = () => { $('fill').classList.toggle('on'); applyProps('fill'); };
 // Opacité : aperçu en direct pendant le glissement, une seule étape d'annulation au lâcher

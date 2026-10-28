@@ -185,6 +185,8 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
         <svg class="i" viewBox="0 0 24 24"><path d="m9 15-4 4h5l1.5-1.5"/><path d="M8.5 12.5 16 5l3 3-7.5 7.5z"/></svg><span>Highlight</span></button>
       <button data-t="draw" data-tip="Freehand drawing · D" aria-label="Draw">
         <svg class="i" viewBox="0 0 24 24"><path d="M3 17c2.5-2 4-7 6-7s1 6 3.5 6S16 9 18 9s2 3 3 4"/></svg><span>Draw</span></button>
+      <button data-t="erase" data-tip="Eraser (paints with the background colour) · B" aria-label="Eraser">
+        <svg class="i" viewBox="0 0 24 24"><path d="M9 20 3.9 14.9a1.5 1.5 0 0 1 0-2.1l8.9-8.9a1.5 1.5 0 0 1 2.1 0l4.2 4.2a1.5 1.5 0 0 1 0 2.1L11 20zM8.5 8.2l7.3 7.3M9 20h11"/></svg><span>Eraser</span></button>
       <div class="tgroup">
         <button data-t="rect" id="shapebtn" aria-label="Shapes"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/></svg><span>Shapes</span><i></i></button>
         <div class="flyout">
@@ -245,6 +247,11 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
         <span>Thickness</span>
         <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Thinner">−</button><input id="width" type="number" value="1.5" min="0.5" max="12" step="0.5"><button data-target="width" data-step="0.5" aria-label="Thicker">+</button></div>
       </div>
+      <div class="prop" data-for="erase">
+        <span>Thickness</span>
+        <div class="stepper"><button data-target="ewidth" data-step="-4" aria-label="Thinner">−</button><input id="ewidth" aria-label="Eraser size" type="number" value="16" min="4" max="80" step="4"><button data-target="ewidth" data-step="4" aria-label="Thicker">+</button></div>
+      </div>
+      <div class="prop info" data-for="erase">Erased text can still be copied and pasted: to really remove it, redact it</div>
       <div class="prop" data-for="rect ellipse"><button class="tog" id="fill" title="Shape filled with the colour">▮ Filled</button></div>
       <div class="prop" data-for="link"><input id="linkto" class="mini wide" placeholder="https://… or page no." title="Link target"></div>
       <div class="prop" data-for="field">

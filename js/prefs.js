@@ -1,5 +1,5 @@
 // Rature · Préférences mémorisées, thème, couleurs favorites, langue, visite guidée
-const PREFS0 = { tool: 'text', font: 'arial', bold: false, italic: false, size: 11, width: 1.5, pen: '#000000', hl: '#ffd84d',
+const PREFS0 = { tool: 'text', font: 'arial', bold: false, italic: false, size: 11, width: 1.5, ewidth: 16, pen: '#000000', hl: '#ffd84d',
                  theme: 'auto', lang: '', favs: [], tour: false };
 let prefs = { ...PREFS0 };
 try { prefs = { ...PREFS0, ...JSON.parse(localStorage.prefs || '{}') }; } catch {}
@@ -10,7 +10,7 @@ function prefsChanged() {
   clearTimeout(prefsT);
   prefsT = setTimeout(() => {
     const f = $('font').value;
-    Object.assign(prefs, { tool: tool === 'crop' ? prefs.tool : tool, size: +$('size').value, width: +$('width').value, pen: penColor, hl: hlColor,
+    Object.assign(prefs, { tool: tool === 'crop' ? prefs.tool : tool, size: +$('size').value, width: +$('width').value, ewidth: +$('ewidth').value, pen: penColor, hl: hlColor,
                            bold: $('bold').classList.contains('on'), italic: $('italic').classList.contains('on'), ...(FONTS[f] && { font: f }) });
     savePrefs();
   }, 300);
@@ -20,6 +20,7 @@ function applyPrefs() {
   penColor = prefs.pen; hlColor = prefs.hl;
   $('size').value = prefs.size;
   $('width').value = prefs.width;
+  $('ewidth').value = prefs.ewidth;
   if (FONTS[prefs.font]) $('font').value = prefs.font;
   $('bold').classList.toggle('on', !!prefs.bold);
   $('italic').classList.toggle('on', !!prefs.italic);

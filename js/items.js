@@ -493,14 +493,22 @@ function down(e, pg) {
     } else recAdd(add({ type: 'mark', pg, kind: stampKind, x: sx, y: sy }));
     e.preventDefault();
     return;
-  } else if (tool === 'draw') {
-    it = add({ type: 'ink', pg, x: sx, y: sy, pts: [[0, 0]] });
+  } else if (tool === 'draw' || tool === 'erase') { // gomme : tracé épais couleur du fond, qui recouvre ce qu'il y a dessous
+    const ew = +$('ewidth').value;
+    it = add({ type: 'ink', pg, x: sx, y: sy, pts: [[0, 0]], ...(tool === 'erase' && { erase: true, w: ew, color: paperColor(pg, sx - ew, sy - ew, sx + ew, sy + ew) }) });
     creating = true;
     onMove = ev => {
       const [x, y] = pos(ev), p = it.pts.at(-1);
       if (Math.hypot(x - it.x - p[0], y - it.y - p[1]) > .8) { it.pts.push([x - it.x, y - it.y]); draw(it); }
     };
-    onUp = () => { if (it.pts.length === 1) it.pts.push([.01, 0]); draw(it); recAdd(it); };
+    onUp = () => {
+      if (it.pts.length === 1) it.pts.push([.01, 0]);
+      if (it.erase) { // fond relevé sur toute la zone gommée, plus sûr qu'au seul point de départ
+        const xs = it.pts.map(p => it.x + p[0]), ys = it.pts.map(p => it.y + p[1]), r = it.w / 2;
+        it.color = paperColor(pg, Math.min(...xs) - r, Math.min(...ys) - r, Math.max(...xs) + r, Math.max(...ys) + r);
+      }
+      draw(it); recAdd(it);
+    };
   } else { // formes, surligneur, caviardage, champ de formulaire : on trace un cadre
     const f = tool === 'field' ? readField() : null;
     it = add({ type: tool === 'highlight' ? 'hl' : tool, pg, x: sx, y: sy, x2: sx, y2: sy,
@@ -565,6 +573,20 @@ function sample(pg, x0, y0, x1, y1, scan) {
   if (grey(ink) && Math.max(...ink) < (scan ? 150 : 90)) ink = [0, 0, 0]; // scan : lettres adoucies (et page affichée en basse résolution) → gris moyen pour du noir
   if (grey(bg) && Math.min(...bg) > 232) bg = [255, 255, 255];
   return { ink: hex(ink), bg: hex(bg) };
+}
+// Couleur du fond d'une zone (gomme) : la teinte la plus fréquente de la page d'origine, le texte et les traits fins y sont minoritaires
+// ponytail: une seule teinte par trait ; un trait à cheval sur deux fonds prend celui qui domine
+function paperColor(pg, x0, y0, x1, y1) {
+  if (pg.renderedZ == null) return '#ffffff';
+  const k = pg.canvas.width / pg.vp.width, X = Math.max(0, x0 * k), Y = Math.max(0, y0 * k);
+  const d = pg.canvas.getContext('2d').getImageData(X, Y, Math.max(1, Math.min(pg.canvas.width - X, (x1 - x0) * k)), Math.max(1, Math.min(pg.canvas.height - Y, (y1 - y0) * k))).data;
+  const n = new Uint32Array(4096), sum = new Float64Array(4096 * 3);
+  for (let i = 0; i < d.length; i += 4) {
+    const b = (d[i] >> 4) << 8 | (d[i + 1] >> 4) << 4 | d[i + 2] >> 4;
+    n[b]++; sum[3 * b] += d[i]; sum[3 * b + 1] += d[i + 1]; sum[3 * b + 2] += d[i + 2];
+  }
+  const b = n.indexOf(Math.max(...n)), c = [0, 1, 2].map(j => Math.round(sum[3 * b + j] / n[b]));
+  return Math.min(...c) > 240 && Math.max(...c) - Math.min(...c) < 12 ? '#ffffff' : hex(c);
 }
 // Couleur exacte d'un texte du PDF : la zone redessinée en haute résolution (indépendante du zoom et du dessin de la page à l'écran,
 // où un petit texte ne fait qu'un pixel et se mélange au blanc), puis teinte médiane du cœur des lettres, loin du mélange avec le fond

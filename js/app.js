@@ -36,7 +36,7 @@ addEventListener('keydown', e => {
 });
 function showHelp() {
   const rows = [
-    ['T · E · S · N', 'Écrire · Corriger · Cocher, mentions · Note'], ['H · D · F', 'Surligner · Dessiner · Champ de formulaire'],
+    ['T · E · S · N', 'Écrire · Corriger · Cocher, mentions · Note'], ['H · D · B · F', 'Surligner · Dessiner · Gomme · Champ de formulaire'],
     ['R · C · L · A · K', 'Rectangle · Cercle · Trait · Flèche · Lien'], ['X · I · V', 'Caviarder · Image · Sélectionner'],
     ['G', 'Vue en grille des pages'], ['Ctrl Z · Ctrl Y', 'Annuler · Rétablir'], ['Suppr · Ctrl D', 'Effacer · Dupliquer la sélection'],
     ['Maj+clic · Ctrl A', 'Sélection multiple · Tout sélectionner sur la page'], ['Ctrl C · Ctrl X · Ctrl V', 'Copier · Couper · Coller (aussi une image)'],

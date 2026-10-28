@@ -139,10 +139,10 @@ svg.shape > .ink { pointer-events: visibleStroke; }
 svg.shape:has(> .hl) { mix-blend-mode: multiply; }
 svg.shape > .sel { filter: drop-shadow(0 0 2px var(--sel)); }
 body[data-tool=text] .layer, body[data-tool=edit] .layer { cursor: text; }
-body[data-tool=stamp] .layer, body[data-tool=draw] .layer, body[data-tool=highlight] .layer, body[data-tool=note] .layer, body[data-tool=arrow] .layer,
+body[data-tool=stamp] .layer, body[data-tool=draw] .layer, body[data-tool=erase] .layer, body[data-tool=highlight] .layer, body[data-tool=note] .layer, body[data-tool=arrow] .layer,
 body[data-tool=rect] .layer, body[data-tool=ellipse] .layer, body[data-tool=line] .layer, body[data-tool=redact] .layer, body[data-tool=field] .layer, body[data-tool=crop] .layer,
 body[data-tool=link] .layer { cursor: crosshair; }
-body[data-tool=draw] .layer, body[data-tool=highlight] .layer, body[data-tool=arrow] .layer, body[data-tool=redact] .layer, body[data-tool=link] .layer,
+body[data-tool=draw] .layer, body[data-tool=erase] .layer, body[data-tool=highlight] .layer, body[data-tool=arrow] .layer, body[data-tool=redact] .layer, body[data-tool=link] .layer,
 body[data-tool=rect] .layer, body[data-tool=ellipse] .layer, body[data-tool=line] .layer, body[data-tool=field] .layer, body[data-tool=crop] .layer { touch-action: none; } /* au doigt : on dessine au lieu de faire défiler */
 #pages { touch-action: pan-x pan-y; } /* le zoom à deux doigts est celui de Rature, pas celui du navigateur */
 /* écrans tactiles : cibles plus grandes */

@@ -179,7 +179,7 @@ function record(undoFn, redoFn, label) {
 }
 const ITEM_NAMES = { text: 'texte', mark: 'symbole', ink: 'dessin', rect: 'rectangle', ellipse: 'cercle', line: 'trait', arrow: 'flèche', hl: 'surlignage',
                      redact: 'caviardage', img: 'image', field: 'champ', link: 'lien' };
-const itemName = it => it.orig ? 'texte corrigé' : it.note ? 'note' : it.frame ? 'tampon' : ITEM_NAMES[it.type] || 'élément';
+const itemName = it => it.erase ? 'gomme' : it.orig ? 'texte corrigé' : it.note ? 'note' : it.frame ? 'tampon' : ITEM_NAMES[it.type] || 'élément';
 // Plusieurs actions d'un coup (tout remplacer, toutes les pages…) = une seule étape d'annulation
 function group(fn, label) {
   const outer = batch;
