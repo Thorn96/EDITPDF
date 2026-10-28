@@ -123,10 +123,13 @@ async function normImage(file, max) {
 function transparentize(c) {
   const g = c.getContext('2d'), id = g.getImageData(0, 0, c.width, c.height), d = id.data, N = c.width * c.height;
   const lum = new Uint8Array(N), hist = new Uint32Array(256);
-  for (let i = 0; i < N; i++) { lum[i] = d[i * 4] * .299 + d[i * 4 + 1] * .587 + d[i * 4 + 2] * .114; hist[lum[i]]++; }
+  for (let i = 0; i < N; i++) { // image déjà transparente (PNG détouré) : vue sur du papier blanc
+    const a = d[i * 4 + 3] / 255;
+    lum[i] = (d[i * 4] * .299 + d[i * 4 + 1] * .587 + d[i * 4 + 2] * .114) * a + 255 * (1 - a); hist[lum[i]]++;
+  }
   const pct = p => { let acc = 0; for (let v = 0; v < 256; v++) if ((acc += hist[v]) >= N * p) return v; return 255; };
   const paper = pct(.6), inkL = pct(.005), span = Math.max(30, paper - inkL);
-  for (let i = 0; i < N; i++) d[i * 4 + 3] = clamp(((paper - lum[i]) / span * 1.4 - .2) * 255, 0, 255);
+  for (let i = 0; i < N; i++) d[i * 4 + 3] = Math.min(d[i * 4 + 3], clamp(((paper - lum[i]) / span * 1.4 - .2) * 255, 0, 255));
   g.putImageData(id, 0, 0);
   return c;
 }

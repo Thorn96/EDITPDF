@@ -53,9 +53,11 @@ function renderSigs() {
     d.className = 'thumb';
     d.draggable = true;
     d.title = tr('Glisse-moi sur le document, ou clique pour me poser sur la page affichée');
-    d.innerHTML = `<img src="${s.src}" alt="Signature ${i + 1}"><button class="del" title="${esc(tr('Supprimer'))}"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
-    d.ondragstart = e => e.dataTransfer.setData('text/plain', 'sig:' + i);
+    d.innerHTML = `<img src="${s.src}" alt="Signature ${i + 1}"><button class="mv" title="${esc(tr('Ranger dans les tampons'))}" aria-label="${esc(tr('Ranger dans les tampons'))}"><svg class="i" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg></button><button class="del" title="${esc(tr('Supprimer'))}"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+    d.ondragstart = e => { e.dataTransfer.setData('text/plain', 'sig:' + i); document.body.dataset.drag = 'sig'; };
+    d.ondragend = () => delete document.body.dataset.drag;
     d.onclick = e => {
+      if (e.target.closest('.mv')) return moveMark('sig:' + i);
       if (!e.target.closest('.del')) { document.body.classList.remove('show-right'); return placeImage(s, null, null, null, 100); }
       const [gone] = sigs.splice(i, 1);
       saveSigs(); renderSigs();
@@ -71,6 +73,17 @@ function addSig(c) { // recadre sur le tracé (pixels non transparents) et mémo
   sigs.push({ src: o.toDataURL('image/png'), ratio: o.width / o.height });
   saveSigs(); renderSigs();
   return true;
+}
+// Signature ou tampon photographié, fond déjà transparent : part sur l'ordinateur si le téléphone y est relié, sinon rangé ici
+function saveMark(kind, c) {
+  const t = trimCanvas(c);
+  if (!t) return toast(kind === 'sig' ? 'Aucune signature trouvée dans ce cadre.' : 'Aucun tampon trouvé dans ce cadre.', 'error');
+  if (sendMarkToDesk(kind, t)) return;
+  if (kind === 'stamp') return saveImageStamp(t);
+  addSig(t);
+  track('signature', { depuis: 'photo' });
+  document.body.classList.add('show-right');
+  toast('Signature enregistrée : glisse-la sur le document');
 }
 
 const pad = $('sigpad'), pctx = pad.getContext('2d');
@@ -106,31 +119,25 @@ $('sigok').onclick = () => {
   track('signature');
   toast('Signature enregistrée : glisse-la sur le document');
 };
-// Signature photographiée : le papier devient transparent, l'encre reste
-$('sigphoto').onchange = async e => {
-  const f = e.target.files[0];
-  e.target.value = '';
-  if (!f) return;
-  const im = await normImage(f, 1600);
-  if (!im) return toast('Image illisible.', 'error');
-  if (!addSig(transparentize(im.canvas))) return toast("Aucune signature trouvée sur la photo.", 'error');
-  toast('Signature importée : glisse-la sur le document');
-};
 
 // ---------- Numériser avec l'appareil photo ----------
-let scan = null; // { photo: canvas, pts: 4 coins [x, y] dans la photo, mode, purpose : 'page' (feuille) ou 'stamp' (tampon d'entreprise) }
+let scan = null; // { photo: canvas, pts: 4 coins [x, y] dans la photo, mode, purpose : 'page' (feuille), 'sig' (signature) ou 'stamp' (tampon d'entreprise) }
 // entrées photo : l'accueil et les panneaux, « Reprendre la photo » (même usage), l'écran téléphone → ordinateur, la création de tampon
 const scanInput = (id, purpose) => { $(id).onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) startScan(f, purpose || scan?.purpose); }; };
 scanInput('scanfile', 'page'); scanInput('relaycam', 'page'); scanInput('stampimg', 'stamp'); scanInput('scanretake');
+scanInput('sigphoto', 'sig'); scanInput('relaysig', 'sig'); scanInput('relaystamp', 'stamp');
 const SCAN_TEXT = { page: ['Numériser', 'Place les 4 coins sur les bords de la feuille : elle sera redressée.', 'Ajouter la page'],
-                    stamp: ['Recadrer le tampon', 'Place les 4 coins autour du tampon : le fond blanc sera retiré.', 'Créer le tampon'] };
+                    stamp: ['Recadrer le tampon', 'Place les 4 coins autour du tampon : le fond blanc sera retiré.', 'Créer le tampon'],
+                    sig: ['Recadrer la signature', 'Place les 4 coins autour de la signature : le fond blanc sera retiré.', 'Enregistrer la signature'] };
 async function startScan(f, purpose = 'page') {
   const im = await normImage(f, 4000); // pleine définition d'un téléphone : c'est elle qui fait la netteté du scan
   if (!im) return toast('Image illisible.', 'error');
-  const stamp = purpose === 'stamp';
-  // tampon : cadre de départ au centre (la détection cherche une feuille entière, pas un tampon)
-  scan = { photo: im.canvas, pts: stamp ? [[.2, .3], [.8, .3], [.8, .7], [.2, .7]].map(([a, b]) => [a * im.w, b * im.h]) : detectCorners(im.canvas),
-           mode: stamp ? 'color' : scan?.purpose === 'page' ? scan.mode : 'color', purpose }; // couleur par défaut : signatures bleues et tampons gardent leur couleur
+  const mark = purpose !== 'page', g = im.canvas.getContext('2d');
+  g.globalCompositeOperation = 'destination-over'; g.fillStyle = '#fff'; g.fillRect(0, 0, im.w, im.h); // image transparente : sur papier blanc
+  // signature, tampon : cadre de départ au centre (la détection cherche une feuille entière)
+  const box = purpose === 'sig' ? [[.12, .32], [.88, .32], [.88, .68], [.12, .68]] : [[.2, .3], [.8, .3], [.8, .7], [.2, .7]];
+  scan = { photo: im.canvas, pts: mark ? box.map(([a, b]) => [a * im.w, b * im.h]) : detectCorners(im.canvas),
+           mode: mark ? 'color' : scan?.purpose === 'page' ? scan.mode : 'color', purpose }; // couleur par défaut : signatures bleues et tampons gardent leur couleur
   const v = $('scanimg');
   v.width = im.w; v.height = im.h;
   v.getContext('2d').drawImage(im.canvas, 0, 0);
@@ -139,7 +146,7 @@ async function startScan(f, purpose = 'page') {
   $('scandlg').querySelector('.dlg-head h3').textContent = tr(title);
   $('scandlg').querySelector('.dlg-head p').textContent = tr(help);
   $('scanok').lastChild.textContent = tr(ok);
-  $('scandlg').querySelector('.scanbar').hidden = stamp; // un tampon garde ses couleurs
+  $('scandlg').querySelector('.scanbar').hidden = mark; // signature, tampon : couleurs gardées
   if (!$('scandlg').open) $('scandlg').showModal();
   document.querySelectorAll('#scanmode button').forEach(b => b.classList.toggle('on', b.dataset.m === scan.mode));
   requestAnimationFrame(layoutScan);
@@ -319,17 +326,17 @@ $('scanok').onclick = async () => {
     const jpg = new Uint8Array(await (await new Promise(r => photo.toBlob(r, 'image/jpeg', .95))).arrayBuffer());
     const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
     const W0 = Math.max(dist(pts[0], pts[1]), dist(pts[3], pts[2])), H0 = Math.max(dist(pts[0], pts[3]), dist(pts[1], pts[2]));
-    const stamp = scan.purpose === 'stamp';
+    const mark = scan.purpose !== 'page';
     let ratio = H0 / W0;
-    if (!stamp && Math.abs(ratio - Math.SQRT2) < .12) ratio = Math.SQRT2; // presque une feuille A4 : on cale sur l'A4
-    // feuille : 2480 px de large (A4 à 300 ppp, comme un scanner) ; tampon : sa taille réelle dans la photo, au plus 1200 px
-    const OW = stamp ? Math.round(clamp(W0, 60, 1200)) : 2480, OH = Math.min(5000, Math.round(OW * ratio));
+    if (!mark && Math.abs(ratio - Math.SQRT2) < .12) ratio = Math.SQRT2; // presque une feuille A4 : on cale sur l'A4
+    // feuille : 2480 px de large (A4 à 300 ppp, comme un scanner) ; signature, tampon : sa taille réelle dans la photo, au plus 1200 px
+    const OW = mark ? Math.round(clamp(W0, 60, 1200)) : 2480, OH = Math.min(5000, Math.round(OW * ratio));
     const out = new mupdf.Image(jpg).toPixmap().warp(pts, OW, OH), px = out.getPixels(), n = px.length / (OW * OH);
     const c = Object.assign(document.createElement('canvas'), { width: OW, height: OH }), g = c.getContext('2d'), id = g.createImageData(OW, OH), o = id.data;
     for (let i = 0, j = 0; i < OW * OH; i++, j += n) { o[i * 4] = px[j]; o[i * 4 + 1] = px[j + (n > 2 ? 1 : 0)]; o[i * 4 + 2] = px[j + (n > 2 ? 2 : 0)]; o[i * 4 + 3] = 255; }
-    if (!stamp) filterScan(o, OW, OH, mode);
+    if (!mark) filterScan(o, OW, OH, mode);
     g.putImageData(id, 0, 0);
-    if (stamp) { $('scandlg').close(); return saveImageStamp(c); } // tampon : couleurs gardées, fond blanc retiré
+    if (mark) { $('scandlg').close(); return saveMark(scan.purpose, transparentize(c)); } // couleurs gardées, fond blanc retiré
     const type = mode === 'bw' ? 'image/png' : 'image/jpeg', blob = await new Promise(r => c.toBlob(r, type, .9));
     const pdf = await PDFLib.PDFDocument.create(), bytes = new Uint8Array(await blob.arrayBuffer());
     const e = type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes), W = 595.28, H = W * OH / OW;
