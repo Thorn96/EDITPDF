@@ -232,6 +232,21 @@ const PAGES = [
     faq: [{ q: 'Le texte caviardé peut-il être récupéré ?', a: 'Non : il est retiré du fichier téléchargé, pas seulement recouvert. Garde l’original si tu en as encore besoin.' },
       { q: 'Ça marche sur un PDF scanné ?', a: 'Oui : la partie de l’image recouverte par la zone est effacée elle aussi.' }, LOCAL, FREE] },
 
+  { slug: 'annoter-un-pdf', art: 'edit', q: '?outil=highlight', short: 'Annoter un PDF',
+    title: 'Annoter un PDF : surligner, barrer, raturer, commenter · Rature',
+    desc: "Surligne, barre ou rature un mot, dessine, ajoute des flèches et des notes sur un PDF, comme au stylo sur une copie. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Comme au stylo rouge sur une copie', h1: 'Annoter un PDF : surligner, barrer, commenter',
+    lead: 'Surligne ce qui compte, rature ce qui ne va pas, ajoute une flèche ou une note dans la marge, puis télécharge le PDF annoté.', cta: 'Annoter mon PDF',
+    steps: [OPEN,
+      { t: 'Choisis ton outil', d: '« Surligner » (H), « Dessiner » (D) pour écrire à main levée, « Trait » (L), « Flèche » (A), ou « Note » (N) pour un post-it. La couleur et l’épaisseur se règlent dans la barre d’options.' },
+      { t: 'Annote et télécharge', d: 'Fais glisser sur la page, puis clique sur « Télécharger » : tes annotations sont dans le PDF.' }],
+    body: [
+      ['Barrer ou raturer un mot', 'Pour barrer proprement, l’outil « Trait » trace une ligne bien droite sur le mot ; pour une vraie rature à la main, passe par « Dessiner ». Et si le mot doit vraiment changer, « Corriger » réécrit le texte du PDF lui-même, dans sa police d’origine.'],
+      ['Effacer une annotation ou une tache', 'Chaque annotation se sélectionne et s’efface avec la touche Suppr. La « Gomme » (B) repeint de la couleur du fond pour faire disparaître un trait ou une tache. Attention : un texte gommé reste lisible par copier-coller ; pour l’effacer vraiment du fichier, utilise « Caviarder ».'],
+      ['Corriger une copie, relire un document', 'Notes façon post-it, flèches, cercles, coches ✓ et croix ✗ : tout ce qu’il faut pour relire un mémoire, corriger un devoir ou commenter un contrat. Sur tablette, écris directement au stylet.']],
+    faq: [{ q: 'Ça marche sur tablette avec un stylet ?', a: 'Oui : la paume posée sur l’écran est ignorée pendant que tu écris au stylet, et les commandes sont agrandies sur écran tactile.' },
+      { q: 'Je me suis trompé, comment revenir en arrière ?', a: 'Ctrl+Z annule, Ctrl+Y rétablit. L’historique des modifications permet aussi de revenir d’un clic à n’importe quelle étape.' }, LOCAL, FREE] },
+
   { slug: 'editeur-pdf-sans-envoi', art: 'local', q: '', short: 'Sans envoyer tes fichiers',
     title: "Éditeur PDF qui n'envoie pas tes fichiers · Rature",
     desc: "Une alternative à iLovePDF et Smallpdf où tout se passe dans ton navigateur : remplir, signer, corriger, caviarder, fusionner un PDF sans jamais l'envoyer sur un serveur.",
@@ -255,17 +270,19 @@ const PAGES = [
 const EN_PAGES = require('./en.js');
 const L = {
   fr: { lang: 'fr', root: '/', locale: 'fr_FR', steps: 'En 3 étapes', faq: 'Questions fréquentes', ready: 'Prêt ? Ça prend une minute.', more: 'Autres guides',
-        open: 'Ouvrir l’éditeur', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
+        open: 'Ouvrir l’éditeur', updated: 'Mis à jour le', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
         footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers', coffee: 'Offrir un café ☕', coffeeTitle: 'Soutenir Rature',
         art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici',
                merged: 'un seul PDF', lighter: 'plus léger', photos: 'photos → PDF', word: 'modifiable dans Word', ocrLine: 'Fait à Lyon, le 14 mars', ocrLbl: 'texte reconnu !' } },
   en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
-        open: 'Open the editor', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
+        open: 'Open the editor', updated: 'Last updated', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
         footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it', coffee: 'Buy me a coffee ☕', coffeeTitle: 'Support Rature',
         art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here',
                merged: 'one PDF', lighter: 'lighter', photos: 'photos → PDF', word: 'editable in Word', ocrLine: 'Signed on 14 March 2026', ocrLbl: 'text recognised!' } },
 };
 PAGES.forEach((p, i) => { p.L = L.fr; p.twin = EN_PAGES[i]; EN_PAGES[i].L = L.en; EN_PAGES[i].twin = p; });
+const LEGAL = require('./legal.js'), SHORT = { fr: ['Rature Sync', 'Mentions légales', 'Confidentialité', 'CGV'], en: ['Rature Sync', 'Legal notice', 'Privacy', 'Terms'] };
+LEGAL.fr.forEach((p, i) => { Object.assign(p, { L: L.fr, twin: LEGAL.en[i], short: SHORT.fr[i] }); Object.assign(LEGAL.en[i], { L: L.en, twin: p, short: SHORT.en[i] }); });
 const url = p => `${p.L.root}${p.slug}/`;
 const alternates = p => [p.L.lang === 'fr' ? p : p.twin, p.L.lang === 'en' ? p : p.twin]
   .map(x => `<link rel="alternate" hreflang="${x.L.lang}" href="${SITE}${url(x)}">`).join('\n') + `\n<link rel="alternate" hreflang="x-default" href="${SITE}${url(p.L.lang === 'fr' ? p : p.twin)}">`;
@@ -273,35 +290,47 @@ const alternates = p => [p.L.lang === 'fr' ? p : p.twin, p.L.lang === 'en' ? p :
 // ---------- Page guide ----------
 const attr = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const LOGO = '<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="5" width="30" height="32" rx="3" fill="#fff" stroke="#15151f" stroke-width="2.4"/><path d="M9 15h18M9 22h13" stroke="#15151f" stroke-width="2.4" stroke-linecap="round"/><path d="M7 23C14 18 24 27 36 16" fill="none" stroke="#e2494f" stroke-width="3.4" stroke-linecap="round"/></svg>';
-const page = (p, all) => { const t = p.L; return `<!doctype html>
-<html lang="${t.lang}">
-<head>
-<meta charset="utf-8">
+const plain = s => s.replace(/<[^>]+>/g, '');
+const ldJson = p => JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+  { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Rature', item: SITE + p.L.root }, { '@type': 'ListItem', position: 2, name: p.short, item: SITE + url(p) }] },
+  { '@type': 'FAQPage', mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } })) }] }).replace(/</g, '\\u003c'); // jamais de « </script> » dans le JSON
+// en-tête commun (guides, tarif, pages légales) ; type : article ou website ; ld : données structurées éventuelles
+const head = (p, type, ld) => { const t = p.L; return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${attr(p.title)}</title>
 <meta name="description" content="${attr(p.desc)}">
 <link rel="canonical" href="${SITE}${url(p)}">
 ${alternates(p)}
-<meta property="og:type" content="article">
+<meta property="og:type" content="${type}">
 <meta property="og:site_name" content="Rature">
 <meta property="og:locale" content="${t.locale}">
 <meta property="og:url" content="${SITE}${url(p)}">
 <meta property="og:title" content="${attr(p.title)}">
 <meta property="og:description" content="${attr(p.desc)}">
 <meta property="og:image" content="${SITE}/${t.lang === 'en' ? 'og-image-en.jpg' : 'og-image.jpg'}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#fbf8f0">
+<meta name="twitter:image" content="${SITE}/${t.lang === 'en' ? 'og-image-en.jpg' : 'og-image.jpg'}">
+${ld ? `<script type="application/ld+json">${ld}</script>\n` : ''}<meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>`; };
+const top = t => `<header class="top"><a class="brand" href="${t.root}">${LOGO}Rature</a><a class="btn" href="${t.root}">${t.open}</a></header>`;
+const legalLinks = t => (t.lang === 'fr' ? LEGAL.fr : LEGAL.en).map(x => `<a href="${url(x)}">${x.short}</a>`).join(' · ');
+const coffee = t => `<a class="coffee" href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>`;
+const page = (p, all) => { const t = p.L; return `<!doctype html>
+<html lang="${t.lang}">
+<head>
+${head(p, 'article', ldJson(p))}
 </head>
 <body>
 <div class="wrap">
-<header class="top"><a class="brand" href="${t.root}">${LOGO}Rature</a><a class="btn" href="${t.root}">${t.open}</a></header>
+${top(t)}
 <main>
 <section class="hero">
   <div>
@@ -332,9 +361,44 @@ ${alternates(p)}
   <ul>${all.filter(o => o !== p).map(o => `<li><a href="${url(o)}">${o.short}</a></li>`).join('')}</ul>
 </nav>
 </main>
-<footer>${t.footer} · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a> · <a href="https://github.com/Thorn96/EDITPDF">${t.source}</a></footer>
+<footer>${t.footer} · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a> · <a href="https://github.com/Thorn96/EDITPDF">${t.source}</a><br>${legalLinks(t)}</footer>
 </div>
-<a class="coffee" href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>
+${coffee(t)}
+</body>
+</html>
+`; };
+
+// ---------- Tarif de Rature Sync et pages légales (contenu : guides/legal.js) ----------
+const plans = pl => `<section class="plans">
+  <div class="planrow">${['month', 'year'].map(k => { const x = pl[k]; return `
+    <div class="plan${x.badge ? ' best' : ''}">${x.badge ? `<span class="badge">${x.badge}</span>` : ''}
+      <h2>${x.name}</h2><p class="price"><b>${x.price}</b> ${x.per}</p><p class="small">${x.note || '&nbsp;'}</p>
+      <span class="cta off" aria-disabled="true">${pl.soon}</span>
+    </div>`; }).join('')}
+  </div>
+  <ul class="perks">${pl.perks.map(s => `<li>${s}</li>`).join('')}</ul>
+  <p class="small">${pl.ttc}</p>
+</section>`;
+const doc = p => { const t = p.L; return `<!doctype html>
+<html lang="${t.lang}">
+<head>
+${head(p, 'website')}
+</head>
+<body>
+<div class="wrap">
+${top(t)}
+<main class="doc">
+<section class="hero solo"><div>${p.eyebrow ? `<p class="eyebrow">${p.eyebrow}</p>` : ''}
+  <h1>${p.h1}</h1>${p.lead ? `\n  <p class="lead">${p.lead}</p>` : ''}
+</div></section>
+${p.plans ? plans(p.plans) : ''}
+<section>${p.sections.map(([h, x]) => `\n  <div class="card"><h2>${h}</h2><p>${x}</p></div>`).join('')}
+</section>
+${p.plans ? '' : `<p class="small">${t.updated} ${LEGAL.UPDATED[t.lang]}</p>`}
+</main>
+<footer>Rature · <a href="${t.root}">${t.open}</a> · <a href="${url(p.twin)}" hreflang="${p.twin.L.lang}">${t.other}</a><br>${legalLinks(t)}</footer>
+</div>
+${coffee(t)}
 </body>
 </html>
 `; };
@@ -346,7 +410,7 @@ function buildEnglishEditor() {
   const EN = new Function(`return ${src.slice(start, src.indexOf('\n});', start) + 2)}`)();
   const dec = s => s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
   const encText = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;'), encAttr = s => encText(s).replace(/"/g, '&quot;');
-  const missing = new Set(), SAME = new Set(['Rature', 'B', 'I', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
+  const missing = new Set(), SAME = new Set(['Rature', 'Rature Sync', 'B', 'I', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
   const swap = (s, enc) => { const raw = dec(s), t = raw.trim(); if (!t) return s; if (EN[t] === undefined) { if (hasLetters(t) && !SAME.has(t)) missing.add(t); return s; } return enc(raw.replace(t, EN[t])); };
 
   let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n'); // fins de ligne Windows ou Unix
@@ -382,7 +446,7 @@ function buildEnglishEditor() {
     return swap(text, encText);
   });
   // liens vers les guides (après la traduction : ils sont déjà en anglais)
-  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(EN_PAGES, 'Guides:'));
+  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(EN_PAGES, 'Guides:')).replace(/<p class="legal">[\s\S]*?<\/p>/, `<p class="legal">${legalLinks(L.en)}</p>`);
   fs.mkdirSync(path.join(ROOT, 'en'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'en', 'index.html'), html);
 
@@ -414,19 +478,27 @@ for (const [list, dir] of [[PAGES, ''], [EN_PAGES, 'en']]) for (const p of list)
   fs.mkdirSync(path.join(ROOT, dir, p.slug), { recursive: true });
   fs.writeFileSync(path.join(ROOT, dir, p.slug, 'index.html'), page(p, list));
 }
+for (const p of [...LEGAL.fr, ...LEGAL.en]) {
+  if ([...p.title].length > 70) throw new Error(`Titre trop long (${[...p.title].length} > 70) : ${p.title}`);
+  const dir = path.join(ROOT, p.L.root, p.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), doc(p));
+}
 // liens vers les guides sur l'accueil français (index.html), tenus à jour ici
 const lowerFirst = s => /^[A-Z]{2}/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1); // « PDF en Word », « OCR » gardent leurs majuscules
 const guideLinks = (list, label) => `<p class="guides">${label} ${list.filter(p => p.art !== 'local').map(p => `<a href="${url(p)}">${lowerFirst(p.short)}</a>`).join(' · ')}</p>`;
 {
-  const f = path.join(ROOT, 'index.html'), src = fs.readFileSync(f, 'utf8'), out = src.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(PAGES, 'Guides :'));
+  const f = path.join(ROOT, 'index.html'), src = fs.readFileSync(f, 'utf8'), out = src.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(PAGES, 'Guides :'))
+    .replace(/<p class="legal">[\s\S]*?<\/p>/, `<p class="legal">${legalLinks(L.fr)}</p>`);
   if (out !== src) fs.writeFileSync(f, out);
 }
 const missing = buildEnglishEditor();
-const urls = [['/', '1.0'], ['/en/', '1.0'], ...[...PAGES, ...EN_PAGES].map(p => [url(p), '0.8'])];
+const today = new Date().toISOString().slice(0, 10), urls = [['/', '1.0'], ['/en/', '1.0'], ...[...PAGES, ...EN_PAGES].map(p => [url(p), '0.8']),
+  ...[...LEGAL.fr, ...LEGAL.en].map(p => [url(p), p.plans ? '0.6' : '0.3'])];
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(([u, pr]) => `  <url><loc>${SITE}${u}</loc><changefreq>weekly</changefreq><priority>${pr}</priority></url>`).join('\n')}
+${urls.map(([u, pr]) => `  <url><loc>${SITE}${u}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>${pr}</priority></url>`).join('\n')}
 </urlset>
 `);
-console.log(`${PAGES.length} guides fr + ${EN_PAGES.length} guides en + /en/ + sitemap.xml (${urls.length} adresses)`);
+console.log(`${PAGES.length} guides fr + ${EN_PAGES.length} guides en + ${LEGAL.fr.length} pages tarif et légales par langue + /en/ + sitemap.xml (${urls.length} adresses)`);
 if (missing.length) console.log(`Textes de l'éditeur sans traduction anglaise (restés en français dans /en/) :\n  ${missing.join('\n  ')}`);

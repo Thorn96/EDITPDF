@@ -616,6 +616,8 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 @media (max-width: 1180px) { body:not(.loaded) #desk { --mx: 10px; } }
 .guides { grid-column: 1 / -1; margin: 46px 0 0; text-align: center; font-size: 13.5px; color: var(--muted); }
 .guides a { color: var(--ink-2); }
+.legal { grid-column: 1 / -1; margin: 10px 0 0; text-align: center; font-size: 12.5px; color: var(--muted); }
+.legal a { color: var(--muted); }
 #langbtn b { font-size: 12.5px; letter-spacing: .04em; }
 @media (max-width: 640px) { #redo { display: none; } } /* place pour le bouton FR/EN ; rétablir reste possible depuis l'historique */
 /* soutien : toujours visible en bas à gauche du bureau (accueil compris) */

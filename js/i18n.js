@@ -10,7 +10,7 @@ Object.assign(EN, {
   'Télécharger': 'Download', "Ajouter à la suite les pages d'un PDF, ou des images comme nouvelles pages": 'Append the pages of a PDF, or images as new pages',
   'PDF ou images': 'PDF or images', "Photographier une feuille et l'ajouter comme page": 'Photograph a sheet and add it as a page', 'Numériser': 'Scan',
   "Plus besoin d'": 'Who needs a ', 'imprimante': 'printer', 'Remplis et signe ton PDF.': 'Fill in and sign your PDF.',
-  'Remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.': 'Fill in a form, fix the text, sign by hand, then download. It all happens in your browser.',
+  'Rature est un éditeur PDF gratuit, sans inscription : remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.': 'Rature is a free PDF editor, no sign-up needed: fill in a form, fix the text, sign by hand, then download. It all happens in your browser.',
   'Écrire et corriger le vrai texte': 'Write and fix the real text', 'Signer à la souris ou au doigt': 'Sign with the mouse or your finger',
   'Effacer pour de bon ce qui doit disparaître': 'Erase for good what must go', 'Fusionner et réorganiser les pages': 'Merge and reorder pages',
   'Glisse ton PDF ici': 'Drop your PDF here', 'ou': 'or', 'Choisir un fichier': 'Choose a file', "c'est ici !": 'right here!',
@@ -219,7 +219,7 @@ Object.assign(EN, {
   'Langue, thème clair ou sombre, et cette visite si tu veux la revoir.': 'Language, light or dark theme, and this tour if you want to see it again.',
   "Quand c'est prêt : télécharge, partage, compresse ou protège ton PDF par mot de passe.": "When it's ready: download, share, compress or password-protect your PDF.",
   // Page, référencement
-  'Rature · Éditeur PDF gratuit : remplir, signer, modifier': 'Rature · Free PDF editor: cross it out, fill it in, sign it',
+  'Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier': 'Rature · Free PDF editor: cross it out, fill it in, sign it',
   // Avant / après, signature électronique
   'Avant / après': 'Before / after', 'Avant': 'Before', 'Après': 'After', 'Retour': 'Back', 'Aucune page modifiée.': 'No page changed.',
   "Chaque page modifiée, telle qu'elle est et telle qu'elle sera téléchargée.": 'Each changed page, as it is now and as it will be downloaded.',

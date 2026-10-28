@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rature · Éditeur PDF gratuit : remplir, signer, modifier</title>
+<title>Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier</title>
 <meta name="description" content="Remplir, signer, modifier le texte, caviarder, fusionner et convertir vos PDF gratuitement, sans inscription. Tout se passe dans votre navigateur : vos fichiers ne sont envoyés nulle part.">
 <meta name="keywords" content="éditeur PDF gratuit, modifier PDF, remplir PDF, signer PDF, modifier texte PDF, caviarder PDF, fusionner PDF, PDF en Word, OCR">
 <link rel="canonical" href="https://rature.app/">
@@ -16,7 +16,7 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_GB">
 <meta property="og:url" content="https://rature.app/">
-<meta property="og:title" content="Rature · Éditeur PDF gratuit : remplir, signer, modifier">
+<meta property="og:title" content="Rature · Éditeur PDF gratuit en ligne : remplir, signer, modifier">
 <meta property="og:description" content="Remplir, signer et corriger vos PDF gratuitement, sans inscription. Tout se passe dans votre navigateur.">
 <meta property="og:image" content="https://rature.app/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -27,11 +27,14 @@
 <meta name="twitter:description" content="Remplir, signer et corriger vos PDF gratuitement, dans le navigateur.">
 <meta name="twitter:image" content="https://rature.app/og-image.jpg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · Éditeur PDF","url":"https://rature.app/","image":"https://rature.app/og-image.jpg",
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"https://rature.app/#site","name":"Rature","alternateName":["Rature PDF","rature.app"],"url":"https://rature.app/","inLanguage":["fr","en"],"publisher":{"@id":"https://rature.app/#org"}},
+{"@type":"Organization","@id":"https://rature.app/#org","name":"Rature","url":"https://rature.app/","logo":"https://rature.app/icon-512.png","sameAs":["https://github.com/Thorn96/EDITPDF"]},
+{"@type":"WebApplication","name":"Rature","alternateName":"Rature · Éditeur PDF","url":"https://rature.app/","image":"https://rature.app/og-image.jpg",
  "description":"Éditeur PDF gratuit dans le navigateur : remplir des formulaires, signer, modifier le texte existant, caviarder, fusionner, convertir en Word, reconnaissance de texte (OCR).",
  "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"Navigateur récent (Chrome, Edge, Firefox, Safari)",
  "inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
- "featureList":["Remplir un formulaire PDF","Signer un PDF","Modifier le texte d'un PDF","Caviarder","Fusionner et réorganiser les pages","Convertir un PDF en Word","Reconnaissance de texte (OCR)","Aucun fichier envoyé sur Internet"]}
+ "featureList":["Remplir un formulaire PDF","Signer un PDF","Modifier le texte d'un PDF","Caviarder","Fusionner et réorganiser les pages","Convertir un PDF en Word","Reconnaissance de texte (OCR)","Aucun fichier envoyé sur Internet"]}]}
 </script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="favicon.ico" sizes="48x48">
@@ -126,7 +129,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
         <div class="pitch">
           <p class="eyebrow">Plus besoin d'<s>imprimante<svg viewBox="0 0 520 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 34C120 18 300 46 514 22"/></svg></s></p>
           <h1>Remplis et signe ton PDF.</h1>
-          <p>Remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.</p>
+          <p>Rature est un éditeur PDF gratuit, sans inscription : remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.</p>
           <ul>
             <li>Écrire et corriger le vrai texte</li>
             <li>Signer à la souris ou au doigt</li>
@@ -156,7 +159,8 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
           </label>
           <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>c'est ici !</span></div>
         </div>
-        <p class="guides">Guides : <a href="/signer-un-pdf/">signer un PDF</a> · <a href="/remplir-un-pdf/">remplir un PDF</a> · <a href="/modifier-texte-pdf/">modifier le texte</a> · <a href="/ocr-pdf/">OCR : lire un scan</a> · <a href="/fusionner-pdf/">fusionner des PDF</a> · <a href="/compresser-pdf/">compresser un PDF</a> · <a href="/photos-en-pdf/">photos en PDF</a> · <a href="/pdf-en-word/">PDF en Word</a> · <a href="/dossier-de-location-pdf/">dossier de location</a> · <a href="/caviarder-un-pdf/">caviarder un PDF</a></p>
+        <p class="guides">Guides : <a href="/signer-un-pdf/">signer un PDF</a> · <a href="/remplir-un-pdf/">remplir un PDF</a> · <a href="/modifier-texte-pdf/">modifier le texte</a> · <a href="/ocr-pdf/">OCR : lire un scan</a> · <a href="/fusionner-pdf/">fusionner des PDF</a> · <a href="/compresser-pdf/">compresser un PDF</a> · <a href="/photos-en-pdf/">photos en PDF</a> · <a href="/pdf-en-word/">PDF en Word</a> · <a href="/dossier-de-location-pdf/">dossier de location</a> · <a href="/caviarder-un-pdf/">caviarder un PDF</a> · <a href="/annoter-un-pdf/">annoter un PDF</a></p>
+        <p class="legal"><a href="/tarifs/">Rature Sync</a> · <a href="/mentions-legales/">Mentions légales</a> · <a href="/confidentialite/">Confidentialité</a> · <a href="/cgv/">CGV</a></p>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <div><b>Reprendre ton travail</b><small id="resumeinfo"></small></div>

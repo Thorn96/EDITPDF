@@ -157,6 +157,21 @@ module.exports = [
     faq: [{ q: 'Can redacted text be recovered?', a: 'No: it is removed from the downloaded file, not just covered. Keep the original if you still need it.' },
       { q: 'Does it work on a scanned PDF?', a: 'Yes: the part of the image covered by the box is erased too.' }, LOCAL, FREE] },
 
+  { slug: 'annotate-pdf', art: 'edit', q: '?outil=highlight', short: 'Annotate a PDF',
+    title: 'Annotate a PDF: highlight, strike through, comment · Rature',
+    desc: 'Highlight, strike through or cross out a word, draw, add arrows and sticky notes on a PDF, like a red pen on paper. Free, no sign-up, nothing is uploaded.',
+    eyebrow: 'Like a red pen on a printout', h1: 'Annotate a PDF: highlight, strike through, comment',
+    lead: 'Highlight what matters, cross out what’s wrong, add an arrow or a note in the margin, then download the annotated PDF.', cta: 'Annotate my PDF',
+    steps: [OPEN,
+      { t: 'Pick your tool', d: '“Highlight” (H), “Draw” (D) to write freehand, “Line” (L), “Arrow” (A), or “Note” (N) for a sticky note. Colour and thickness are set in the options bar.' },
+      { t: 'Annotate and download', d: 'Drag on the page, then click “Download”: your annotations are in the PDF.' }],
+    body: [
+      ['Strike through or cross out a word', 'For a clean strikethrough, the “Line” tool draws a perfectly straight line over the word; for a real hand-drawn cross-out, use “Draw”. And if the word really has to change, “Edit text” rewrites the PDF’s own text, in its original font.'],
+      ['Erase an annotation or a smudge', 'Every annotation can be selected and removed with the Delete key. The “Eraser” (B) paints with the background colour to make a stroke or a smudge disappear. Note: erased text can still be read by copy-pasting; to really remove it from the file, use “Redact”.'],
+      ['Mark a paper, review a document', 'Sticky notes, arrows, circles, ticks ✓ and crosses ✗: everything you need to review a thesis, mark homework or comment on a contract. On a tablet, write directly with a stylus.']],
+    faq: [{ q: 'Does it work on a tablet with a stylus?', a: 'Yes: your palm resting on the screen is ignored while you write with the stylus, and controls are larger on touch screens.' },
+      { q: 'I made a mistake, how do I go back?', a: 'Ctrl+Z undoes, Ctrl+Y redoes. The edit history also lets you jump back to any step in one click.' }, LOCAL, FREE] },
+
   { slug: 'pdf-editor-no-upload', art: 'local', q: '', short: 'No file upload',
     title: 'A PDF editor that doesn’t upload your files · Rature',
     desc: 'An alternative to iLovePDF and Smallpdf where everything happens in your browser: fill in, sign, edit, redact and merge a PDF without ever sending it to a server.',
