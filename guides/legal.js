@@ -3,10 +3,12 @@
 const ME = {
   name: 'Léonard Guido', addr: '4 rue Ernest Renan, 12700 Capdenac-Gare, France', siret: '101 401 461 00013', mail: 'contact@rature.app',
   // hébergeur du site : à changer avec l'hébergement (passage chez Cloudflare Pages)
+  // médiateur de la consommation (convention signée en octobre 2026, 3 ans renouvelables)
+  mediator: 'Société Médiation Professionnelle, Alteritae, 5 rue Salvaing, 12000 Rodez, France', mediatorUrl: 'https://www.mediateur-consommation-smp.fr',
   host: 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA (vercel.com)',
 };
-const UPDATED = { fr: '28 octobre 2026', en: '28 October 2026' };
-const mail = `<a href="mailto:${ME.mail}">${ME.mail}</a>`;
+const UPDATED = { fr: '30 octobre 2026', en: '30 October 2026' };
+const mail = `<a href="mailto:${ME.mail}">${ME.mail}</a>`, mediator = `${ME.mediator} (<a href="${ME.mediatorUrl}">mediateur-consommation-smp.fr</a>)`;
 // prix TTC (TVA incluse) : mensuel 4,99 €, annuel 49,99 € = 12 mois à 4,99 € (59,88 €) moins 17 %
 const PRICE = { month: 4.99, year: 49.99 }, SAVE = Math.round((1 - PRICE.year / (12 * PRICE.month)) * 100);
 
@@ -39,6 +41,7 @@ const fr = [
       ['Éditeur', `${ME.name}, entrepreneur individuel (EI)<br>${ME.addr}<br>SIRET : ${ME.siret}<br>Contact : ${mail}<br>Directeur de la publication : ${ME.name}`],
       ['Hébergement', `Site : ${ME.host}.<br>Comptes Rature Sync : Supabase Inc., serveurs situés à Paris (Union européenne).`],
       ['Code source', 'Le code de Rature est public : <a href="https://github.com/Thorn96/EDITPDF">github.com/Thorn96/EDITPDF</a>. Les bibliothèques utilisées gardent leurs propres licences.'],
+      ['Médiation de la consommation', `${mediator}.`],
       ['Données personnelles', 'Voir la <a href="/confidentialite/">politique de confidentialité</a>.'],
     ],
   },
@@ -71,7 +74,7 @@ const fr = [
       ['6. Rétractation et remboursement', `Tu disposes de 14 jours à compter de la souscription pour changer d’avis : sur simple demande à ${mail}, tu es remboursé intégralement, même si tu as déjà utilisé le service. Après ce délai, la période en cours n’est pas remboursée au prorata, mais la résiliation empêche tout nouveau prélèvement.`],
       ['7. Chiffrement et récupération', 'Tes données synchronisées sont chiffrées avec une clé qui ne quitte jamais tes appareils. Si tu perds à la fois tous tes appareils connectés et ta phrase de récupération, personne, pas même Rature, ne peut récupérer ces données.'],
       ['8. Disponibilité et responsabilité', 'Rature fait le nécessaire pour que le service soit disponible et fiable, sans pouvoir garantir une disponibilité permanente (maintenance, pannes). Ces conditions ne limitent pas les garanties légales dont bénéficie le consommateur, notamment la garantie de conformité des contenus et services numériques (articles L224-25-1 et suivants du Code de la consommation).'],
-      ['9. Litiges et droit applicable', `Ces conditions sont soumises au droit français. En cas de difficulté, écris d’abord à ${mail} : nous chercherons une solution amiable. À défaut, le consommateur peut saisir le tribunal de son lieu de résidence.`],
+      ['9. Litiges et droit applicable', `Ces conditions sont soumises au droit français. En cas de difficulté, écris d’abord à ${mail} : nous chercherons une solution amiable. Si aucun accord n’est trouvé, ou sans réponse de notre part sous deux mois, le consommateur peut recourir gratuitement au médiateur de la consommation : ${mediator}. La demande se fait en ligne sur son site ou par courrier, en français, dans l’année qui suit la réclamation écrite. Le consommateur peut aussi saisir le tribunal de son lieu de résidence.`],
       ['10. Modification', 'Ces conditions peuvent évoluer. Les abonnés sont prévenus par e-mail de tout changement important avant qu’il ne s’applique.'],
     ],
   },
@@ -106,6 +109,7 @@ const en = [
       ['Publisher', `${ME.name}, sole trader (entrepreneur individuel)<br>${ME.addr}<br>SIRET: ${ME.siret}<br>Contact: ${mail}<br>Publication director: ${ME.name}`],
       ['Hosting', `Website: ${ME.host}.<br>Rature Sync accounts: Supabase Inc., servers in Paris (European Union).`],
       ['Source code', 'Rature’s code is public: <a href="https://github.com/Thorn96/EDITPDF">github.com/Thorn96/EDITPDF</a>. The libraries it uses keep their own licences.'],
+      ['Consumer mediation', `${mediator}.`],
       ['Personal data', 'See the <a href="/en/privacy/">privacy policy</a>.'],
     ],
   },
@@ -138,7 +142,7 @@ const en = [
       ['6. Withdrawal and refunds', `You have 14 days from subscribing to change your mind: on request to ${mail}, you get a full refund, even if you have already used the service. After that, the current period is not refunded pro rata, but cancelling prevents any further charge.`],
       ['7. Encryption and recovery', 'Your synced data is encrypted with a key that never leaves your devices. If you lose both all your signed-in devices and your recovery phrase, nobody, not even Rature, can recover that data.'],
       ['8. Availability and liability', 'Rature does what is needed for the service to be available and reliable, without being able to guarantee permanent availability (maintenance, outages). These terms do not limit the statutory guarantees consumers are entitled to, in particular the conformity guarantee for digital content and services (articles L224-25-1 and following of the French Consumer Code).'],
-      ['9. Disputes and governing law', `These terms are governed by French law. If there is a problem, write to ${mail} first: we will look for an amicable solution. Failing that, consumers may bring the matter before the court of their place of residence.`],
+      ['9. Disputes and governing law', `These terms are governed by French law. If there is a problem, write to ${mail} first: we will look for an amicable solution. If no agreement is reached, or if we have not replied within two months, consumers may refer the dispute free of charge to the consumer mediator: ${mediator}. Requests are made online on its website or by post, in French, within one year of the written complaint. Consumers may also bring the matter before the court of their place of residence.`],
       ['10. Changes', 'These terms may change. Subscribers are told by email about any significant change before it applies.'],
     ],
   },
