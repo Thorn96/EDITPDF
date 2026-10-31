@@ -703,3 +703,18 @@ body.picking .page, body.picking .page * { cursor: crosshair !important; }
 .clouddocs li b, .clouddocs li small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clouddocs li small { color: var(--muted); font-size: 12px; }
 @media (max-width: 900px) { .clouddocs { order: -2; } }
+/* Rature Sync : aspect premium, avantages, proposition après téléchargement */
+.premiumbadge { display: inline-block; margin-left: 6px; padding: 3px 10px; border-radius: 999px; vertical-align: middle;
+  background: linear-gradient(135deg, #ffd84d, #f5a623); color: #3b2a00; font: 700 12px/1.4 var(--ui); letter-spacing: .02em; }
+body.premium #accountbtn { position: relative; color: #d89400; }
+body.premium #accountbtn::after { content: '✦'; position: absolute; top: 2px; right: 3px; font-size: 10px; color: #f5a623; }
+.perks { list-style: none; margin: 14px 26px 0; padding: 0; display: grid; gap: 10px; }
+.perks li { display: flex; gap: 12px; align-items: flex-start; }
+.perks li > svg { flex: none; width: 30px; height: 30px; padding: 6px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); }
+.perks li span { display: flex; flex-direction: column; font-size: 13.5px; }
+.perks li small { color: var(--muted); font-size: 12.5px; }
+.upsellok { margin: 0 0 6px !important; color: #2e7d32 !important; font-weight: 700; font-size: 13px !important; }
+.upsell .dlg-head h3 { font-size: 28px; }
+.syncbox.todo { border-color: var(--accent); background: var(--accent-soft); }
+.syncbox .todo { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11.5px; }
+.syncsummary { font-weight: 600; color: var(--ink) !important; }

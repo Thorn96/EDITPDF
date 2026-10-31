@@ -52,6 +52,42 @@ async function billing(route, body) {
 
 // ---------- Fenêtre « Mon compte » ----------
 let codeSent = false, wantPlan = null; // wantPlan : offre choisie avant la connexion (page de tarif), payée juste après
+var premium = false; // abonné Rature Sync en règle (connu dès qu'on a vérifié l'abonnement) ; var : lu par app.js au téléchargement
+// Avantages de Rature Sync, montrés dans « Mon compte » (non abonné) et dans la proposition après un téléchargement
+const PERKS = [
+  ['M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z', 'Chiffré de bout en bout', 'Personne d’autre que toi ne peut lire tes fichiers, pas même Rature.'],
+  ['M3 17c3-1 4-6 6-6s1 5 3 5 3-3 4-3 1.5 2 5 2', 'Tes signatures et tampons partout', 'Crée-les une fois, retrouve-les sur ton ordinateur, ton portable et ton téléphone.'],
+  ['M4 4h10l6 6v10H4zM14 4v6h6', 'Reprends tes documents là où tu t’es arrêté', 'Commencé au bureau, fini à la maison : tes corrections restent modifiables.'],
+  ['M12 3v4M12 17v4M3 12h4M17 12h4', 'Tes réglages te suivent', 'Couleurs favorites, police, couleurs du stylo et du surligneur.'],
+];
+function renderPerks() {
+  document.querySelectorAll('[data-perks]').forEach(ul => ul.replaceChildren(...PERKS.map(([d, t, x]) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg><span><b></b><small></small></span>`;
+    li.querySelector('b').textContent = tr(t);
+    li.querySelector('small').textContent = tr(x);
+    return li;
+  })));
+}
+function setPremium(on) {
+  premium = !!on;
+  document.body.classList.toggle('premium', premium);
+  $('accountbtn').title = $('accountbtn').ariaLabel = tr(premium ? 'Mon compte · Rature Sync actif' : 'Mon compte');
+  $('acctbadge').hidden = !premium;
+  $('acctperks').hidden = $('acctpitch').hidden = premium; // l'abonné n'a plus besoin qu'on lui vende Rature Sync
+}
+// Après un téléchargement : proposition de Rature Sync à qui n'est pas abonné
+function showUpsell() {
+  if (premium || !syncOn || document.querySelector('dialog[open]')) return;
+  $('upselldlg').showModal();
+  track('proposition', { etape: 'vue' });
+}
+$('upselldlg').onclick = e => {
+  const p = e.target.closest('[data-plan]')?.dataset.plan;
+  if (p) { $('upselldlg').close(); track('proposition', { etape: 'offre', plan: p }); openAccount(p); }
+};
+$('upsellsignin').onclick = () => { $('upselldlg').close(); openAccount(); };
+$('upselllater').onclick = () => $('upselldlg').close();
 const acctSay = (t, err) => { $('acctmsg').textContent = t ? tr(t) : ''; $('acctmsg').classList.toggle('err', !!err); };
 const fmtDate = iso => new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -73,6 +109,7 @@ async function renderAccount() {
   const sub = await mySubscription().catch(() => null);
   if (!session) return renderAccount(); // session expirée entre-temps
   const active = sub && ACTIVE_SUB.includes(sub.status);
+  setPremium(active);
   $('acctplans').hidden = active;
   $('acctgo').hidden = !sub; // un ancien abonné garde l'accès à ses factures
   $('acctgo').textContent = tr('Gérer mon abonnement');
@@ -141,6 +178,7 @@ async function managePlan() {
 async function logout() {
   const t = session?.access;
   forgetVault(); // la clé de chiffrement quitte ce navigateur avec la session
+  setPremium(false);
   saveSession(null);
   codeSent = false;
   acctSay('Déconnecté.');
@@ -149,6 +187,8 @@ async function logout() {
 }
 
 $('accountbtn').hidden = !syncOn;
+renderPerks();
+if (session && syncOn) mySubscription().then(s => setPremium(s && ACTIVE_SUB.includes(s.status))).catch(() => {}); // badge dès l'ouverture
 $('accountbtn').onclick = () => openAccount();
 $('acctgo').onclick = () => !session ? (codeSent ? verifyCode() : sendCode()) : managePlan();
 $('acctemail').oninput = () => { if (codeSent) { codeSent = false; acctSay(''); renderAccount(); } }; // autre adresse : nouveau code

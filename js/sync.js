@@ -227,8 +227,11 @@ function renderCloudDocs() {
 
 // ---------- Mise en route (fenêtre « Mon compte ») ----------
 let draftCode = null; // code affiché pendant l'activation, pas encore confirmé
-const syncView = v => ['syncsetup', 'synccodebox', 'syncunlock', 'syncon'].forEach(id => $(id).hidden = id !== v);
+const syncView = v => { ['syncsetup', 'synccodebox', 'syncunlock', 'syncon'].forEach(id => $(id).hidden = id !== v); $('syncbox').classList.toggle('todo', v !== 'syncon'); };
 function renderSyncState() {
+  const docs = syncSt ? Object.keys(syncSt.docs).length : 0;
+  $('syncsummary').textContent = '✓ ' + [plural(sigs.length, '{n} signature', '{n} signatures'), plural(stamps.length, '{n} tampon', '{n} tampons'),
+    plural(docs, '{n} document', '{n} documents')].join(' · ') + ' ' + tr('sur tous tes appareils');
   $('syncstate').textContent = lastSync ? tr('active · à jour à {h}', { h: new Date(lastSync).toLocaleTimeString(lang === 'en' ? 'en-GB' : 'fr-FR', { hour: '2-digit', minute: '2-digit' }) }) : tr('active');
 }
 async function renderSync(active) {

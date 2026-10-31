@@ -460,7 +460,8 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
 </dialog>
 
 <dialog id="accountdlg">
-  <div class="dlg-head"><h3>My account</h3><p>Rature Sync: your signatures, stamps and work in progress on all your computers, end-to-end encrypted.</p></div>
+  <div class="dlg-head"><h3>My account <span id="acctbadge" class="premiumbadge" hidden>✦ Rature Sync</span></h3><p id="acctpitch">Rature Sync: your signatures, stamps and work in progress on all your computers, end-to-end encrypted.</p></div>
+  <ul id="acctperks" class="perks" data-perks></ul>
   <div id="acctlogin">
     <label class="fld">Email address<input id="acctemail" class="txt" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <div id="acctcodebox" hidden><label class="fld">Code received by email<input id="acctcode" class="txt" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="123456"></label></div>
@@ -476,7 +477,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     <div id="syncbox" class="syncbox" hidden>
       <p class="syncti"><b>Sync</b> <span id="syncstate"></span></p>
       <div id="syncsetup">
-        <p>Your signatures, stamps, settings and work in progress follow you on all your devices, end-to-end encrypted.</p>
+        <p><b class="todo">Last step</b> Turn on sync: your signatures, stamps, settings and work in progress will follow you on all your devices, end-to-end encrypted.</p>
         <button id="syncenable" class="btn primary">Turn on sync</button>
       </div>
       <div id="synccodebox" hidden>
@@ -490,6 +491,7 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
         <div class="syncacts"><button id="syncunlockgo" class="btn primary">Link this device</button></div>
       </div>
       <div id="syncon" hidden>
+        <p id="syncsummary" class="syncsummary"></p>
         <div class="syncacts"><button id="syncnow" class="btn">Sync now</button><button id="syncshow" class="btn">Add a device</button><button id="syncwipe" class="btn ghost">Erase my online data</button></div>
       </div>
     </div>
@@ -499,6 +501,21 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     <button id="acctlogout" class="btn ghost grow" hidden>Sign out</button>
     <button id="acctclose" class="btn">Close</button><button id="acctgo" class="btn primary">Get a code</button>
   </div>
+</dialog>
+
+<dialog id="upselldlg" class="upsell">
+  <div class="dlg-head">
+    <p class="upsellok">✓ Your PDF is downloaded</p>
+    <h3>Upgrade to Rature Sync</h3>
+    <p>Rature stays free. With Rature Sync, your work follows you on all your devices.</p>
+  </div>
+  <ul class="perks" data-perks></ul>
+  <div class="acctplans">
+    <button class="acctplan" data-plan="month"><span>Monthly</span><b>€4.99</b><small>per month</small></button>
+    <button class="acctplan best" data-plan="year"><span>Yearly · −17%</span><b>€49.99</b><small>per year, 2 months free</small></button>
+  </div>
+  <p class="hintline">No commitment: cancel in two clicks, refunded with no questions asked within 14 days.</p>
+  <div class="dlg-foot"><button id="upsellsignin" class="btn ghost grow">I already have an account</button><button id="upselllater" class="btn">Later</button></div>
 </dialog>
 
 <dialog id="relaydlg">

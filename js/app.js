@@ -133,7 +133,11 @@ async function exportDoc(share, ready) {
   try {
     const out = ready?.out || await makePdf(o);
     track(share ? 'partage' : 'telechargement', { pages: o.list.length, reduit: !!o.compress, motdepasse: !!o.pw });
-    if (!share) { download(new Blob([out], { type: 'application/pdf' }), name); return toast(tr('{name} téléchargé ✓', { name }), '', { label: 'Offrir un café ☕', fn: donate }); }
+    if (!share) {
+      download(new Blob([out], { type: 'application/pdf' }), name);
+      if (!premium) setTimeout(showUpsell, 700); // Rature Sync proposé après chaque téléchargement, à qui n'est pas abonné
+      return toast(tr('{name} téléchargé ✓', { name }), '', { label: 'Offrir un café ☕', fn: donate });
+    }
     const file = new File([out], name, { type: 'application/pdf' }), go = () => navigator.share({ files: [file], title: name }).catch(() => {});
     try { await navigator.share({ files: [file], title: name }); }
     catch (e) { // le partage doit suivre un clic : si la préparation a été longue, on redemande un clic
