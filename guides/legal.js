@@ -147,5 +147,5 @@ const en = [
   },
 ];
 // ventes ouvertes : boutons « S’abonner » sur la page de tarif (à passer à true le jour du lancement, avec les clés Stripe réelles)
-const SALES_OPEN = false;
+const SALES_OPEN = true;
 module.exports = { fr, en, UPDATED, PRICE, SALES_OPEN };

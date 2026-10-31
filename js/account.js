@@ -2,7 +2,7 @@
 // La session (jetons Supabase) est gardée dans ce navigateur. Rien n'est envoyé tant qu'on ne se connecte pas.
 // Avant l'ouverture des ventes, le compte n'apparaît qu'en développement ou après une visite avec ?sync=1 (mémorisé).
 // Jour du lancement : SYNC_LAUNCHED = true ici ET SALES_OPEN = true dans guides/legal.js (boutons de la page de tarif).
-const SYNC_LAUNCHED = false;
+const SYNC_LAUNCHED = true;
 const AUTH = SUPA + '/auth/v1', BILLING = SUPA + '/functions/v1/billing', ACTIVE_SUB = ['active', 'trialing', 'past_due'];
 const syncOn = SYNC_LAUNCHED || (() => {
   try { if (new URLSearchParams(location.search).has('sync')) localStorage.syncBeta = '1'; return location.hostname === 'localhost' || localStorage.syncBeta === '1'; }
