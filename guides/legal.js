@@ -2,12 +2,11 @@
 // Une page = { slug, title, desc, h1, lead, plans?, sections: [[titre, html]] }. Les deux langues dans le même ordre.
 const ME = {
   name: 'Léonard Guido', addr: '4 rue Ernest Renan, 12700 Capdenac-Gare, France', siret: '101 401 461 00013', mail: 'contact@rature.app',
-  // hébergeur du site : à changer avec l'hébergement (passage chez Cloudflare Pages)
   // médiateur de la consommation (convention signée en octobre 2026, 3 ans renouvelables)
   mediator: 'Société Médiation Professionnelle, Alteritae, 5 rue Salvaing, 12000 Rodez, France', mediatorUrl: 'https://www.mediateur-consommation-smp.fr',
-  host: 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA (vercel.com)',
+  host: 'Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA (cloudflare.com)', // hébergeur du site (Cloudflare Pages)
 };
-const UPDATED = { fr: '30 octobre 2026', en: '30 October 2026' };
+const UPDATED = { fr: '31 octobre 2026', en: '31 October 2026' };
 const mail = `<a href="mailto:${ME.mail}">${ME.mail}</a>`, mediator = `${ME.mediator} (<a href="${ME.mediatorUrl}">mediateur-consommation-smp.fr</a>)`;
 // prix TTC (TVA incluse) : mensuel 4,99 €, annuel 49,99 € = 12 mois à 4,99 € (59,88 €) moins 17 %
 const PRICE = { month: 4.99, year: 49.99 }, SAVE = Math.round((1 - PRICE.year / (12 * PRICE.month)) * 100);
@@ -56,7 +55,7 @@ const fr = [
       ['Statistiques de visite', 'Nous mesurons la fréquentation sans cookie et sans t’identifier : pages vues, pays, type de navigateur et outils utilisés, comptés de façon agrégée. Cela sert uniquement à améliorer Rature (intérêt légitime).'],
       ['Numériser avec le téléphone', 'La photo passe directement du téléphone à l’ordinateur, chiffrée. Un service de mise en relation (PeerJS) reçoit seulement les identifiants techniques et adresses IP nécessaires pour connecter les deux appareils. Quand le réseau bloque la liaison directe, elle passe par un relais Cloudflare, qui ne peut pas lire son contenu chiffré.'],
       ['Rature Sync (compte payant)', `Nous traitons ton adresse e-mail (connexion), l’état de ton abonnement transmis par Stripe (identifiant client, dates, statut, jamais ton numéro de carte) et tes données synchronisées. Celles-ci (documents, signatures, tampons, réglages) sont chiffrées de bout en bout dans ton navigateur avant l’envoi : ni nous ni l’hébergeur ne pouvons les lire. Base légale : l’exécution du contrat. Hébergement : Supabase, serveurs à Paris. Durée : tant que ton compte existe ; après la fin de l’abonnement, tes données chiffrées sont gardées 30 jours (pour te laisser revenir) puis supprimées. Tu peux tout supprimer immédiatement depuis ton compte ou en écrivant à ${mail}.`],
-      ['Prestataires et transferts', 'Hébergement du site (Vercel, États-Unis), relais du téléphone (Cloudflare, États-Unis), paiement (Stripe, Irlande et États-Unis), comptes (Supabase, serveurs dans l’Union européenne). Les transferts hors de l’Union européenne sont encadrés par les garanties prévues par le RGPD (cadre de protection des données UE–États-Unis ou clauses contractuelles types).'],
+      ['Prestataires et transferts', 'Hébergement du site, mesure des visites et relais du téléphone (Cloudflare, États-Unis), paiement (Stripe, Irlande et États-Unis), comptes et statistiques d’utilisation (Supabase, serveurs dans l’Union européenne). Les transferts hors de l’Union européenne sont encadrés par les garanties prévues par le RGPD (cadre de protection des données UE–États-Unis ou clauses contractuelles types).'],
       ['Cookies', 'Aucun cookie publicitaire ni de mesure d’audience. Avec Rature Sync, un jeton de connexion est gardé dans ton navigateur : il est strictement nécessaire au service.'],
       ['Tes droits', `Tu peux accéder à tes données, les rectifier, les supprimer, les récupérer, t’opposer à un traitement ou le limiter, en écrivant à ${mail}. Tu peux aussi adresser une réclamation à la CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).`],
     ],
@@ -124,7 +123,7 @@ const en = [
       ['Visit statistics', 'We measure traffic without cookies and without identifying you: page views, country, browser type and tools used, counted in aggregate. This is only used to improve Rature (legitimate interest).'],
       ['Scanning with your phone', 'The photo goes straight from the phone to the computer, encrypted. A matchmaking service (PeerJS) only receives the technical identifiers and IP addresses needed to connect the two devices. When the network blocks the direct link, it goes through a Cloudflare relay, which cannot read its encrypted content.'],
       ['Rature Sync (paid account)', `We process your email address (sign-in), your subscription status sent by Stripe (customer ID, dates, status, never your card number) and your synced data. That data (documents, signatures, stamps, settings) is end-to-end encrypted in your browser before it is sent: neither we nor the host can read it. Legal basis: performance of the contract. Hosting: Supabase, servers in Paris. Retention: as long as your account exists; after your subscription ends, your encrypted data is kept for 30 days (so you can come back) and then deleted. You can delete everything immediately from your account or by writing to ${mail}.`],
-      ['Providers and transfers', 'Website hosting (Vercel, USA), phone relay (Cloudflare, USA), payment (Stripe, Ireland and USA), accounts (Supabase, servers in the European Union). Transfers outside the European Union are covered by the safeguards provided by the GDPR (EU–US Data Privacy Framework or standard contractual clauses).'],
+      ['Providers and transfers', 'Website hosting, visit statistics and phone relay (Cloudflare, USA), payment (Stripe, Ireland and USA), accounts and usage statistics (Supabase, servers in the European Union). Transfers outside the European Union are covered by the safeguards provided by the GDPR (EU–US Data Privacy Framework or standard contractual clauses).'],
       ['Cookies', 'No advertising or analytics cookies. With Rature Sync, a sign-in token is kept in your browser: it is strictly necessary for the service.'],
       ['Your rights', `You can access, correct, delete or export your data, object to or restrict its processing, by writing to ${mail}. You can also lodge a complaint with the CNIL, the French data protection authority (<a href="https://www.cnil.fr">cnil.fr</a>).`],
     ],

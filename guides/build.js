@@ -1,5 +1,5 @@
 // Rature · fabrique les pages du site : guides (fr et en), éditeur anglais /en/, sitemap. À relancer après chaque modification :  node guides/build.js
-// Chaque page : /<slug>/index.html ou /en/<slug>/index.html, servie telle quelle par Vercel. Contenu anglais des guides : guides/en.js.
+// Chaque page : /<slug>/index.html ou /en/<slug>/index.html, servie telle quelle par Cloudflare Pages. Contenu anglais des guides : guides/en.js.
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..'), SITE = 'https://rature.app';
 
