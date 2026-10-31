@@ -24,7 +24,8 @@ const json = (req: Request, body: unknown, status = 200) =>
 async function stripe(path: string, params?: Record<string, string>) {
   const r = await fetch('https://api.stripe.com/v1/' + path, {
     method: params ? 'POST' : 'GET',
-    headers: { Authorization: 'Bearer ' + env('STRIPE_SECRET_KEY'), ...(params && { 'Content-Type': 'application/x-www-form-urlencoded' }) },
+    headers: { Authorization: 'Bearer ' + env('STRIPE_SECRET_KEY'), 'Stripe-Version': '2025-03-31.basil', // version minimale de Managed Payments
+               ...(params && { 'Content-Type': 'application/x-www-form-urlencoded' }) },
     body: params && new URLSearchParams(params),
   });
   const j = await r.json();
