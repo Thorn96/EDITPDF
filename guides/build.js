@@ -367,11 +367,12 @@ ${coffee(t)}
 `; };
 
 // ---------- Tarif de Rature Sync et pages légales (contenu : guides/legal.js) ----------
-const plans = pl => `<section class="plans">
+// LEGAL.SALES_OPEN : les boutons ouvrent la connexion puis le paiement (l'éditeur, ?abonnement=…) ; sinon « Bientôt disponible »
+const plans = (pl, t) => `<section class="plans">
   <div class="planrow">${['month', 'year'].map(k => { const x = pl[k]; return `
     <div class="plan${x.badge ? ' best' : ''}">${x.badge ? `<span class="badge">${x.badge}</span>` : ''}
       <h2>${x.name}</h2><p class="price"><b>${x.price}</b> ${x.per}</p><p class="small">${x.note || '&nbsp;'}</p>
-      <span class="cta off" aria-disabled="true">${pl.soon}</span>
+      ${LEGAL.SALES_OPEN ? `<a class="cta" href="${t.root}?abonnement=${k}">${pl.cta}</a>` : `<span class="cta off" aria-disabled="true">${pl.soon}</span>`}
     </div>`; }).join('')}
   </div>
   <ul class="perks">${pl.perks.map(s => `<li>${s}</li>`).join('')}</ul>
@@ -389,7 +390,7 @@ ${top(t)}
 <section class="hero solo"><div>${p.eyebrow ? `<p class="eyebrow">${p.eyebrow}</p>` : ''}
   <h1>${p.h1}</h1>${p.lead ? `\n  <p class="lead">${p.lead}</p>` : ''}
 </div></section>
-${p.plans ? plans(p.plans) : ''}
+${p.plans ? plans(p.plans, t) : ''}
 <section>${p.sections.map(([h, x]) => `\n  <div class="card"><h2>${h}</h2><p>${x}</p></div>`).join('')}
 </section>
 ${p.plans ? '' : `<p class="small">${t.updated} ${LEGAL.UPDATED[t.lang]}</p>`}
@@ -458,7 +459,7 @@ function buildEnglishEditor() {
 // ---------- Scripts et styles de l'éditeur : un seul fichier minifié chacun (moins d'octets, moins de requêtes) ----------
 // Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.min.js et css/rature.min.css (esbuild, via npx).
 // Ordre = ordre de chargement : les fichiers partagent leurs variables globales, comme des scripts séparés.
-const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'prefs', 'i18n', 'init'];
+const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'account', 'prefs', 'i18n', 'init'];
 function minifyAssets() {
   const { execSync } = require('child_process');
   const esbuild = (input, args) => execSync(`npx -y esbuild@0.24.2 --minify --legal-comments=none --log-level=error ${args}`, { input, cwd: ROOT, maxBuffer: 64 << 20 }).toString();

@@ -12,3 +12,4 @@ if (OUTIL) track('guide', { outil: OUTIL }); // arrivée depuis un guide
 checkResume().then(() => { if (Q.has('reprendre') && !$('resume').hidden) $('resumego').click(); });
 if (Q.has('reprendre')) history.replaceState(null, '', location.pathname); // adresse propre une fois le travail repris
 if (Q.get('relais')) startPhoneRelay(Q.get('relais'), Q.get('pour')); // téléphone ouvert depuis le QR code affiché sur un ordinateur
+accountFromUrl(); // retour de la page de paiement, ou offre choisie sur la page de tarif

@@ -21,7 +21,7 @@ const fr = [
     plans: {
       month: { name: 'Mensuel', price: '4,99 €', per: 'par mois' },
       year: { name: 'Annuel', price: '49,99 €', per: 'par an', note: 'soit 4,17 € par mois', badge: `−${SAVE} % · 2 mois offerts` },
-      ttc: 'Prix TTC, TVA incluse.', soon: 'Bientôt disponible',
+      ttc: 'Prix TTC, TVA incluse.', soon: 'Bientôt disponible', cta: 'S’abonner',
       perks: ['Signatures, tampons et réglages sur tous tes ordinateurs', 'Documents en cours : tu reprends là où tu t’es arrêté, corrections toujours modifiables',
               'Chiffrement de bout en bout : ni Rature ni l’hébergeur ne peuvent lire tes fichiers', 'Résiliable à tout moment, remboursé sans discussion pendant 14 jours'],
     },
@@ -89,7 +89,7 @@ const en = [
     plans: {
       month: { name: 'Monthly', price: '€4.99', per: 'per month' },
       year: { name: 'Yearly', price: '€49.99', per: 'per year', note: 'that is €4.17 a month', badge: `−${SAVE}% · 2 months free` },
-      ttc: 'Prices include VAT.', soon: 'Coming soon',
+      ttc: 'Prices include VAT.', soon: 'Coming soon', cta: 'Subscribe',
       perks: ['Signatures, stamps and settings on all your computers', 'Work in progress: pick up where you left off, edits still editable',
               'End-to-end encryption: neither Rature nor the host can read your files', 'Cancel anytime, refunded with no questions asked within 14 days'],
     },
@@ -146,4 +146,6 @@ const en = [
     ],
   },
 ];
-module.exports = { fr, en, UPDATED, PRICE };
+// ventes ouvertes : boutons « S’abonner » sur la page de tarif (à passer à true le jour du lancement, avec les clés Stripe réelles)
+const SALES_OPEN = false;
+module.exports = { fr, en, UPDATED, PRICE, SALES_OPEN };

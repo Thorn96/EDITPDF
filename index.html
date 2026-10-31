@@ -86,6 +86,8 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
       <svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 7h8M9 17h6"/><path d="m8.5 14 7-5" opacity=".6"/></svg></button>
     <button id="toolsbtn" class="btn icon ghost" title="Plus d'outils">
       <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></svg></button>
+    <button id="accountbtn" class="btn icon ghost" title="Mon compte" aria-label="Mon compte" hidden>
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></button>
     <button id="langbtn" class="btn icon ghost" title="English version" aria-label="English version" lang="en"><b>EN</b></button>
     <button id="themebtn" class="btn icon ghost" title="Thème"><svg class="i" viewBox="0 0 24 24"></svg></button>
     <button id="settingsbtn" class="btn icon ghost" title="Réglages">
@@ -454,6 +456,28 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
   </div>
   <p class="hintline">La page passe directement du téléphone à l'ordinateur, chiffrée. Un service de mise en relation (PeerJS) aide seulement les deux appareils à se trouver : il ne voit pas tes documents.</p>
   <div class="dlg-foot"><button id="phoneclose" class="btn primary">Terminé</button></div>
+</dialog>
+
+<dialog id="accountdlg">
+  <div class="dlg-head"><h3>Mon compte</h3><p>Rature Sync : tes signatures, tampons et documents en cours sur tous tes ordinateurs, chiffrés de bout en bout.</p></div>
+  <div id="acctlogin">
+    <label class="fld">Adresse e-mail<input id="acctemail" class="txt" type="email" autocomplete="email" placeholder="toi@exemple.fr"></label>
+    <div id="acctcodebox" hidden><label class="fld">Code reçu par e-mail<input id="acctcode" class="txt" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="123456"></label></div>
+    <p class="hintline">Pas de mot de passe : on t'envoie un code à chaque connexion.</p>
+  </div>
+  <div id="acctinfo" hidden>
+    <p class="acctwho">Connecté : <b id="acctwho"></b></p>
+    <p id="acctstatus" class="relaystatus" aria-live="polite"></p>
+    <div id="acctplans" class="acctplans">
+      <button class="acctplan" data-plan="month"><span>Mensuel</span><b>4,99 €</b><small>par mois</small></button>
+      <button class="acctplan best" data-plan="year"><span>Annuel · −17 %</span><b>49,99 €</b><small>par an, soit 2 mois offerts</small></button>
+    </div>
+  </div>
+  <p id="acctmsg" class="acctmsg" aria-live="polite"></p>
+  <div class="dlg-foot">
+    <button id="acctlogout" class="btn ghost grow" hidden>Se déconnecter</button>
+    <button id="acctclose" class="btn">Fermer</button><button id="acctgo" class="btn primary">Recevoir un code</button>
+  </div>
 </dialog>
 
 <dialog id="relaydlg">
