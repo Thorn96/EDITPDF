@@ -2,13 +2,13 @@
 // L'onglet affiché vit dans les variables globales (pages, items…) ; les autres gardent leur état de côté.
 const tabs = [null]; // état des onglets en arrière-plan (celui de l'onglet affiché : null)
 let tabAt = 0, openInNewTab = false;
-const tabState = () => ({ sources, pages, items, past, future, deco, bookmarks, expname: $('expname').value, Z, scroll: $('pages').scrollTop });
+const tabState = () => ({ sources, pages, items, past, future, deco, bookmarks, docId, expname: $('expname').value, Z, scroll: $('pages').scrollTop });
 function applyTab(s) {
   select(null);
   closeFind();
   closeGrid?.();
   closeMenu();
-  ({ sources, pages, items, past, future, deco, bookmarks } = s);
+  ({ sources, pages, items, past, future, deco, bookmarks, docId } = s);
   $('expname').value = s.expname || '';
   mount();
   setZoom(s.Z);

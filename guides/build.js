@@ -459,7 +459,7 @@ function buildEnglishEditor() {
 // ---------- Scripts et styles de l'éditeur : un seul fichier minifié chacun (moins d'octets, moins de requêtes) ----------
 // Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.min.js et css/rature.min.css (esbuild, via npx).
 // Ordre = ordre de chargement : les fichiers partagent leurs variables globales, comme des scripts séparés.
-const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'account', 'prefs', 'i18n', 'init'];
+const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'account', 'sync', 'prefs', 'i18n', 'init'];
 function minifyAssets() {
   const { execSync } = require('child_process');
   const esbuild = (input, args) => execSync(`npx -y esbuild@0.24.2 --minify --legal-comments=none --log-level=error ${args}`, { input, cwd: ROOT, maxBuffer: 64 << 20 }).toString();

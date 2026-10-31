@@ -57,6 +57,7 @@ const fmtDate = iso => new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' 
 
 async function renderAccount() {
   const logged = !!session;
+  if (!logged) $('syncbox').hidden = true;
   $('acctlogin').hidden = logged;
   $('acctinfo').hidden = !logged;
   $('acctlogout').hidden = !logged;
@@ -79,6 +80,7 @@ async function renderAccount() {
     : tr(sub.cancel_at_period_end ? 'Rature Sync actif ({p}) jusqu’au {d}, puis arrêté.' : 'Rature Sync actif ({p}), renouvelé le {d}.',
          { p: tr(sub.plan === 'year' ? 'annuel' : 'mensuel'), d: sub.period_end ? fmtDate(sub.period_end) : '…' });
   if (sub?.status === 'past_due') $('acctstatus').textContent += ' ' + tr('Le dernier paiement a échoué : mets à jour ta carte.');
+  renderSync(active);
   return active;
 }
 async function openAccount(plan) {
@@ -138,6 +140,7 @@ async function managePlan() {
 }
 async function logout() {
   const t = session?.access;
+  forgetVault(); // la clé de chiffrement quitte ce navigateur avec la session
   saveSession(null);
   codeSent = false;
   acctSay('Déconnecté.');

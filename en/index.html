@@ -164,6 +164,10 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
           <button id="resumego" class="btn primary">Resume</button>
           <button id="resumedel" class="btn icon ghost" title="Forget this work"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         </div>
+        <div id="clouddocs" class="clouddocs" hidden>
+          <b>Synced documents</b>
+          <ul id="clouddoclist"></ul>
+        </div>
       </div>
     </div>
     <input type="file" id="scanfile" accept="image/*" capture="environment" hidden>
@@ -468,6 +472,26 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     <div id="acctplans" class="acctplans">
       <button class="acctplan" data-plan="month"><span>Monthly</span><b>€4.99</b><small>per month</small></button>
       <button class="acctplan best" data-plan="year"><span>Yearly · −17%</span><b>€49.99</b><small>per year, 2 months free</small></button>
+    </div>
+    <div id="syncbox" class="syncbox" hidden>
+      <p class="syncti"><b>Sync</b> <span id="syncstate"></span></p>
+      <div id="syncsetup">
+        <p>Your signatures, stamps, settings and work in progress follow you on all your devices, end-to-end encrypted.</p>
+        <button id="syncenable" class="btn primary">Turn on sync</button>
+      </div>
+      <div id="synccodebox" hidden>
+        <p><b>Write down this recovery code</b> (or take a photo of it): it encrypts your data and lets you add a device. Nobody can recover it for you, not even Rature.</p>
+        <code id="syncdraft" class="synccode"></code>
+        <div class="syncacts"><button id="synccopy" class="btn">Copy</button><button id="syncnoted" class="btn primary">I wrote down my code</button></div>
+      </div>
+      <div id="syncunlock" hidden>
+        <p>Your data is encrypted. To link this device, enter your recovery code, or scan its QR code from a device already linked (My account › Add a device).</p>
+        <label class="fld">Recovery code<input id="synccodein" class="txt" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"></label>
+        <div class="syncacts"><button id="syncunlockgo" class="btn primary">Link this device</button></div>
+      </div>
+      <div id="syncon" hidden>
+        <div class="syncacts"><button id="syncnow" class="btn">Sync now</button><button id="syncshow" class="btn">Add a device</button><button id="syncwipe" class="btn ghost">Erase my online data</button></div>
+      </div>
     </div>
   </div>
   <p id="acctmsg" class="acctmsg" aria-live="polite"></p>

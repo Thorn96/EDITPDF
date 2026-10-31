@@ -134,6 +134,7 @@ function resetDoc() {
   closeGrid?.();
   renderQueue.clear();
   items = []; pages = []; sources = []; past = []; future = []; bookmarks = [];
+  docId = null; // nouveau document
   mount();
   $('undo').disabled = $('redo').disabled = true;
 }

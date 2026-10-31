@@ -133,6 +133,7 @@ async function openTemplates() {
       const snap = await idb('readonly', s => s.get('tpl:' + t.id));
       $('tpldlg').close();
       await restore(snap);
+      docId = null; // document neuf tiré du modèle, distinct de celui qui a servi à le créer
       $('expname').value = t.name;
       toast(tr('Modèle « {name} » ouvert', { name: t.name }));
     };

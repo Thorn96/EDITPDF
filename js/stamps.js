@@ -6,7 +6,7 @@ const STAMPS0 = [
 ];
 let stamps = STAMPS0;
 try { stamps = JSON.parse(localStorage.stamps || 'null') || STAMPS0; } catch {}
-const saveStamps = () => { try { localStorage.stamps = JSON.stringify(stamps); } catch { toast('Ce navigateur refuse de mémoriser les tampons.', 'error'); } };
+const saveStamps = () => { try { localStorage.stamps = JSON.stringify(stamps); } catch { toast('Ce navigateur refuse de mémoriser les tampons.', 'error'); } syncSoon(); };
 // les tampons proposés d'office suivent la langue ; ceux créés par l'utilisateur gardent son texte
 const stampText = s => (STAMPS0.some(d => d.id === s.id && d.text === s.text) ? tr(s.text) : s.text).replaceAll('{date}', today());
 

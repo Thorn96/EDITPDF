@@ -167,6 +167,10 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
           <button id="resumego" class="btn primary">Reprendre</button>
           <button id="resumedel" class="btn icon ghost" title="Oublier ce travail"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         </div>
+        <div id="clouddocs" class="clouddocs" hidden>
+          <b>Documents synchronisés</b>
+          <ul id="clouddoclist"></ul>
+        </div>
       </div>
     </div>
     <input type="file" id="scanfile" accept="image/*" capture="environment" hidden>
@@ -471,6 +475,26 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     <div id="acctplans" class="acctplans">
       <button class="acctplan" data-plan="month"><span>Mensuel</span><b>4,99 €</b><small>par mois</small></button>
       <button class="acctplan best" data-plan="year"><span>Annuel · −17 %</span><b>49,99 €</b><small>par an, soit 2 mois offerts</small></button>
+    </div>
+    <div id="syncbox" class="syncbox" hidden>
+      <p class="syncti"><b>Synchronisation</b> <span id="syncstate"></span></p>
+      <div id="syncsetup">
+        <p>Tes signatures, tampons, réglages et documents en cours te suivent sur tous tes appareils, chiffrés de bout en bout.</p>
+        <button id="syncenable" class="btn primary">Activer la synchronisation</button>
+      </div>
+      <div id="synccodebox" hidden>
+        <p><b>Note ce code de récupération</b> (ou fais-en une photo) : il chiffre tes données et te sert à ajouter un appareil. Personne ne peut le retrouver à ta place, pas même Rature.</p>
+        <code id="syncdraft" class="synccode"></code>
+        <div class="syncacts"><button id="synccopy" class="btn">Copier</button><button id="syncnoted" class="btn primary">J'ai noté mon code</button></div>
+      </div>
+      <div id="syncunlock" hidden>
+        <p>Tes données sont chiffrées. Pour relier cet appareil, saisis ton code de récupération, ou scanne son QR code depuis un appareil déjà relié (Mon compte › Ajouter un appareil).</p>
+        <label class="fld">Code de récupération<input id="synccodein" class="txt" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"></label>
+        <div class="syncacts"><button id="syncunlockgo" class="btn primary">Relier cet appareil</button></div>
+      </div>
+      <div id="syncon" hidden>
+        <div class="syncacts"><button id="syncnow" class="btn">Synchroniser maintenant</button><button id="syncshow" class="btn">Ajouter un appareil</button><button id="syncwipe" class="btn ghost">Effacer mes données en ligne</button></div>
+      </div>
     </div>
   </div>
   <p id="acctmsg" class="acctmsg" aria-live="polite"></p>

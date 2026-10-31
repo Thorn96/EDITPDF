@@ -44,6 +44,7 @@ let sigs = [];
 try { sigs = JSON.parse(localStorage.signatures || '[]'); } catch {}
 const saveSigs = () => {
   try { localStorage.signatures = JSON.stringify(sigs); } catch { toast('Ce navigateur refuse de mémoriser les signatures.', 'error'); }
+  syncSoon();
 };
 function renderSigs() {
   $('siglist').innerHTML = '';
@@ -70,7 +71,7 @@ renderSigs();
 function addSig(c) { // recadre sur le tracé (pixels non transparents) et mémorise
   const o = trimCanvas(c);
   if (!o) return false;
-  sigs.push({ src: o.toDataURL('image/png'), ratio: o.width / o.height });
+  sigs.push({ id: newId('g'), src: o.toDataURL('image/png'), ratio: o.width / o.height });
   saveSigs(); renderSigs();
   return true;
 }

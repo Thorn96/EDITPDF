@@ -598,11 +598,12 @@ function idb(mode, fn) {
   });
 }
 let restoring = false;
+var docId = null; // identifiant du document affiché (synchronisation) ; var : remis à zéro par resetDoc, défini avant ce fichier
 // Le document entier, sérialisable : sauvegarde automatique et modèles
 function snapshot() {
   const used = [...new Set(pages.map(p => p.src))];
   return {
-    t: Date.now(), name: $('fname').textContent, expname: $('expname').value, deco,
+    id: docId ||= newId('d'), t: Date.now(), name: $('fname').textContent, expname: $('expname').value, deco,
     sources: used.map(s => ({ name: s.name, bytes: s.bytes, fields: s.fields, fields0: s.fields0, signed: s.signed })),
     pages: pages.map(p => ({ src: used.indexOf(p.src), index: p.index, rot: p.rot, crop: p.crop || null, ocr: p.ocr || null })),
     items: items.filter(it => !(it.fresh && !it.text.trim())).map(it => {
@@ -616,6 +617,7 @@ async function autosave() {
   if (!pages.length || restoring) return; // pas de sauvegarde partielle pendant une reprise
   try {
     await idb('readwrite', s => s.put(snapshot(), 'session'));
+    docChanged(); // Rature Sync : le document part aussi, chiffré, vers les autres appareils
     $('saved').classList.add('on');
     clearTimeout(autosave.t);
     autosave.t = setTimeout(() => $('saved').classList.remove('on'), 1600);
@@ -628,6 +630,7 @@ async function restore(s) {
 }
 async function restoreInner(s) {
   resetDoc();
+  docId = s.id || null;
   deco = { ...DECO0, ...s.deco };
   const srcs = [];
   for (const x of s.sources) {

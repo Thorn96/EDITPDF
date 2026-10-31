@@ -3,7 +3,7 @@ const PREFS0 = { tool: 'text', font: 'arial', bold: false, italic: false, size: 
                  theme: 'auto', lang: '', favs: [], tour: false };
 let prefs = { ...PREFS0 };
 try { prefs = { ...PREFS0, ...JSON.parse(localStorage.prefs || '{}') }; } catch {}
-const savePrefs = () => { try { localStorage.prefs = JSON.stringify(prefs); } catch {} };
+const savePrefs = () => { try { localStorage.prefs = JSON.stringify(prefs); } catch {} syncSoon(); };
 // Les derniers réglages utilisés deviennent ceux des prochains éléments
 let prefsT;
 function prefsChanged() {

@@ -13,3 +13,4 @@ checkResume().then(() => { if (Q.has('reprendre') && !$('resume').hidden) $('res
 if (Q.has('reprendre')) history.replaceState(null, '', location.pathname); // adresse propre une fois le travail repris
 if (Q.get('relais')) startPhoneRelay(Q.get('relais'), Q.get('pour')); // téléphone ouvert depuis le QR code affiché sur un ordinateur
 accountFromUrl(); // retour de la page de paiement, ou offre choisie sur la page de tarif
+startSync(); // Rature Sync : clé déjà connue sur cet appareil, ou code arrivé par QR code
