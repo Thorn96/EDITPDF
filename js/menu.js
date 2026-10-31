@@ -7,6 +7,7 @@ function openMenu(x, y, entries) {
     if (!e) continue;
     if (e === '-') { m.append(document.createElement('hr')); continue; }
     if (e.head) { m.append(Object.assign(document.createElement('div'), { className: 'mhead', textContent: tr(e.head) })); continue; }
+    if (e.note) { m.append(Object.assign(document.createElement('p'), { className: 'mnote', textContent: tr(e.note) })); continue; }
     const b = document.createElement('button');
     b.innerHTML = `<span>${esc(tr(e.label))}</span>${e.key ? `<kbd>${esc(tr(e.key))}</kbd>` : ''}`;
     b.classList.toggle('danger', !!e.danger);
@@ -80,6 +81,7 @@ function openPageMenu(e, pg) {
 function toolsEntries() {
   const none = !pages.length, pg = visiblePage();
   return [
+    none && { note: 'Ouvre un PDF et tous ces outils s’activent. Ils sont tous gratuits, sans inscription.' },
     { head: 'Pages' },
     { label: 'Vue en grille des pages', key: 'G', fn: openGrid, disabled: none },
     { label: 'Insérer une page blanche', fn: () => insertBlank(pg), disabled: none },
@@ -150,7 +152,7 @@ function commands() {
     const [label, key] = b.dataset.tip.split(' · ');
     put(label, () => b.dataset.t ? setTool(b.dataset.t) : b.click(), key, 'Outil');
   }
-  const add = (list, group) => { let g = group; for (const e of list) { if (!e || e === '-') continue; if (e.head) { g = e.head; continue; } if (!e.disabled) put(e.label, e.fn, e.key, g); } };
+  const add = (list, group) => { let g = group; for (const e of list) { if (!e || e === '-' || e.note) continue; if (e.head) { g = e.head; continue; } if (!e.disabled) put(e.label, e.fn, e.key, g); } };
   add([
     { head: 'Fichier' }, { label: 'Ouvrir un fichier…', key: 'Ctrl O', fn: () => $('file').click() },
     pages.length && { label: 'Télécharger le PDF…', key: 'Ctrl S', fn: () => openExport() },
