@@ -96,6 +96,7 @@ async function webhook(req: Request) {
     period_end: end ? new Date(end * 1000).toISOString() : null, cancel_at_period_end: !!(s.cancel_at_period_end || s.cancel_at),
     updated_at: new Date().toISOString(),
   });
+  if (error?.code === '23503') return new Response('compte supprimé'); // compte Rature effacé : plus rien à tenir à jour
   if (error) throw error; // Stripe réessaiera
   return new Response('ok');
 }
