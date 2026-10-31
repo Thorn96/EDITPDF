@@ -131,7 +131,7 @@ $('batchgo').onclick = async () => {
       try {
         let bytes = new Uint8Array(await f.arrayBuffer());
         if (isEncrypted(bytes)) bytes = await decrypt(bytes, f.name);
-        const doc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise, src = { name: f.name, bytes, fields: {}, fields0: {} }, list = [];
+        const doc = await openPdf({ data: bytes.slice() }), src = { name: f.name, bytes, fields: {}, fields0: {} }, list = [];
         for (let i = 0; i < doc.numPages; i++) { const e = { src, index: i, rot: 0, pdfPage: await doc.getPage(i + 1) }; e.vp = viewportOf(e); list.push(e); }
         let res = await build(list);
         if (a4) res = await toA4(res);

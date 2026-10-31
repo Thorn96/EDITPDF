@@ -47,7 +47,6 @@ function showHelp() {
   ask({ title: 'Raccourcis clavier', html: `<dl class="keys">${rows.map(([k, v]) => `<dt>${k.split(' ').map(x => x === '·' ? ' ' : `<kbd>${esc(tr(x))}</kbd>`).join(' ')}</dt><dd>${esc(tr(v))}</dd>`).join('')}</dl>`,
         buttons: [{ label: 'Compris', value: 1, primary: true }] });
 }
-$('help').onclick = showHelp;
 
 // ---------- Logo : retour à l'accueil ----------
 // le document affiché est sauvegardé juste avant et se reprend depuis l'accueil (« Reprendre ton travail ») ; seul celui-là peut l'être
@@ -164,7 +163,7 @@ $('expprev').onclick = async () => {
   const btn = $('expprev');
   btn.classList.add('busy');
   try {
-    const out = await makePdf(o), doc = await pdfjsLib.getDocument({ data: out.slice(), password: o.pw }).promise;
+    const out = await makePdf(o), doc = await openPdf({ data: out.slice(), password: o.pw });
     preview = { o, out };
     const changed = o.list.map((pg, i) => ({ pg, i })).filter(({ pg }) => items.some(it => it.pg === pg) || pg.rot || pg.crop || deco.wm || deco.header || deco.footer || deco.num || o.a4);
     const draw = async (page, vp) => {
@@ -638,7 +637,7 @@ async function restoreInner(s) {
   deco = { ...DECO0, ...s.deco };
   const srcs = [];
   for (const x of s.sources) {
-    const doc = await pdfjsLib.getDocument({ data: x.bytes.slice() }).promise;
+    const doc = await openPdf({ data: x.bytes.slice() });
     srcs.push({ name: x.name, bytes: x.bytes, doc, fields: structuredClone(x.fields), fields0: x.fields0, signed: x.signed });
   }
   sources = srcs;

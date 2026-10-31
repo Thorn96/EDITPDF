@@ -13,11 +13,16 @@ const track = (name, data) => {
 };
 // Bibliothèques PDF (1,6 Mo) : chargées 1 s après l'affichage de la page, ou dès qu'on ouvre un fichier si c'est plus tôt.
 // Tout ce qui lit ou fabrique un PDF commence par « await libsReady() ».
-const LIBS = ['lib/pdfjs/pdf.min.js', 'lib/pdf-lib/pdf-lib.min.js', 'lib/pdf-lib/fontkit.umd.min.js'];
+// pdf.js est un module (version « legacy », pour les navigateurs un peu anciens) ; pdf-lib et fontkit sont des scripts classiques.
+const LIBS = ['lib/pdf-lib/pdf-lib.min.js', 'lib/pdf-lib/fontkit.umd.min.js'];
 let libsP;
-const libsReady = () => libsP ||= Promise.all(LIBS.map(src => new Promise((ok, ko) =>
-  document.head.append(Object.assign(document.createElement('script'), { src: here(src), async: false, onload: ok, onerror: ko })))))
-  .then(() => { pdfjsLib.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.js'); }, e => { libsP = null; throw e; }); // échec (hors ligne) : on réessaiera
+const libsReady = () => libsP ||= Promise.all([import(here('lib/pdfjs/pdf.min.mjs')), ...LIBS.map(src => new Promise((ok, ko) =>
+  document.head.append(Object.assign(document.createElement('script'), { src: here(src), async: false, onload: ok, onerror: ko }))))])
+  .then(([pdfjs]) => { globalThis.pdfjsLib = pdfjs; pdfjs.GlobalWorkerOptions.workerSrc = here('lib/pdfjs/pdf.worker.min.mjs'); },
+        e => { libsP = null; throw e; }); // échec (hors ligne) : on réessaiera
+// Toute lecture de PDF passe par ici. isEvalSupported : pdf.js ne compile jamais de code venu d'un PDF (défense de plus contre une faille
+// comme CVE-2024-4367, corrigée depuis pdf.js 4.2.67)
+const openPdf = o => pdfjsLib.getDocument({ ...o, isEvalSupported: false }).promise;
 addEventListener('load', () => setTimeout(libsReady, 1000));
 const $ = id => document.getElementById(id), measure = document.createElement('canvas').getContext('2d');
 measure.fontKerning = 'none'; // mesures sans crénage, comme le texte écrit dans le PDF

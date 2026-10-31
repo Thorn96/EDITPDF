@@ -1,11 +1,11 @@
 // Rature : fonctionne hors ligne une fois ouvert en ligne. Tout est hébergé sur le site.
 // Page et scripts de Rature : réseau d'abord (les mises à jour arrivent tout de suite), cache si hors ligne.
 // Bibliothèques et polices (versions figées) : cache d'abord.
-const V = 'rature-v5';
+const V = 'rature-v6';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png',
-  './css/rature.min.css', './js/rature.min.js', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
-  './lib/pdfjs/pdf.min.js', './lib/pdfjs/pdf.worker.min.js', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
+  './css/rature.min.css', './js/boot.js', './js/rature.min.js', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
+  './lib/pdfjs/pdf.min.mjs', './lib/pdfjs/pdf.worker.min.mjs', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
 ];
 // Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes (~19 Mo) : téléchargés en arrière-plan seulement
 // pour l'application installée (message « later » envoyé par la page). Sur le site, ils sont mis en cache à leur première utilisation.

@@ -22,7 +22,7 @@ function openMenu(x, y, entries) {
   m.style.top = clamp(y, 8, innerHeight - r.height - 8) + 'px';
 }
 function closeMenu() { if ($('menu').hidden) return false; $('menu').hidden = true; return true; }
-addEventListener('pointerdown', e => { if (!e.target.closest('#menu, #toolsbtn, #settingsbtn, #histbtn')) closeMenu(); }, true);
+addEventListener('pointerdown', e => { if (!e.target.closest('#menu, #toolsbtn, #settingsbtn')) closeMenu(); }, true);
 addEventListener('resize', () => closeMenu());
 $('pages').addEventListener('scroll', () => closeMenu());
 const menuAt = btn => { const r = btn.getBoundingClientRect(); return [r.right - 250, r.bottom + 6]; };
@@ -135,14 +135,13 @@ function goToStep(n) { // n : nombre d'étapes à garder faites
 function openHistory() {
   if (closeMenu()) return;
   const steps = [...past.map((a, i) => ({ a, n: i + 1, done: true })), ...[...future].reverse().map((a, i) => ({ a, n: past.length + i + 1, done: false }))];
-  openMenu(...menuAt($('histbtn').offsetParent ? $('histbtn') : $('toolsbtn')), [
+  openMenu(...menuAt($('toolsbtn')), [
     { head: steps.length ? 'Historique' : "Aucune modification pour l'instant" },
     ...steps.slice(-40).reverse().map(({ a, n, done }) => ({ label: a.label || tr('Modification'), key: ago(a.t), on: n === past.length, undone: !done, fn: () => goToStep(n) })),
     steps.length && '-',
     steps.length && { label: "Revenir au document d'origine", fn: () => goToStep(0), disabled: !past.length },
   ]);
 }
-$('histbtn').onclick = openHistory;
 
 // ---------- Palette de commandes (Ctrl K) : n'importe quelle action en tapant quelques lettres ----------
 function commands() {

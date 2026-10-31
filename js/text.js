@@ -70,7 +70,6 @@ function replaceHits(list) {
   }, tr('Remplacement'));
   return list.length;
 }
-$('findbtn').onclick = () => $('find').hidden ? openFind() : closeFind();
 $('fclose').onclick = closeFind;
 $('fq').oninput = () => runFind();
 $('fq').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); showHit(hitI + (e.shiftKey ? -1 : 1)); } if (e.key === 'Escape') closeFind(); };
@@ -111,7 +110,6 @@ function openDeco() {
   $('dnum').value = deco.num; $('dnumpos').value = deco.numPos; $('dhead').value = deco.header; $('dfoot').value = deco.footer;
   $('decodlg').showModal();
 }
-$('decobtn').onclick = openDeco;
 $('decocancel').onclick = () => $('decodlg').close();
 $('dwmchips').onclick = e => { const b = e.target.closest('button'); if (b) $('dwm').value = b.dataset.wm; };
 $('dwmcolors').onclick = e => { const c = e.target.dataset.c; if (c) document.querySelectorAll('#dwmcolors .sw').forEach(s => s.classList.toggle('on', s.dataset.c === c)); };

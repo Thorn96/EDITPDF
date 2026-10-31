@@ -39,15 +39,7 @@
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../icon-192.png">
 <link rel="manifest" href="../manifest-en.webmanifest">
-<script>/* avant le premier affichage : thème choisi, et page dans la bonne langue.
-   Langue voulue : celle choisie avec le bouton FR/EN, sinon celle du navigateur. Les robots des moteurs de recherche ne sont jamais
-   redirigés : chacun des deux adresses (/ en français, /en/ en anglais) doit pouvoir être lue et indexée telle quelle. */
-try { var P = JSON.parse(localStorage.prefs || '{}'); } catch (e) { P = {}; }
-if (P.theme === 'light' || P.theme === 'dark') document.documentElement.dataset.theme = P.theme;
-var PAGE = document.documentElement.lang, NAV = /^fr/i.test(navigator.language || '') ? 'fr' : 'en';
-var BOT = /bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent);
-var WANT = P.lang || (BOT ? PAGE : NAV);
-if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentElement.dataset.root || './') + location.search);</script>
+<script src="../js/boot.js"></script>
 <link rel="preload" href="../fonts/ui/YoungSerif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/ui/SchibstedGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../fonts/ui/fonts.css">
@@ -77,27 +69,20 @@ if (WANT !== PAGE) location.replace((WANT === 'en' ? 'en/' : document.documentEl
     <button id="install" class="btn ghost" hidden title="Install Rature as an app">
       <svg class="i" viewBox="0 0 24 24"><path d="M12 3v11M7 9.5l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg><span class="lbl">Install</span>
     </button>
-    <button id="findbtn" class="btn icon ghost" title="Find and replace (Ctrl+F)">
-      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/></svg></button>
-    <button id="decobtn" class="btn icon ghost" title="Watermark, page numbers, header">
-      <svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 7h8M9 17h6"/><path d="m8.5 14 7-5" opacity=".6"/></svg></button>
-    <button id="toolsbtn" class="btn icon ghost" title="More tools">
-      <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></svg></button>
-    <button id="accountbtn" class="btn icon ghost" title="My account" aria-label="My account" hidden>
-      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg></button>
+    <button id="toolsbtn" class="btn icon ghost labeled" title="Tools: pages, watermark, find, history, Word…">
+      <svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M16.75 13.5v6.5M13.5 16.75H20"/></svg><span class="lbl">Tools</span></button>
+    <button id="accountbtn" class="btn icon ghost labeled" title="My account" aria-label="My account" hidden>
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span class="lbl">Account</span></button>
     <button id="langbtn" class="btn icon ghost" title="Version française" aria-label="Version française" lang="fr"><b>FR</b></button>
     <button id="themebtn" class="btn icon ghost" title="Theme"><svg class="i" viewBox="0 0 24 24"></svg></button>
     <button id="settingsbtn" class="btn icon ghost" title="Settings">
       <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-    <button id="help" class="btn icon ghost" title="Keyboard shortcuts (?)"><b style="font-size:16px">?</b></button>
     <button id="btnSigs" class="btn icon ghost drawer-btn" title="My signatures"><svg class="i" viewBox="0 0 24 24"><path d="M3 17c3-1 4-6 6-6s1 5 3 5 3-3 4-3 1.5 2 5 2"/></svg></button>
     <span class="sep"></span>
     <button id="undo" class="btn icon" title="Undo (Ctrl+Z)" disabled>
       <svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
     <button id="redo" class="btn icon" title="Redo (Ctrl+Y)" disabled>
       <svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
-    <button id="histbtn" class="btn icon ghost" title="Change history">
-      <svg class="i" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 4v4.6h4.6M12 8v4l3 2"/></svg></button>
     <span class="sep"></span>
     <button id="save" class="btn primary" title="Download or share the edited PDF (Ctrl+S)">
       <svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="spin"></span><span class="lbl">Download</span>

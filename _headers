@@ -1,0 +1,11 @@
+# En-têtes de sécurité Cloudflare Pages : HTTPS imposé pendant un an, aucune page de Rature affichable dans le cadre d'un autre site,
+# et politique de sécurité du contenu (CSP) : seuls les scripts du site s'exécutent, et la page ne parle qu'aux serveurs listés.
+#   script-src   le site, WebAssembly (MuPDF, OCR) et la mesure d'audience Cloudflare (ajoutée par Cloudflare)
+#   connect-src  le site (/api/turn), data: (WebAssembly embarqué de l'OCR, rien ne sort de la page), Supabase (compte, Sync, statistiques), Web3Forms (signalements), PeerJS (mise en relation
+#                du téléphone), mesure d'audience Cloudflare
+#   style-src    'unsafe-inline' : les positions et couleurs des éléments sont posées en style="…" (aucun code ne s'exécute par là)
+# Ajouter un service extérieur = l'ajouter ici, sinon le navigateur le bloque (erreur « Content-Security-Policy » dans la console).
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; connect-src 'self' data: https://ebyblqobavgtgpcqowiz.supabase.co https://api.web3forms.com https://0.peerjs.com wss://0.peerjs.com https://cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

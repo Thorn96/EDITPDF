@@ -26,7 +26,7 @@ async function addSource(bytes, name) {
   const signed = isSigned(bytes);
   if (signed) toast(tr('« {name} » est signé électroniquement : le modifier annulera sa signature.', { name }), '', null, 7000);
   bytes = await repairText(bytes);
-  const doc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise; // pdf.js détache le buffer qu'on lui donne
+  const doc = await openPdf({ data: bytes.slice() }); // pdf.js détache le buffer qu'on lui donne
   const src = { name, bytes, doc, fields: {}, fields0: {}, signed }, list = [];
   for (let i = 0; i < doc.numPages; i++) list.push({ src, index: i, rot: 0, pdfPage: await doc.getPage(i + 1) });
   sources.push(src);
@@ -38,7 +38,7 @@ async function repairLater(src) {
   const fixed = await repairText(src.bytes, true);
   if (fixed === src.bytes || !sources.includes(src)) return;
   src.bytes = fixed; // l'enregistrement et le copier-coller en profitent
-  src.doc = await pdfjsLib.getDocument({ data: fixed.slice() }).promise;
+  src.doc = await openPdf({ data: fixed.slice() });
   for (const pg of pages.filter(p => p.src === src)) { pg.pdfPage = await src.doc.getPage(pg.index + 1); await rebuildPage(pg); }
 }
 

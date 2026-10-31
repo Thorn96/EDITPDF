@@ -68,7 +68,8 @@ Object.assign(EN, {
   'Tes signatures et tampons partout': 'Your signatures and stamps everywhere', 'Crée-les une fois, retrouve-les sur ton ordinateur, ton portable et ton téléphone.': 'Create them once, find them on your computer, your laptop and your phone.',
   'Reprends tes documents là où tu t’es arrêté': 'Pick up your documents where you left off', 'Commencé au bureau, fini à la maison : tes corrections restent modifiables.': 'Started at the office, finished at home: your edits stay editable.',
   'Tes réglages te suivent': 'Your settings follow you', 'Couleurs favorites, police, couleurs du stylo et du surligneur.': 'Favourite colours, font, pen and highlighter colours.',
-  'Mon compte · Rature Sync actif': 'My account · Rature Sync active',
+  'Mon compte · Rature Sync actif': 'My account · Rature Sync active', 'Compte': 'Account',
+  'Outils : pages, filigrane, rechercher, historique, Word…': 'Tools: pages, watermark, find, history, Word…',
   '{n} signature': '{n} signature', '{n} signatures': '{n} signatures', '{n} tampon': '{n} stamp', '{n} tampons': '{n} stamps',
   '{n} document': '{n} document', '{n} documents': '{n} documents', 'sur tous tes appareils': 'on all your devices',
   // Synchronisation Rature Sync

@@ -493,7 +493,7 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 }
 @media (max-width: 640px) {
   header { gap: 8px; padding: 0 10px; }
-  .brand b, #fname, .lbl, .actions .sep, #help { display: none; }
+  .brand b, #fname, .lbl, .actions .sep { display: none; }
   .btn { padding: 0 11px; }
   #tools button { width: 38px; height: 35px; }
   #zoom { right: 10px; bottom: 10px; }
@@ -593,9 +593,9 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .tour-tip p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.5; }
 .tour-foot { display: flex; align-items: center; gap: 8px; }
 .tour-foot span { margin-right: auto; font-size: 12px; color: var(--muted); }
-@media (max-width: 640px) { #themebtn, #settingsbtn ~ #help { display: none; } .gridtip { display: none; } }
+@media (max-width: 640px) { #themebtn { display: none; } .gridtip { display: none; } }
 /* en-tête plus étroit : ces boutons restent accessibles depuis « Plus d'outils » et « Réglages » */
-@media (max-width: 1180px) { #findbtn, #decobtn, #themebtn, #help, .brand small { display: none; } }
+@media (max-width: 1180px) { .brand small { display: none; } }
 
 /* ---------- Rature : barre d'outils sur petits écrans, écrans tactiles, signatures montrées ---------- */
 @media (pointer: coarse) { #tools > button, #tools .tgroup > button { height: 42px; } }
@@ -610,7 +610,7 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
 .side.right.flash { animation: flash 1.2s ease-out; }
 @keyframes flash { 0%, 60% { box-shadow: inset 0 0 0 3px var(--accent); } }
 @media (max-width: 640px) {
-  #histbtn { display: none; } .brand svg { width: 26px; height: 26px; }
+  .brand svg { width: 26px; height: 26px; }
   header { gap: 4px; } .actions { gap: 3px; } header .btn { height: 36px; padding: 0 9px; } header .btn.icon { width: 34px; padding: 0; }
 }
 @media (max-width: 1180px) { body:not(.loaded) #desk { --mx: 10px; } }
@@ -718,3 +718,6 @@ body.premium #accountbtn::after { content: '✦'; position: absolute; top: 2px; 
 .syncbox.todo { border-color: var(--accent); background: var(--accent-soft); }
 .syncbox .todo { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11.5px; }
 .syncsummary { font-weight: 600; color: var(--ink) !important; }
+/* Outils, Compte : un mot à côté de l'icône sur grand écran ; ailleurs, une icône carrée comme ses voisines */
+.btn.icon.labeled .lbl { display: none; }
+@media (min-width: 1181px) { .btn.icon.labeled { width: auto; padding: 0 14px; } .btn.icon.labeled .lbl { display: inline; } }
