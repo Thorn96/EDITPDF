@@ -317,9 +317,7 @@ ${ld ? `<script type="application/ld+json">${ld}</script>\n` : ''}<meta name="th
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
-<link rel="stylesheet" href="/guides/guide.css">
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>`; };
+<link rel="stylesheet" href="/guides/guide.css">`; }; // visites : Cloudflare Web Analytics, ajouté par Cloudflare
 const top = t => `<header class="top"><a class="brand" href="${t.root}">${LOGO}Rature</a><a class="btn" href="${t.root}">${t.open}</a></header>`;
 const legalLinks = t => (t.lang === 'fr' ? LEGAL.fr : LEGAL.en).map(x => `<a href="${url(x)}">${x.short}</a>`).join(' · ');
 const coffee = t => `<a class="coffee" href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener" title="${t.coffeeTitle}">${t.coffee}</a>`;
