@@ -228,6 +228,7 @@ async function buildPage(pg) {
   flush();
   pg.ocr?.forEach(r => addRun(pg, r));
   // page « scannée » = sans texte visible mais avec une image (une page blanche n'en est pas une)
+  pg.hasImg = hasImg; // image possiblement pleine de texte même sur une page qui a du vrai texte : l'OCR la lit aussi
   pg.wrap.classList.toggle('scan', !n && hasImg);
   pg.wrap.classList.toggle('ocrdone', !!pg.ocr);
   await buildFields(pg);

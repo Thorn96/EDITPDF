@@ -148,9 +148,14 @@ async function ocrPage(pg, btn = document.createElement('button'), quiet, shared
     const { data } = await worker.recognize(c);
     if (!shared) await worker.terminate();
     pg.ocr = [];
+    // page mixte (vrai texte + image de texte) : les lignes lues sur le vrai texte, déjà modifiable, sont écartées
+    // ponytail: test par ligne entière ; une ligne de l'image alignée avec du vrai texte peut être perdue, passer aux mots si ça arrive
+    const real = [...pg.layer.querySelectorAll('.tl')].map(d => d.run).concat(items.filter(i => i.pg === pg).flatMap(runsOf)).filter(r => !r.scan);
+    const onReal = ([x0, y0, x1, y1]) => real.reduce((s, r) => s + Math.max(0, Math.min(x1, r.x + r.w) - Math.max(x0, r.x)) * Math.max(0, Math.min(y1, r.top + r.px * 1.1) - Math.max(y0, r.top)), 0) > .5 * (x1 - x0) * (y1 - y0);
     for (const l of data.lines) {
       const str = l.text.trim(), b = l.bbox;
       if (!str || l.confidence < 35 || !/[\p{L}\p{N}]{3}/u.test(str)) continue; // bruit (signature, tampon) : aucun mot de 3 signes
+      if (onReal([b.x0 / k, b.y0 / k, b.x1 / k, b.y1 / k])) continue;
       const bl = l.baseline?.has_baseline ? (l.baseline.y0 + l.baseline.y1) / 2 : b.y1 - (b.y1 - b.y0) * .2;
       // hauteur des minuscules (estimée par Tesseract sur toute la ligne) : la mesure la plus stable de la taille du texte
       const ra = l.rowAttributes, xh = ra?.row_height ? (ra.row_height - ra.ascenders - ra.descenders) / k : 0;
@@ -175,7 +180,7 @@ let scanning = false;
 async function scanDocument() {
   if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
   if (scanning) return;
-  const list = pages.filter(p => p.wrap.classList.contains('scan') && !p.ocr);
+  const list = pages.filter(p => p.hasImg && !p.ocr); // scans, et pages de vrai texte qui contiennent une image
   if (!list.length) return toast(pages.some(p => p.ocr) ? 'Le texte de ce PDF est déjà reconnu : clique sur une ligne pour la corriger.' : 'Ce PDF contient déjà du vrai texte : choisis « Corriger » pour le modifier.');
   scanning = true;
   const btn = document.querySelector('#tools [data-a=ocr]'), label = btn.innerHTML, hint = $('hint').innerHTML;
