@@ -4,7 +4,7 @@
 const V = 'rature-v6';
 const CORE = [
   './', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png',
-  './css/rature.min.css', './js/boot.js', './js/rature.min.js', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
+  './css/rature.f6a57c85b3.min.css', './js/boot.js', './js/rature.33b4a55666.min.js', './fonts/ui/fonts.css', './fonts/pdf/fonts.css',
   './lib/pdfjs/pdf.min.mjs', './lib/pdfjs/pdf.worker.min.mjs', './lib/pdf-lib/pdf-lib.min.js', './lib/pdf-lib/fontkit.umd.min.js',
 ];
 // Moteurs plus lourds (correction du texte, OCR) et polices les plus courantes (~19 Mo) : téléchargés en arrière-plan seulement
@@ -23,6 +23,9 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil((async () => {
     for (const k of await caches.keys()) if (k !== V) await caches.delete(k);
+    // anciennes versions des scripts et styles (leur nom contient une empreinte, changée à chaque modification : guides/build.js)
+    const core = new Set(CORE.map(u => new URL(u, location).href)), c = await caches.open(V);
+    for (const r of await c.keys()) if (/\/rature\.[0-9a-f]+\.min\.(js|css)$/.test(new URL(r.url).pathname) && !core.has(r.url)) await c.delete(r);
     await self.clients.claim();
   })());
 });

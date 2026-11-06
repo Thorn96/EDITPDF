@@ -338,7 +338,9 @@ body:not(.loaded) .side { display: none !important; }
 @media (max-width: 1180px) { #empty { padding-left: 24px; } }
 @media (max-width: 900px) {
   .welcome { grid-template-columns: minmax(0, 1fr); max-width: 560px; gap: 26px; }
-  .dropwrap { order: -1; } .resume { order: -2; }
+  /* le titre d'abord, puis tout de suite la zone de dépôt, puis le reste de la présentation */
+  .pitch { display: contents; } .pitch .eyebrow { order: -4; } .pitch h1 { order: -3; margin: -14px 0 0; }
+  .dropwrap { order: -2; } .resume { order: -5; }
   .pitch { gap: 16px; } .pitch ul { display: none; }
   .drop { min-height: 0; padding: 30px 20px; } .here { display: none; }
 }
@@ -627,6 +629,10 @@ svg.shape .link { fill: color-mix(in srgb, #1d6fe0 12%, transparent); stroke: #1
           background: #ffdd00; color: #15151f; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap;
           box-shadow: 2px 2px 0 var(--hard); transition: background .15s, transform .15s; }
 #coffee:hover { background: #ffe94d; transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--hard); }
+/* accueil sur téléphone : le bouton flottant recouvrait le texte ; le lien passe dans la ligne du bas (.legal .tip, guides/build.js) */
+.legal .tip { display: none; }
+@media (max-width: 640px) { body:not(.loaded) #coffee { display: none; } .legal .tip { display: inline; } }
+.guides a, .legal a { display: inline-block; padding: 5px 1px; } /* liens assez hauts pour le doigt */
 body:not(.loaded) #btnPages, body:not(.loaded) #btnSigs { display: none !important; } /* panneaux affichés seulement avec un document */
 /* lecture d'un scan en cours : bouton qui pulse, avancement dans la consigne du bas (affichée aussi sur petit écran) */
 #tools button.busy { pointer-events: none; animation: pulse .9s ease-in-out infinite alternate; }

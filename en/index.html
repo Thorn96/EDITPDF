@@ -27,11 +27,14 @@
 <meta name="twitter:description" content="Fill in, sign and fix your PDFs for free, right in your browser.">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · PDF editor","url":"https://rature.app/en/","image":"https://rature.app/og-image-en.jpg",
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"https://rature.app/#site","name":"Rature","url":"https://rature.app/","inLanguage":["fr","en"],"publisher":{"@id":"https://rature.app/#org"}},
+{"@type":"Organization","@id":"https://rature.app/#org","name":"Rature","url":"https://rature.app/","logo":"https://rature.app/icon-512.png","sameAs":["https://github.com/Thorn96/EDITPDF"]},
+{"@type":"WebApplication","@id":"https://rature.app/en/#app","publisher":{"@id":"https://rature.app/#org"},"name":"Rature","alternateName":"Rature · PDF editor","url":"https://rature.app/en/","image":"https://rature.app/og-image-en.jpg",
  "description":"Free PDF editor in your browser: fill in forms, sign, edit the existing text, redact, merge, convert to Word, text recognition (OCR). Cross it out, fill it in, sign it.",
  "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"A recent browser (Chrome, Edge, Firefox, Safari)",
  "inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
- "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}
+ "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}]}
 </script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="../favicon.ico" sizes="48x48">
@@ -44,7 +47,7 @@
 <link rel="preload" href="../fonts/ui/SchibstedGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../fonts/ui/fonts.css">
 <link rel="stylesheet" href="../fonts/pdf/fonts.css">
-<link rel="stylesheet" href="../css/rature.min.css">
+<link rel="stylesheet" href="../css/rature.f6a57c85b3.min.css">
 <!-- Visites comptées par Cloudflare Web Analytics, sans cookie, rien sur le contenu des PDF -->
 </head>
 <body data-tool="text">
@@ -110,7 +113,7 @@
       <div class="welcome">
         <div class="pitch">
           <p class="eyebrow">Who needs a <s>printer<svg viewBox="0 0 520 60" preserveAspectRatio="none" aria-hidden="true"><path d="M6 34C120 18 300 46 514 22"/></svg></s></p>
-          <h1>Fill in and sign your PDF.</h1>
+          <h1>Fill in, sign and edit your PDF.</h1>
           <p>Rature is a free PDF editor, no sign-up needed: fill in a form, fix the text, sign by hand, then download. It all happens in your browser.</p>
           <ul>
             <li>Write and fix the real text</li>
@@ -141,8 +144,8 @@
           </label>
           <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>right here!</span></div>
         </div>
-        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a PDF</a> · <a href="/en/fill-pdf/">fill in a PDF</a> · <a href="/en/edit-pdf-text/">edit PDF text</a> · <a href="/en/ocr-pdf/">OCR: read a scan</a> · <a href="/en/merge-pdf/">merge PDFs</a> · <a href="/en/compress-pdf/">compress a PDF</a> · <a href="/en/photos-to-pdf/">photos to PDF</a> · <a href="/en/pdf-to-word/">PDF to Word</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a PDF</a> · <a href="/en/annotate-pdf/">annotate a PDF</a></p>
-        <p class="legal"><a href="/en/pricing/">Rature Sync</a> · <a href="/en/legal-notice/">Legal notice</a> · <a href="/en/privacy/">Privacy</a> · <a href="/en/terms/">Terms</a></p>
+        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a PDF</a> · <a href="/en/fill-pdf/">fill in a PDF</a> · <a href="/en/edit-pdf-text/">edit PDF text</a> · <a href="/en/ocr-pdf/">OCR: read a scan</a> · <a href="/en/merge-pdf/">merge PDFs</a> · <a href="/en/compress-pdf/">compress a PDF</a> · <a href="/en/photos-to-pdf/">photos to PDF</a> · <a href="/en/pdf-to-word/">PDF to Word</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a PDF</a> · <a href="/en/annotate-pdf/">annotate a PDF</a> · <a href="/en/pdf-editor-no-upload/">no file upload</a></p>
+        <p class="legal"><a href="/en/pricing/">Rature Sync</a> · <a href="/en/legal-notice/">Legal notice</a> · <a href="/en/privacy/">Privacy</a> · <a href="/en/terms/">Terms</a><span class="tip"> · <a href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener">Buy me a coffee ☕</a></span></p>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <div><b>Pick up where you left off</b><small id="resumeinfo"></small></div>
@@ -218,7 +221,7 @@
           <button class="sw" style="--c:#2e7d32" data-c="#2e7d32" title="Green"></button>
           <button class="sw" style="--c:#ffd84d" data-c="#ffd84d" title="Highlighter yellow"></button>
           <span id="favs" style="display:contents"></span>
-          <label class="sw custom" title="Other colour"><input type="color" id="color" value="#000000"></label>
+          <label class="sw custom" title="Other colour"><input aria-label="Other colour" type="color" id="color" value="#000000"></label>
           <button class="sw pipette" id="pipette" type="button" title="Eyedropper: pick a colour from the document" aria-label="Eyedropper: pick a colour from the document"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 4.5 5 5M13 6l5 5-8.5 8.5H6v-3.5z"/><path d="M15.5 3.5a2.1 2.1 0 0 1 3 0l2 2a2.1 2.1 0 0 1 0 3l-2 2"/></svg></button>
         </div>
       </div>
@@ -235,7 +238,7 @@
       </div>
       <div class="prop" data-for="draw rect ellipse line arrow">
         <span>Thickness</span>
-        <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Thinner">−</button><input id="width" type="number" value="1.5" min="0.5" max="12" step="0.5"><button data-target="width" data-step="0.5" aria-label="Thicker">+</button></div>
+        <div class="stepper"><button data-target="width" data-step="-0.5" aria-label="Thinner">−</button><input aria-label="Thickness" id="width" type="number" value="1.5" min="0.5" max="12" step="0.5"><button data-target="width" data-step="0.5" aria-label="Thicker">+</button></div>
       </div>
       <div class="prop" data-for="erase">
         <span>Thickness</span>
@@ -265,7 +268,7 @@
 
     <div id="find" class="float" hidden>
       <div class="frow">
-        <input id="fq" placeholder="Search the PDF" autocomplete="off">
+        <input aria-label="Search the PDF" id="fq" placeholder="Search the PDF" autocomplete="off">
         <span id="fcount"></span>
         <button id="fprev" title="Previous (Shift+Enter)"><svg class="i" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg></button>
         <button id="fnext" title="Next (Enter)"><svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -273,7 +276,7 @@
         <button id="fclose" title="Close (Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </div>
       <div class="frow" id="frep" hidden>
-        <input id="fr" placeholder="Replace with" autocomplete="off">
+        <input aria-label="Replace with" id="fr" placeholder="Replace with" autocomplete="off">
         <button id="fone" class="btn">Replace</button><button id="fall" class="btn">All</button>
       </div>
     </div>
@@ -361,7 +364,7 @@
   <label class="chk"><input type="checkbox" id="expcompress"> Reduce the file size <small>(lighter photos, clean-up)</small></label>
   <label class="chk"><input type="checkbox" id="expa4"> Make every page A4</label>
   <label class="chk"><input type="checkbox" id="exppw"> Protect with a password</label>
-  <div class="fld" id="exppwbox" hidden><input id="exppass" class="txt" type="password" placeholder="Password to open" autocomplete="new-password"></div>
+  <div class="fld" id="exppwbox" hidden><input aria-label="Password to open" id="exppass" class="txt" type="password" placeholder="Password to open" autocomplete="new-password"></div>
   <p id="expsigned" class="warnline" hidden>This PDF is digitally signed: the edited file will no longer carry a valid signature.</p>
   <div id="expmsg" class="dlg-msg"></div>
   <div class="dlg-foot">
@@ -374,7 +377,7 @@
 
 <div id="palette" hidden>
   <div class="pal" role="dialog" aria-label="Command palette">
-    <input id="palq" placeholder="What do you want to do? (tool, action, page…)" autocomplete="off" spellcheck="false">
+    <input aria-label="What do you want to do? (tool, action, page…)" id="palq" placeholder="What do you want to do? (tool, action, page…)" autocomplete="off" spellcheck="false">
     <div id="pallist" role="listbox"></div>
   </div>
 </div>
@@ -397,7 +400,7 @@
     <p>Added to every page of the downloaded PDF.</p>
   </div>
   <div class="fld">Watermark
-    <input id="dwm" class="txt" placeholder="e.g. COPY" autocomplete="off">
+    <input aria-label="Watermark" id="dwm" class="txt" placeholder="e.g. COPY" autocomplete="off">
     <div class="chips" id="dwmchips">
       <button data-wm="COPY">COPY</button><button data-wm="CONFIDENTIAL">CONFIDENTIAL</button>
       <button data-wm="For rental application only">For rental application only</button>
@@ -407,13 +410,13 @@
       <button class="sw on" style="--c:#c62828" data-c="#c62828" title="Red"></button>
       <button class="sw" style="--c:#555555" data-c="#555555" title="Grey"></button>
       <button class="sw" style="--c:#1d3fbf" data-c="#1d3fbf" title="Blue"></button>
-      Intensity <input type="range" id="dwmop" min="5" max="45" value="15">
+      Intensity <input aria-label="Intensity" type="range" id="dwmop" min="5" max="45" value="15">
     </div>
   </div>
   <div class="fld">Page numbers
     <div class="row">
-      <select id="dnum"><option value="">None</option><option value="{n}">1</option><option value="Page {n}">Page 1</option><option value="Page {n} / {N}">Page 1 / 3</option><option value="{n} / {N}">1 / 3</option></select>
-      <select id="dnumpos"><option value="bc">Bottom centre</option><option value="br">Bottom right</option><option value="tr">Top right</option></select>
+      <select aria-label="Page numbers" id="dnum"><option value="">None</option><option value="{n}">1</option><option value="Page {n}">Page 1</option><option value="Page {n} / {N}">Page 1 / 3</option><option value="{n} / {N}">1 / 3</option></select>
+      <select aria-label="Page number position" id="dnumpos"><option value="bc">Bottom centre</option><option value="br">Bottom right</option><option value="tr">Top right</option></select>
     </div>
   </div>
   <label class="fld">Header<input id="dhead" class="txt" placeholder="e.g. Rental application · {date}" autocomplete="off"></label>
@@ -578,7 +581,7 @@
   <label class="chk"><input type="checkbox" id="batchcompress" checked> Reduce the size</label>
   <label class="chk"><input type="checkbox" id="batcha4"> A4 format</label>
   <label class="chk"><input type="checkbox" id="batchpw"> Protect with a password</label>
-  <div class="fld" id="batchpwbox" hidden><input id="batchpass" class="txt" type="password" placeholder="Password" autocomplete="new-password"></div>
+  <div class="fld" id="batchpwbox" hidden><input aria-label="Password" id="batchpass" class="txt" type="password" placeholder="Password" autocomplete="new-password"></div>
   <div id="batchmsg" class="dlg-msg"></div>
   <div class="dlg-foot"><button id="batchcancel" class="btn">Close</button><button id="batchgo" class="btn primary"><span class="spin"></span>Start</button></div>
 </dialog>
@@ -616,7 +619,7 @@
 
 <dialog id="textdlg" class="wide">
   <div class="dlg-head"><h3>Document's text</h3><p id="textinfo"></p></div>
-  <div class="fld"><textarea id="textout" class="area" readonly></textarea></div>
+  <div class="fld"><textarea aria-label="Document's text" id="textout" class="area" readonly></textarea></div>
   <div class="dlg-foot">
     <button id="textocr" class="btn grow" hidden><span class="spin"></span>Recognise the scanned pages</button>
     <button id="textclose" class="btn">Close</button><button id="textcopy" class="btn">Copy</button><button id="textdl" class="btn primary">Download (.txt)</button>
@@ -653,6 +656,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <!-- tout le code de l'éditeur en un fichier minifié (sources dans js/, fabriqué par node guides/build.js), exécuté une fois la page affichée ; les bibliothèques PDF sont chargées ensuite par core.js -->
-<script defer src="../js/rature.min.js"></script>
+<script defer src="../js/rature.33b4a55666.min.js"></script>
 </body>
 </html>

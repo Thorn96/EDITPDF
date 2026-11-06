@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Rental application","item":"https://rature.app/en/rental-application-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I reduce the size of the file?","acceptedAnswer":{"@type":"Answer","text":"When downloading, tick “Reduce the file size”: photos are made lighter. You can also put every page in A4 format."}},{"@type":"Question","name":"Can I combine several PDFs into one?","acceptedAnswer":{"@type":"Answer","text":"Yes: open them together, or add them with “PDF or images” in the pages panel, then reorder the pages by dragging them."}},{"@type":"Question","name":"Are my documents uploaded?","acceptedAnswer":{"@type":"Answer","text":"No, everything stays on your device. That matters for documents this sensitive."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/rental-application-pdf/#page","url":"https://rature.app/en/rental-application-pdf/","name":"Rental application in PDF: fill in, sign, protect · Rature","description":"Fill in and sign your rental application documents, add a watermark against fraud and combine everything into one light PDF. Free, and nothing is uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Rental application","item":"https://rature.app/en/rental-application-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I reduce the size of the file?","acceptedAnswer":{"@type":"Answer","text":"When downloading, tick “Reduce the file size”: photos are made lighter. You can also put every page in A4 format."}},{"@type":"Question","name":"Can I combine several PDFs into one?","acceptedAnswer":{"@type":"Answer","text":"Yes: open them together, or add them with “PDF or images” in the pages panel, then reorder the pages by dragging them."}},{"@type":"Question","name":"Are my documents uploaded?","acceptedAnswer":{"@type":"Answer","text":"No, everything stays on your device. That matters for documents this sensitive."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">For the landlord or the agency</p>
     <h1>Prepare your rental application as a PDF</h1>
     <p class="lead">Fill in and sign each document, add a watermark against fraud, combine it all into one light file.</p>
-    <a class="cta" href="/en/?outil=text">Prepare my application <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?outil=text&amp;ouvrir=1">
+      <a class="cta" href="/en/?outil=text">Prepare my application <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Prepare my application">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true"><g transform="rotate(-6 160 190)"><rect x="34" y="30" width="230" height="300" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M48 70h150" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/><path d="M48 92h170" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/><path d="M48 114h120" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/></g>
 <g><rect x="54" y="42" width="240" height="316" rx="6" fill="#15151f" transform="translate(8 8)"/><rect x="54" y="42" width="240" height="316" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

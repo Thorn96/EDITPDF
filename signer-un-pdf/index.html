@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"Signer un PDF","item":"https://rature.app/signer-un-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}},{"@type":"Question","name":"Mon document est-il envoyé sur Internet ?","acceptedAnswer":{"@type":"Answer","text":"Non. Tout se passe dans ton navigateur : le fichier ne quitte pas ton appareil, et Rature fonctionne même hors ligne une fois ouvert."}},{"@type":"Question","name":"Ça marche sur téléphone ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Tu signes directement au doigt sur l’écran, puis tu télécharges ou partages le PDF signé."}},{"@type":"Question","name":"Et si le PDF est déjà signé électroniquement ?","acceptedAnswer":{"@type":"Answer","text":"Rature te prévient : modifier le fichier rend la signature électronique existante invalide."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/signer-un-pdf/#page","url":"https://rature.app/signer-un-pdf/","name":"Signer un PDF gratuitement, sans l'imprimer · Rature","description":"Signe un PDF à la souris, au doigt ou au stylet, gratuitement et sans inscription. Le fichier ne quitte pas ton appareil. Signature gardée pour la prochaine fois, paraphe sur chaque page.","inLanguage":"fr","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/#app"}},{"@type":"WebApplication","@id":"https://rature.app/#app","name":"Rature","url":"https://rature.app/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"Signer un PDF","item":"https://rature.app/signer-un-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}},{"@type":"Question","name":"Mon document est-il envoyé sur Internet ?","acceptedAnswer":{"@type":"Answer","text":"Non. Tout se passe dans ton navigateur : le fichier ne quitte pas ton appareil, et Rature fonctionne même hors ligne une fois ouvert."}},{"@type":"Question","name":"Ça marche sur téléphone ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Tu signes directement au doigt sur l’écran, puis tu télécharges ou partages le PDF signé."}},{"@type":"Question","name":"Et si le PDF est déjà signé électroniquement ?","acceptedAnswer":{"@type":"Answer","text":"Rature te prévient : modifier le fichier rend la signature électronique existante invalide."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Plus besoin d’imprimer, signer, scanner</p>
     <h1>Signer un PDF sans l'imprimer</h1>
     <p class="lead">Trace ta signature une fois, pose-la sur le document, télécharge. Sur ordinateur comme sur téléphone, sans créer de compte.</p>
-    <a class="cta" href="/?outil=sign">Signer mon PDF <span aria-hidden="true">→</span></a>
-    <p class="small">Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+    <div class="dropzone" data-go="/?outil=sign&amp;ouvrir=1">
+      <a class="cta" href="/?outil=sign">Signer mon PDF <span aria-hidden="true">→</span></a>
+      <p class="small">ou glisse ton fichier sur cette page<br>Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Signer mon PDF">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

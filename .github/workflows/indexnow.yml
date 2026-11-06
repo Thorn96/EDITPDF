@@ -1,0 +1,21 @@
+# Après chaque mise en ligne, signale à Bing (et aux autres moteurs IndexNow) les pages modifiées, pour qu'elles soient relues vite.
+# La clé n'a rien de secret : le fichier https://rature.app/97677b73311161648c7bdfd6e94402c9.txt prouve seulement que le site est à nous.
+name: IndexNow
+on:
+  push:
+    branches: [main]
+    paths: ['**/index.html']
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Pages modifiées, envoyées une fois le site à jour
+        env: { KEY: 97677b73311161648c7bdfd6e94402c9, BEFORE: ${{ github.event.before }}, AFTER: ${{ github.sha }} }
+        run: |
+          sleep 180 # ponytail: attente fixe du déploiement Cloudflare Pages (1 à 2 min) ; interroger le déploiement s'il devient plus lent
+          urls=$(git diff --name-only "$BEFORE" "$AFTER" -- '*index.html' | sed -e 's#index\.html$##' -e 's#^#https://rature.app/#' | jq -R . | jq -sc .)
+          echo "$urls"
+          [ "$urls" = "[]" ] && exit 0
+          curl -sS -o /dev/null -w 'IndexNow : %{http_code}\n' -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8'             -d "{\"host\":\"rature.app\",\"key\":\"$KEY\",\"keyLocation\":\"https://rature.app/$KEY.txt\",\"urlList\":$urls}"

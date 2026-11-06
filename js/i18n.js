@@ -9,7 +9,7 @@ Object.assign(EN, {
   'Annuler (Ctrl+Z)': 'Undo (Ctrl+Z)', 'Rétablir (Ctrl+Y)': 'Redo (Ctrl+Y)', 'Télécharger ou partager le PDF modifié (Ctrl+S)': 'Download or share the edited PDF (Ctrl+S)',
   'Télécharger': 'Download', "Ajouter à la suite les pages d'un PDF, ou des images comme nouvelles pages": 'Append the pages of a PDF, or images as new pages',
   'PDF ou images': 'PDF or images', "Photographier une feuille et l'ajouter comme page": 'Photograph a sheet and add it as a page', 'Numériser': 'Scan',
-  "Plus besoin d'": 'Who needs a ', 'imprimante': 'printer', 'Remplis et signe ton PDF.': 'Fill in and sign your PDF.',
+  "Plus besoin d'": 'Who needs a ', 'imprimante': 'printer', 'Remplis, signe et modifie ton PDF.': 'Fill in, sign and edit your PDF.',
   'Rature est un éditeur PDF gratuit, sans inscription : remplis un formulaire, corrige le texte, signe à la main, puis télécharge. Tout se passe dans ton navigateur.': 'Rature is a free PDF editor, no sign-up needed: fill in a form, fix the text, sign by hand, then download. It all happens in your browser.',
   'Écrire et corriger le vrai texte': 'Write and fix the real text', 'Signer à la souris ou au doigt': 'Sign with the mouse or your finger',
   'Effacer pour de bon ce qui doit disparaître': 'Erase for good what must go', 'Fusionner et réorganiser les pages': 'Merge and reorder pages',
@@ -175,7 +175,7 @@ Object.assign(EN, {
   // Mise en page
   'Mise en page': 'Layout', 'Ajouté sur toutes les pages du PDF téléchargé.': 'Added to every page of the downloaded PDF.', 'Filigrane': 'Watermark', 'ex. COPIE': 'e.g. COPY',
   'COPIE': 'COPY', 'CONFIDENTIEL': 'CONFIDENTIAL', 'Uniquement pour dossier de location': 'For rental application only', 'Document non contractuel': 'Non-binding document', 'Aucun': 'None',
-  'Couleur': 'Colour', 'Gris': 'Grey', 'Bleu': 'Blue', 'Intensité': 'Intensity', 'Numéros de page': 'Page numbers', 'Page 1': 'Page 1', 'Page 1 / 3': 'Page 1 / 3',
+  'Couleur': 'Colour', 'Gris': 'Grey', 'Bleu': 'Blue', 'Intensité': 'Intensity', 'Position des numéros de page': 'Page number position', 'Numéros de page': 'Page numbers', 'Page 1': 'Page 1', 'Page 1 / 3': 'Page 1 / 3',
   'En bas au centre': 'Bottom centre', 'En bas à droite': 'Bottom right', 'En haut à droite': 'Top right', 'En-tête': 'Header', 'ex. Dossier de location · {date}': 'e.g. Rental application · {date}',
   'Pied de page': 'Footer', 'ex. Jean Dupont · 06 12 34 56 78': 'e.g. John Smith · 07700 900123', "{date} est remplacé par la date du jour.": "{date} becomes today's date.", 'Appliquer': 'Apply',
   // Numérisation

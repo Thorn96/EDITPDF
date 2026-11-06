@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Edit PDF text","item":"https://rature.app/en/edit-pdf-text/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does the edited text keep the same font?","acceptedAnswer":{"@type":"Answer","text":"Yes when the PDF contains the font, which is the most common case. Otherwise Rature picks the closest free font."}},{"@type":"Question","name":"What about a password-protected PDF?","acceptedAnswer":{"@type":"Answer","text":"It opens if you know its password."}},{"@type":"Question","name":"What if the PDF is already digitally signed?","acceptedAnswer":{"@type":"Answer","text":"Rature warns you: changing the file invalidates the existing digital signature."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/edit-pdf-text/#page","url":"https://rature.app/en/edit-pdf-text/","name":"Edit the text of a PDF for free · Rature","description":"Fix a typo, change a date or an amount right in the text of a PDF, in its original font. Free, no sign-up, the file is never uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Edit PDF text","item":"https://rature.app/en/edit-pdf-text/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does the edited text keep the same font?","acceptedAnswer":{"@type":"Answer","text":"Yes when the PDF contains the font, which is the most common case. Otherwise Rature picks the closest free font."}},{"@type":"Question","name":"What about a password-protected PDF?","acceptedAnswer":{"@type":"Answer","text":"It opens if you know its password."}},{"@type":"Question","name":"What if the PDF is already digitally signed?","acceptedAnswer":{"@type":"Answer","text":"Rature warns you: changing the file invalidates the existing digital signature."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Not a white box on top: the real text</p>
     <h1>Edit the text of a PDF</h1>
     <p class="lead">Click a line, fix it, done. The old text is really replaced, in the document’s own font.</p>
-    <a class="cta" href="/en/?outil=edit">Edit my PDF <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?outil=edit&amp;ouvrir=1">
+      <a class="cta" href="/en/?outil=edit">Edit my PDF <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Edit my PDF">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

@@ -270,12 +270,12 @@ const PAGES = [
 const EN_PAGES = require('./en.js');
 const L = {
   fr: { lang: 'fr', root: '/', locale: 'fr_FR', steps: 'En 3 étapes', faq: 'Questions fréquentes', ready: 'Prêt ? Ça prend une minute.', more: 'Autres guides',
-        open: 'Ouvrir l’éditeur', updated: 'Mis à jour le', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
+        open: 'Ouvrir l’éditeur', updated: 'Mis à jour le', drop: 'ou glisse ton fichier sur cette page', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
         footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers', coffee: 'Offrir un café ☕', coffeeTitle: 'Soutenir Rature',
         art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici',
                merged: 'un seul PDF', lighter: 'plus léger', photos: 'photos → PDF', word: 'modifiable dans Word', ocrLine: 'Fait à Lyon, le 14 mars', ocrLbl: 'texte reconnu !' } },
   en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
-        open: 'Open the editor', updated: 'Last updated', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
+        open: 'Open the editor', updated: 'Last updated', drop: 'or drop your file on this page', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
         footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it', coffee: 'Buy me a coffee ☕', coffeeTitle: 'Support Rature',
         art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here',
                merged: 'one PDF', lighter: 'lighter', photos: 'photos → PDF', word: 'editable in Word', ocrLine: 'Signed on 14 March 2026', ocrLbl: 'text recognised!' } },
@@ -291,9 +291,22 @@ const alternates = p => [p.L.lang === 'fr' ? p : p.twin, p.L.lang === 'en' ? p :
 const attr = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const LOGO = '<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="5" width="30" height="32" rx="3" fill="#fff" stroke="#15151f" stroke-width="2.4"/><path d="M9 15h18M9 22h13" stroke="#15151f" stroke-width="2.4" stroke-linecap="round"/><path d="M7 23C14 18 24 27 36 16" fill="none" stroke="#e2494f" stroke-width="3.4" stroke-linecap="round"/></svg>';
 const plain = s => s.replace(/<[^>]+>/g, '');
-const ldJson = p => JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+const ld = graph => JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c'); // jamais de « </script> » dans le JSON
+// l'application et la page, reliées au site et à l'organisation décrits sur l'accueil (index.html)
+const FREE_OFFER = { '@type': 'Offer', name: 'Rature', price: '0', priceCurrency: 'EUR' };
+const app = (t, offers = FREE_OFFER) => ({ '@type': 'WebApplication', '@id': `${SITE}${t.root}#app`, name: 'Rature', url: SITE + t.root, applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Windows, macOS, Linux, Android, iOS', inLanguage: t.lang, isAccessibleForFree: true, offers, publisher: { '@id': `${SITE}/#org` } });
+const webPage = p => ({ '@type': 'WebPage', '@id': `${SITE}${url(p)}#page`, url: SITE + url(p), name: p.title, description: p.desc, inLanguage: p.L.lang,
+  isPartOf: { '@id': `${SITE}/#site` }, about: { '@id': `${SITE}${p.L.root}#app` } });
+const ldJson = p => ld([webPage(p), app(p.L),
   { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Rature', item: SITE + p.L.root }, { '@type': 'ListItem', position: 2, name: p.short, item: SITE + url(p) }] },
-  { '@type': 'FAQPage', mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } })) }] }).replace(/</g, '\\u003c'); // jamais de « </script> » dans le JSON
+  { '@type': 'FAQPage', mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } })) }]);
+// page de tarif : l'abonnement Rature Sync en plus de l'offre gratuite (prix TTC tirés de guides/legal.js)
+const euros = s => s.replace(',', '.').match(/\d+(\.\d+)?/)[0];
+const ldPlans = p => ld([webPage(p), app(p.L, [FREE_OFFER, ...['month', 'year'].map(k => ({ '@type': 'Offer', name: `Rature Sync · ${p.plans[k].name}`, price: euros(p.plans[k].price),
+  priceCurrency: 'EUR', url: SITE + url(p), priceSpecification: { '@type': 'UnitPriceSpecification', price: euros(p.plans[k].price), priceCurrency: 'EUR',
+  valueAddedTaxIncluded: true, billingDuration: k === 'month' ? 'P1M' : 'P1Y' } }))])]);
+const ACCEPT = 'application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document'; // fichiers acceptés, comme l'éditeur
 // en-tête commun (guides, tarif, pages légales) ; type : article ou website ; ld : données structurées éventuelles
 const head = (p, type, ld) => { const t = p.L; return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -325,6 +338,7 @@ const page = (p, all) => { const t = p.L; return `<!doctype html>
 <html lang="${t.lang}">
 <head>
 ${head(p, 'article', ldJson(p))}
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -335,8 +349,11 @@ ${top(t)}
     <p class="eyebrow">${p.eyebrow}</p>
     <h1>${p.h1}</h1>
     <p class="lead">${p.lead}</p>
-    <a class="cta" href="${t.root}${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
-    <p class="small">${t.small}</p>
+    <div class="dropzone" data-go="${t.root}${p.q ? p.q + '&amp;' : '?'}ouvrir=1">
+      <a class="cta" href="${t.root}${p.q}">${p.cta} <span aria-hidden="true">→</span></a>
+      <p class="small">${t.drop}<br>${t.small}</p>
+      <input type="file" accept="${ACCEPT}" multiple hidden aria-label="${attr(p.cta)}">
+    </div>
   </div>
   <div class="art">${ART(t.art)[p.art]}</div>
 </section>
@@ -381,7 +398,7 @@ const plans = (pl, t) => `<section class="plans">
 const doc = p => { const t = p.L; return `<!doctype html>
 <html lang="${t.lang}">
 <head>
-${head(p, 'website')}
+${head(p, 'website', p.plans && ldPlans(p))}
 </head>
 <body>
 <div class="wrap">
@@ -419,11 +436,14 @@ function buildEnglishEditor() {
   html = html.replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="Fill in, sign, edit the text, redact, merge and convert your PDFs for free, without signing up. Everything happens in your browser: your files are never uploaded.">')
     .replace(/<meta name="keywords" content="[^"]*">/, '<meta name="keywords" content="free PDF editor, edit PDF, fill in PDF, sign PDF, edit PDF text, redact PDF, merge PDF, PDF to Word, OCR, no upload">')
     .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, `<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Rature","alternateName":"Rature · PDF editor","url":"${SITE}/en/","image":"${SITE}/og-image-en.jpg",
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"${SITE}/#site","name":"Rature","url":"${SITE}/","inLanguage":["fr","en"],"publisher":{"@id":"${SITE}/#org"}},
+{"@type":"Organization","@id":"${SITE}/#org","name":"Rature","url":"${SITE}/","logo":"${SITE}/icon-512.png","sameAs":["https://github.com/Thorn96/EDITPDF"]},
+{"@type":"WebApplication","@id":"${SITE}/en/#app","publisher":{"@id":"${SITE}/#org"},"name":"Rature","alternateName":"Rature · PDF editor","url":"${SITE}/en/","image":"${SITE}/og-image-en.jpg",
  "description":"Free PDF editor in your browser: fill in forms, sign, edit the existing text, redact, merge, convert to Word, text recognition (OCR). Cross it out, fill it in, sign it.",
  "applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","browserRequirements":"A recent browser (Chrome, Edge, Firefox, Safari)",
  "inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},
- "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}
+ "featureList":["Fill in a PDF form","Sign a PDF","Edit the text of a PDF","Redact","Merge and reorder pages","Convert a PDF to Word","Text recognition (OCR)","No file ever uploaded"]}]}
 </script>`);
   once(`<link rel="canonical" href="${SITE}/">`, `<link rel="canonical" href="${SITE}/en/">`);
   once('<meta property="og:locale" content="fr_FR">\n<meta property="og:locale:alternate" content="en_GB">', '<meta property="og:locale" content="en_GB">\n<meta property="og:locale:alternate" content="fr_FR">');
@@ -445,7 +465,7 @@ function buildEnglishEditor() {
     return swap(text, encText);
   });
   // liens vers les guides (après la traduction : ils sont déjà en anglais)
-  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(EN_PAGES, 'Guides:')).replace(/<p class="legal">[\s\S]*?<\/p>/, `<p class="legal">${legalLinks(L.en)}</p>`);
+  html = html.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(EN_PAGES, 'Guides:')).replace(/<p class="legal">[\s\S]*?<\/p>/, homeLegal(L.en));
   fs.mkdirSync(path.join(ROOT, 'en'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'en', 'index.html'), html);
 
@@ -457,17 +477,28 @@ function buildEnglishEditor() {
 }
 
 // ---------- Scripts et styles de l'éditeur : un seul fichier minifié chacun (moins d'octets, moins de requêtes) ----------
-// Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.min.js et css/rature.min.css (esbuild, via npx).
+// Les sources restent dans js/*.js et css/rature.css ; la page charge js/rature.<empreinte>.min.js et css/rature.<empreinte>.min.css (esbuild, via npx).
+// L'empreinte change avec le contenu : le navigateur garde ces fichiers un an (_headers) et prend le nouveau dès qu'il change.
+// index.html et sw.js sont mis à jour avec les nouveaux noms ; les anciens fichiers sont supprimés.
 // Ordre = ordre de chargement : les fichiers partagent leurs variables globales, comme des scripts séparés.
 const JS = ['core', 'fonts', 'ui', 'document', 'items', 'text', 'media', 'app', 'menu', 'pagetools', 'stamps', 'tools', 'assist', 'convert', 'tabs', 'report', 'relay', 'account', 'sync', 'prefs', 'i18n', 'init'];
 function minifyAssets() {
-  const { execSync } = require('child_process');
+  const { execSync } = require('child_process'), crypto = require('crypto');
   const esbuild = (input, args) => execSync(`npx -y esbuild@0.24.2 --minify --legal-comments=none --log-level=error ${args}`, { input, cwd: ROOT, maxBuffer: 64 << 20 }).toString();
   const js = JS.map(n => `// ${n}.js\n${fs.readFileSync(path.join(ROOT, 'js', n + '.js'), 'utf8')}`).join('\n;\n');
-  fs.writeFileSync(path.join(ROOT, 'js', 'rature.min.js'), esbuild(js, '--loader=js'));
-  fs.writeFileSync(path.join(ROOT, 'css', 'rature.min.css'), esbuild(fs.readFileSync(path.join(ROOT, 'css', 'rature.css'), 'utf8'), '--loader=css'));
-  const kb = f => Math.round(fs.statSync(path.join(ROOT, f)).size / 1024);
-  console.log(`js/rature.min.js ${kb('js/rature.min.js')} Ko (sources ${Math.round(js.length / 1024)} Ko), css/rature.min.css ${kb('css/rature.min.css')} Ko (source ${kb('css/rature.css')} Ko)`);
+  const names = {}, OLD = /^rature\.([0-9a-f]+\.)?min\.(js|css)$/;
+  for (const [ext, code] of [['js', esbuild(js, '--loader=js')], ['css', esbuild(fs.readFileSync(path.join(ROOT, 'css', 'rature.css'), 'utf8'), '--loader=css')]]) {
+    const name = `rature.${crypto.createHash('sha256').update(code).digest('hex').slice(0, 10)}.min.${ext}`;
+    for (const f of fs.readdirSync(path.join(ROOT, ext))) if (OLD.test(f) && f !== name) fs.unlinkSync(path.join(ROOT, ext, f));
+    fs.writeFileSync(path.join(ROOT, ext, name), code);
+    names[ext] = `${ext}/${name}`;
+    console.log(`${names[ext]} ${Math.round(code.length / 1024)} Ko`);
+  }
+  for (const f of ['index.html', 'sw.js']) {
+    const file = path.join(ROOT, f), src = fs.readFileSync(file, 'utf8');
+    const out = src.replace(/js\/rature\.([0-9a-f]+\.)?min\.js/g, names.js).replace(/css\/rature\.([0-9a-f]+\.)?min\.css/g, names.css);
+    if (out !== src) fs.writeFileSync(file, out);
+  }
 }
 
 // ---------- Fabrication ----------
@@ -485,10 +516,12 @@ for (const p of [...LEGAL.fr, ...LEGAL.en]) {
 }
 // liens vers les guides sur l'accueil français (index.html), tenus à jour ici
 const lowerFirst = s => /^[A-Z]{2}/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1); // « PDF en Word », « OCR » gardent leurs majuscules
-const guideLinks = (list, label) => `<p class="guides">${label} ${list.filter(p => p.art !== 'local').map(p => `<a href="${url(p)}">${lowerFirst(p.short)}</a>`).join(' · ')}</p>`;
+const guideLinks = (list, label) => `<p class="guides">${label} ${list.map(p => `<a href="${url(p)}">${lowerFirst(p.short)}</a>`).join(' · ')}</p>`;
+// le café dans la ligne du bas : affiché à la place du bouton flottant sur téléphone, où celui-ci recouvrait le texte (css/rature.css, .tip)
+function homeLegal(t) { return `<p class="legal">${legalLinks(t)}<span class="tip"> · <a href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener">${t.coffee}</a></span></p>`; }
 {
   const f = path.join(ROOT, 'index.html'), src = fs.readFileSync(f, 'utf8'), out = src.replace(/<p class="guides">[\s\S]*?<\/p>/, guideLinks(PAGES, 'Guides :'))
-    .replace(/<p class="legal">[\s\S]*?<\/p>/, `<p class="legal">${legalLinks(L.fr)}</p>`);
+    .replace(/<p class="legal">[\s\S]*?<\/p>/, homeLegal(L.fr));
   if (out !== src) fs.writeFileSync(f, out);
 }
 const missing = buildEnglishEditor();
@@ -499,5 +532,27 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="
 ${urls.map(([u, pr]) => `  <url><loc>${SITE}${u}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>${pr}</priority></url>`).join('\n')}
 </urlset>
 `);
-console.log(`${PAGES.length} guides fr + ${EN_PAGES.length} guides en + ${LEGAL.fr.length} pages tarif et légales par langue + /en/ + sitemap.xml (${urls.length} adresses)`);
+// llms.txt : le résumé du site pour les assistants IA (format llmstxt.org), tenu à jour avec les guides
+const llmsList = list => list.map(p => `- [${p.short}](${SITE}${url(p)}): ${plain(p.desc)}`).join('\n');
+fs.writeFileSync(path.join(ROOT, 'llms.txt'), `# Rature
+
+> Free PDF editor that runs entirely in the browser, in French and English: fill in forms, sign, edit the existing text in its original font, redact for good, annotate, merge, compress, convert to Word and read scanned pages (OCR). Documents are processed on the device and are not uploaded. The optional paid plan, Rature Sync, syncs signatures, stamps, settings and work in progress between devices, end-to-end encrypted.
+
+- Editor (French): ${SITE}/
+- Editor (English): ${SITE}/en/
+- Source code: https://github.com/Thorn96/EDITPDF
+
+## Guides (English)
+
+${llmsList(EN_PAGES)}
+
+## Guides (français)
+
+${llmsList(PAGES)}
+
+## Rature Sync and legal
+
+${llmsList(LEGAL.en)}
+`);
+console.log(`${PAGES.length} guides fr +${EN_PAGES.length} guides en + ${LEGAL.fr.length} pages tarif et légales par langue + /en/ + sitemap.xml (${urls.length} adresses)`);
 if (missing.length) console.log(`Textes de l'éditeur sans traduction anglaise (restés en français dans /en/) :\n  ${missing.join('\n  ')}`);

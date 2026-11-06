@@ -1,0 +1,44 @@
+# Rature
+
+> Free PDF editor that runs entirely in the browser, in French and English: fill in forms, sign, edit the existing text in its original font, redact for good, annotate, merge, compress, convert to Word and read scanned pages (OCR). Documents are processed on the device and are not uploaded. The optional paid plan, Rature Sync, syncs signatures, stamps, settings and work in progress between devices, end-to-end encrypted.
+
+- Editor (French): https://rature.app/
+- Editor (English): https://rature.app/en/
+- Source code: https://github.com/Thorn96/EDITPDF
+
+## Guides (English)
+
+- [Sign a PDF](https://rature.app/en/sign-pdf/): Sign a PDF with your mouse, finger or stylus, for free and without signing up. The file never leaves your device. Your signature is kept for next time.
+- [Fill in a PDF](https://rature.app/en/fill-pdf/): Fill in any PDF form, even one that isn’t fillable: type anywhere, tick boxes, add the date and sign. Free, no sign-up, the file is never uploaded.
+- [Edit PDF text](https://rature.app/en/edit-pdf-text/): Fix a typo, change a date or an amount right in the text of a PDF, in its original font. Free, no sign-up, the file is never uploaded.
+- [OCR: read a scan](https://rature.app/en/ocr-pdf/): Recognise the text of a scanned PDF or a photo of a document (OCR), in English and French, to fix it, search it or copy it. Free, and nothing is uploaded.
+- [Merge PDFs](https://rature.app/en/merge-pdf/): Combine several PDFs (and photos) into one file, put the pages in order, delete the ones you don’t need. Free, no sign-up, nothing is uploaded.
+- [Compress a PDF](https://rature.app/en/compress-pdf/): Shrink a PDF that’s too heavy for an email or an online form: lighter photos, cleaned-up file. Free, no sign-up, nothing is uploaded.
+- [Photos to PDF](https://rature.app/en/photos-to-pdf/): Turn photos or images (JPG, PNG) into a single PDF, one page per image, from your phone or computer. Free, no sign-up, nothing is uploaded.
+- [PDF to Word](https://rature.app/en/pdf-to-word/): Convert a PDF into an editable Word document, paragraphs and headings included, even a scan thanks to OCR. Free, no sign-up, the file is never uploaded.
+- [Rental application](https://rature.app/en/rental-application-pdf/): Fill in and sign your rental application documents, add a watermark against fraud and combine everything into one light PDF. Free, and nothing is uploaded.
+- [Redact a PDF](https://rature.app/en/redact-pdf/): Permanently remove a name, a number or a bank account from a PDF: what’s under the box is really erased from the file. Automatic redaction of sensitive data. Free.
+- [Annotate a PDF](https://rature.app/en/annotate-pdf/): Highlight, strike through or cross out a word, draw, add arrows and sticky notes on a PDF, like a red pen on paper. Free, no sign-up, nothing is uploaded.
+- [No file upload](https://rature.app/en/pdf-editor-no-upload/): An alternative to iLovePDF and Smallpdf where everything happens in your browser: fill in, sign, edit, redact and merge a PDF without ever sending it to a server.
+
+## Guides (français)
+
+- [Signer un PDF](https://rature.app/signer-un-pdf/): Signe un PDF à la souris, au doigt ou au stylet, gratuitement et sans inscription. Le fichier ne quitte pas ton appareil. Signature gardée pour la prochaine fois, paraphe sur chaque page.
+- [Remplir un PDF](https://rature.app/remplir-un-pdf/): Remplis un formulaire PDF, même non modifiable : écris n'importe où, coche les cases, date et signe. Gratuit, sans inscription, sans envoyer le fichier.
+- [Modifier le texte](https://rature.app/modifier-texte-pdf/): Corrige une faute, change une date ou un montant directement dans le texte d'un PDF, dans sa police d'origine. Gratuit, sans inscription, sans envoi du fichier.
+- [OCR : lire un scan](https://rature.app/ocr-pdf/): Reconnais le texte d'un PDF scanné ou d'une photo de document (OCR), en français et en anglais, pour le corriger, le rechercher ou le copier. Gratuit, rien n'est envoyé.
+- [Fusionner des PDF](https://rature.app/fusionner-pdf/): Réunis plusieurs PDF (et des photos) en un seul fichier, remets les pages dans l'ordre, supprime celles en trop. Gratuit, sans inscription, rien n'est envoyé.
+- [Compresser un PDF](https://rature.app/compresser-pdf/): Réduis le poids d'un PDF trop lourd pour un e-mail ou un formulaire en ligne : photos allégées, fichier nettoyé. Gratuit, sans inscription, rien n'est envoyé.
+- [Photos en PDF](https://rature.app/photos-en-pdf/): Transforme des photos ou des images (JPG, PNG) en un seul PDF, une page par image, depuis ton téléphone ou ton ordinateur. Gratuit, sans inscription, rien n'est envoyé.
+- [PDF en Word](https://rature.app/pdf-en-word/): Convertis un PDF en document Word modifiable, paragraphes et titres compris, même un scan grâce à l'OCR. Gratuit, sans inscription, le fichier n'est pas envoyé.
+- [Dossier de location](https://rature.app/dossier-de-location-pdf/): Remplis et signe les pièces de ton dossier de location (attestation de caution solidaire, fiche de renseignements), ajoute un filigrane et réunis tout en un seul PDF. Gratuit.
+- [Caviarder un PDF](https://rature.app/caviarder-un-pdf/): Masque définitivement un nom, un numéro ou un IBAN dans un PDF : ce qui est sous la zone est vraiment effacé du fichier. Caviardage automatique des données sensibles. Gratuit.
+- [Annoter un PDF](https://rature.app/annoter-un-pdf/): Surligne, barre ou rature un mot, dessine, ajoute des flèches et des notes sur un PDF, comme au stylo sur une copie. Gratuit, sans inscription, rien n'est envoyé.
+- [Sans envoyer tes fichiers](https://rature.app/editeur-pdf-sans-envoi/): Une alternative à iLovePDF et Smallpdf où tout se passe dans ton navigateur : remplir, signer, corriger, caviarder, fusionner un PDF sans jamais l'envoyer sur un serveur.
+
+## Rature Sync and legal
+
+- [Rature Sync](https://rature.app/en/pricing/): Rature stays free. Rature Sync syncs signatures, stamps and documents across your computers, end-to-end encrypted: €4.99 a month or €49.99 a year.
+- [Legal notice](https://rature.app/en/legal-notice/): Publisher, hosting and contact for the Rature website (rature.app).
+- [Privacy](https://rature.app/en/privacy/): What data Rature processes, where, why and for how long. Without an account, your files never leave your device.
+- [Terms](https://rature.app/en/terms/): Terms of use of Rature and terms of sale of the Rature Sync subscription: price, cancellation, refunds.

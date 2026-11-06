@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Compress a PDF","item":"https://rature.app/en/compress-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much smaller will the file be?","acceptedAnswer":{"@type":"Answer","text":"It depends on the content: a PDF full of photos gets much lighter, a PDF made mostly of text is often already light."}},{"@type":"Question","name":"Does the quality drop?","acceptedAnswer":{"@type":"Answer","text":"Photos are slightly less detailed, with no visible difference on screen in most cases. The text stays identical."}},{"@type":"Question","name":"Is my document sent over the Internet?","acceptedAnswer":{"@type":"Answer","text":"No. Everything happens in your browser: the file never leaves your device, and Rature even works offline once opened."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/compress-pdf/#page","url":"https://rature.app/en/compress-pdf/","name":"Compress a PDF for free, without uploading it · Rature","description":"Shrink a PDF that’s too heavy for an email or an online form: lighter photos, cleaned-up file. Free, no sign-up, nothing is uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Compress a PDF","item":"https://rature.app/en/compress-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much smaller will the file be?","acceptedAnswer":{"@type":"Answer","text":"It depends on the content: a PDF full of photos gets much lighter, a PDF made mostly of text is often already light."}},{"@type":"Question","name":"Does the quality drop?","acceptedAnswer":{"@type":"Answer","text":"Photos are slightly less detailed, with no visible difference on screen in most cases. The text stays identical."}},{"@type":"Question","name":"Is my document sent over the Internet?","acceptedAnswer":{"@type":"Answer","text":"No. Everything happens in your browser: the file never leaves your device, and Rature even works offline once opened."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Too heavy to send?</p>
     <h1>Compress a PDF</h1>
     <p class="lead">Lighten the photos and clean up the file to get under an email or website limit.</p>
-    <a class="cta" href="/en/?outil=compress">Compress my PDF <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?outil=compress&amp;ouvrir=1">
+      <a class="cta" href="/en/?outil=compress">Compress my PDF <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Compress my PDF">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

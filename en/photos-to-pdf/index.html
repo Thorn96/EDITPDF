@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Photos to PDF","item":"https://rature.app/en/photos-to-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which image formats?","acceptedAnswer":{"@type":"Answer","text":"JPG, PNG, WebP and the other image formats your browser can display."}},{"@type":"Question","name":"Are my photos uploaded?","acceptedAnswer":{"@type":"Answer","text":"No: the conversion happens on your device."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/photos-to-pdf/#page","url":"https://rature.app/en/photos-to-pdf/","name":"Photos to PDF: turn images into a PDF · Rature","description":"Turn photos or images (JPG, PNG) into a single PDF, one page per image, from your phone or computer. Free, no sign-up, nothing is uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"Photos to PDF","item":"https://rature.app/en/photos-to-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which image formats?","acceptedAnswer":{"@type":"Answer","text":"JPG, PNG, WebP and the other image formats your browser can display."}},{"@type":"Question","name":"Are my photos uploaded?","acceptedAnswer":{"@type":"Answer","text":"No: the conversion happens on your device."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">JPG, PNG, phone photos</p>
     <h1>Turn photos into a PDF</h1>
     <p class="lead">Pick your photos: each one becomes a page, and you download a single PDF. On a phone, just take a picture of the sheet.</p>
-    <a class="cta" href="/en/">Choose my photos <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?ouvrir=1">
+      <a class="cta" href="/en/">Choose my photos <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Choose my photos">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="24" y="70" width="104" height="196" rx="16" fill="#fff" stroke="#15151f" stroke-width="3"/><rect x="36" y="98" width="80" height="120" rx="4" fill="#fbf8f0" stroke="#15151f" stroke-width="2"/>

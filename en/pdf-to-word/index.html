@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"PDF to Word","item":"https://rature.app/en/pdf-to-word/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Are my edits included?","acceptedAnswer":{"@type":"Answer","text":"Yes: the Word file contains the document with your changes."}},{"@type":"Question","name":"Is my document sent over the Internet?","acceptedAnswer":{"@type":"Answer","text":"No. Everything happens in your browser: the file never leaves your device, and Rature even works offline once opened."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/pdf-to-word/#page","url":"https://rature.app/en/pdf-to-word/","name":"Convert a PDF to Word (.docx) for free · Rature","description":"Convert a PDF into an editable Word document, paragraphs and headings included, even a scan thanks to OCR. Free, no sign-up, the file is never uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"PDF to Word","item":"https://rature.app/en/pdf-to-word/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Are my edits included?","acceptedAnswer":{"@type":"Answer","text":"Yes: the Word file contains the document with your changes."}},{"@type":"Question","name":"Is my document sent over the Internet?","acceptedAnswer":{"@type":"Answer","text":"No. Everything happens in your browser: the file never leaves your device, and Rature even works offline once opened."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">To rework the text in Word</p>
     <h1>Convert a PDF to Word</h1>
     <p class="lead">Get the text of a PDF into a Word file, with its paragraphs, headings, bold and italics.</p>
-    <a class="cta" href="/en/?outil=word">Convert my PDF <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?outil=word&amp;ouvrir=1">
+      <a class="cta" href="/en/?outil=word">Convert my PDF <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Convert my PDF">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="20" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M38 100h80M38 118h70M38 136h84M38 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>

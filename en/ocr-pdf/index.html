@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image-en.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"OCR: read a scan","item":"https://rature.app/en/ocr-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which languages are recognised?","acceptedAnswer":{"@type":"Answer","text":"English and French, accents included."}},{"@type":"Question","name":"What about handwriting?","acceptedAnswer":{"@type":"Answer","text":"It is poorly recognised: OCR is made for printed text."}},{"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"A few seconds per page on a recent computer, a little more on a phone."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/en/ocr-pdf/#page","url":"https://rature.app/en/ocr-pdf/","name":"Free OCR: make a scanned PDF editable · Rature","description":"Recognise the text of a scanned PDF or a photo of a document (OCR), in English and French, to fix it, search it or copy it. Free, and nothing is uploaded.","inLanguage":"en","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/en/#app"}},{"@type":"WebApplication","@id":"https://rature.app/en/#app","name":"Rature","url":"https://rature.app/en/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/en/"},{"@type":"ListItem","position":2,"name":"OCR: read a scan","item":"https://rature.app/en/ocr-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which languages are recognised?","acceptedAnswer":{"@type":"Answer","text":"English and French, accents included."}},{"@type":"Question","name":"What about handwriting?","acceptedAnswer":{"@type":"Answer","text":"It is poorly recognised: OCR is made for printed text."}},{"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"A few seconds per page on a recent computer, a little more on a phone."}},{"@type":"Question","name":"Is it really free?","acceptedAnswer":{"@type":"Answer","text":"Yes: no sign-up, no document limit, and no watermark added."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">A scan is just a picture… for now</p>
     <h1>Make a scanned PDF editable (OCR)</h1>
     <p class="lead">The “OCR” button reads the text of every scanned page. You can then fix it like real text, search it and copy it.</p>
-    <a class="cta" href="/en/?outil=ocr">Read my scan <span aria-hidden="true">→</span></a>
-    <p class="small">Free · no sign-up · the file stays on your device</p>
+    <div class="dropzone" data-go="/en/?outil=ocr&amp;ouvrir=1">
+      <a class="cta" href="/en/?outil=ocr">Read my scan <span aria-hidden="true">→</span></a>
+      <p class="small">or drop your file on this page<br>Free · no sign-up · the file stays on your device</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Read my scan">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

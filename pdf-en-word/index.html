@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"PDF en Word","item":"https://rature.app/pdf-en-word/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mes corrections sont-elles incluses ?","acceptedAnswer":{"@type":"Answer","text":"Oui : le fichier Word reprend le document avec tes modifications."}},{"@type":"Question","name":"Mon document est-il envoyé sur Internet ?","acceptedAnswer":{"@type":"Answer","text":"Non. Tout se passe dans ton navigateur : le fichier ne quitte pas ton appareil, et Rature fonctionne même hors ligne une fois ouvert."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/pdf-en-word/#page","url":"https://rature.app/pdf-en-word/","name":"Convertir un PDF en Word (.docx) gratuitement · Rature","description":"Convertis un PDF en document Word modifiable, paragraphes et titres compris, même un scan grâce à l'OCR. Gratuit, sans inscription, le fichier n'est pas envoyé.","inLanguage":"fr","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/#app"}},{"@type":"WebApplication","@id":"https://rature.app/#app","name":"Rature","url":"https://rature.app/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"PDF en Word","item":"https://rature.app/pdf-en-word/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mes corrections sont-elles incluses ?","acceptedAnswer":{"@type":"Answer","text":"Oui : le fichier Word reprend le document avec tes modifications."}},{"@type":"Question","name":"Mon document est-il envoyé sur Internet ?","acceptedAnswer":{"@type":"Answer","text":"Non. Tout se passe dans ton navigateur : le fichier ne quitte pas ton appareil, et Rature fonctionne même hors ligne une fois ouvert."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Pour retravailler le texte dans Word</p>
     <h1>Convertir un PDF en Word</h1>
     <p class="lead">Récupère le texte d’un PDF dans un fichier Word, avec ses paragraphes, ses titres, le gras et l’italique.</p>
-    <a class="cta" href="/?outil=word">Convertir mon PDF <span aria-hidden="true">→</span></a>
-    <p class="small">Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+    <div class="dropzone" data-go="/?outil=word&amp;ouvrir=1">
+      <a class="cta" href="/?outil=word">Convertir mon PDF <span aria-hidden="true">→</span></a>
+      <p class="small">ou glisse ton fichier sur cette page<br>Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Convertir mon PDF">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="20" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M38 100h80M38 118h70M38 136h84M38 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>

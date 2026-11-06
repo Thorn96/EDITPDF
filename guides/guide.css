@@ -32,6 +32,10 @@ a { color: var(--pen); }
 h1 { margin: 0 0 18px; font: 400 clamp(36px, 5vw, 58px)/1.08 var(--display); letter-spacing: -.02em; }
 .lead { margin: 0 0 28px; font-size: 19px; color: var(--ink-2); }
 .small { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
+/* zone de dépôt : le fichier glissé ou choisi s'ouvre dans l'éditeur (guides/drop.js) */
+.dropzone { padding: 26px 24px 20px; border: 2px dashed var(--muted); border-radius: 18px; background: var(--panel); text-align: center; transition: border-color .15s, background .15s; }
+.dropzone.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.dropzone .small { margin: 16px auto 0; }
 .art svg { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; color: var(--ink); } /* flèches : couleur du texte, visibles dans les deux thèmes */
 section { padding: 8px 0 36px; }
 h2 { margin: 0 0 14px; font: 400 30px/1.2 var(--display); }
@@ -56,7 +60,7 @@ footer { padding: 30px 0 40px; color: var(--muted); font-size: 14px; }
   body { background-image: none, linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule-2) 1px, transparent 1px); }
   .wrap { padding-left: 0; }
   .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: 16px; }
-  .art { order: -1; } .art svg { max-width: 220px; }
+  .art { order: -1; } .art svg { max-width: 140px; } /* petite : le titre et la zone de dépôt tiennent dans le premier écran */
   .steps { grid-template-columns: minmax(0, 1fr); }
   .top .btn { display: none; }
 }
@@ -65,6 +69,9 @@ footer { padding: 30px 0 40px; color: var(--muted); font-size: 14px; }
           background: #ffdd00; color: #15151f; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; box-shadow: 2px 2px 0 var(--hard); }
 .coffee:hover { background: #ffe94d; }
 footer { padding-bottom: 72px; } /* le bouton ne recouvre pas le bas de page */
+/* téléphone : le bouton flottant recouvrait le texte, il passe tout en bas de la page */
+@media (max-width: 760px) { .coffee { position: static; display: table; margin: 0 auto 28px; } footer { padding-bottom: 20px; } }
+footer a { display: inline-block; padding: 5px 2px; } /* liens assez hauts pour le doigt */
 /* tarif et pages légales */
 .hero.solo { grid-template-columns: minmax(0, 1fr); padding-bottom: 28px; }
 .doc .card p { max-width: 75ch; }

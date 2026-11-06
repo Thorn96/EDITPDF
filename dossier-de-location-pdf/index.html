@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"Dossier de location","item":"https://rature.app/dossier-de-location-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment réduire la taille du dossier ?","acceptedAnswer":{"@type":"Answer","text":"Au téléchargement, coche « Réduire la taille du fichier » : les photos sont allégées. Tu peux aussi mettre toutes les pages au format A4."}},{"@type":"Question","name":"Puis-je réunir plusieurs PDF en un seul ?","acceptedAnswer":{"@type":"Answer","text":"Oui : ouvre-les ensemble, ou ajoute-les avec « PDF ou images » dans le panneau des pages, puis réorganise les pages en les glissant."}},{"@type":"Question","name":"Mes documents sont-ils envoyés ?","acceptedAnswer":{"@type":"Answer","text":"Non, tout reste sur ton appareil. C’est important pour des pièces aussi sensibles."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/dossier-de-location-pdf/#page","url":"https://rature.app/dossier-de-location-pdf/","name":"Dossier de location en PDF : remplir, signer, protéger · Rature","description":"Remplis et signe les pièces de ton dossier de location (attestation de caution solidaire, fiche de renseignements), ajoute un filigrane et réunis tout en un seul PDF. Gratuit.","inLanguage":"fr","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/#app"}},{"@type":"WebApplication","@id":"https://rature.app/#app","name":"Rature","url":"https://rature.app/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"Dossier de location","item":"https://rature.app/dossier-de-location-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment réduire la taille du dossier ?","acceptedAnswer":{"@type":"Answer","text":"Au téléchargement, coche « Réduire la taille du fichier » : les photos sont allégées. Tu peux aussi mettre toutes les pages au format A4."}},{"@type":"Question","name":"Puis-je réunir plusieurs PDF en un seul ?","acceptedAnswer":{"@type":"Answer","text":"Oui : ouvre-les ensemble, ou ajoute-les avec « PDF ou images » dans le panneau des pages, puis réorganise les pages en les glissant."}},{"@type":"Question","name":"Mes documents sont-ils envoyés ?","acceptedAnswer":{"@type":"Answer","text":"Non, tout reste sur ton appareil. C’est important pour des pièces aussi sensibles."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Pour le propriétaire ou l’agence</p>
     <h1>Préparer ton dossier de location en PDF</h1>
     <p class="lead">Remplis et signe chaque pièce, ajoute un filigrane contre la fraude, réunis le tout en un seul fichier léger.</p>
-    <a class="cta" href="/?outil=text">Préparer mon dossier <span aria-hidden="true">→</span></a>
-    <p class="small">Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+    <div class="dropzone" data-go="/?outil=text&amp;ouvrir=1">
+      <a class="cta" href="/?outil=text">Préparer mon dossier <span aria-hidden="true">→</span></a>
+      <p class="small">ou glisse ton fichier sur cette page<br>Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Préparer mon dossier">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true"><g transform="rotate(-6 160 190)"><rect x="34" y="30" width="230" height="300" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/><path d="M48 70h150" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/><path d="M48 92h170" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/><path d="M48 114h120" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/></g>
 <g><rect x="54" y="42" width="240" height="316" rx="6" fill="#15151f" transform="translate(8 8)"/><rect x="54" y="42" width="240" height="316" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>

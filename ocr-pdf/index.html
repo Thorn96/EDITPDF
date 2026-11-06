@@ -20,13 +20,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://rature.app/og-image.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"OCR : lire un scan","item":"https://rature.app/ocr-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quelles langues sont reconnues ?","acceptedAnswer":{"@type":"Answer","text":"Le français et l’anglais, accents compris."}},{"@type":"Question","name":"Et l’écriture manuscrite ?","acceptedAnswer":{"@type":"Answer","text":"Elle est mal reconnue : l’OCR est fait pour le texte imprimé."}},{"@type":"Question","name":"Combien de temps ça prend ?","acceptedAnswer":{"@type":"Answer","text":"Quelques secondes par page sur un ordinateur récent, un peu plus sur un téléphone."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://rature.app/ocr-pdf/#page","url":"https://rature.app/ocr-pdf/","name":"OCR gratuit : rendre un PDF scanné modifiable · Rature","description":"Reconnais le texte d'un PDF scanné ou d'une photo de document (OCR), en français et en anglais, pour le corriger, le rechercher ou le copier. Gratuit, rien n'est envoyé.","inLanguage":"fr","isPartOf":{"@id":"https://rature.app/#site"},"about":{"@id":"https://rature.app/#app"}},{"@type":"WebApplication","@id":"https://rature.app/#app","name":"Rature","url":"https://rature.app/","applicationCategory":"BusinessApplication","operatingSystem":"Windows, macOS, Linux, Android, iOS","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","name":"Rature","price":"0","priceCurrency":"EUR"},"publisher":{"@id":"https://rature.app/#org"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Rature","item":"https://rature.app/"},{"@type":"ListItem","position":2,"name":"OCR : lire un scan","item":"https://rature.app/ocr-pdf/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quelles langues sont reconnues ?","acceptedAnswer":{"@type":"Answer","text":"Le français et l’anglais, accents compris."}},{"@type":"Question","name":"Et l’écriture manuscrite ?","acceptedAnswer":{"@type":"Answer","text":"Elle est mal reconnue : l’OCR est fait pour le texte imprimé."}},{"@type":"Question","name":"Combien de temps ça prend ?","acceptedAnswer":{"@type":"Answer","text":"Quelques secondes par page sur un ordinateur récent, un peu plus sur un téléphone."}},{"@type":"Question","name":"Est-ce vraiment gratuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui : sans inscription, sans limite de documents et sans filigrane ajouté."}}]}]}</script>
 <meta name="theme-color" content="#fbf8f0">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-96.png" type="image/png" sizes="96x96">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/ui/fonts.css">
 <link rel="stylesheet" href="/guides/guide.css">
+<script src="/guides/drop.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -37,8 +38,11 @@
     <p class="eyebrow">Un scan n’est qu’une image… pour l’instant</p>
     <h1>Rendre un PDF scanné modifiable (OCR)</h1>
     <p class="lead">Le bouton « OCR » lit le texte de chaque page scannée. Tu peux ensuite le corriger comme un vrai texte, le rechercher et le copier.</p>
-    <a class="cta" href="/?outil=ocr">Lire mon scan <span aria-hidden="true">→</span></a>
-    <p class="small">Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+    <div class="dropzone" data-go="/?outil=ocr&amp;ouvrir=1">
+      <a class="cta" href="/?outil=ocr">Lire mon scan <span aria-hidden="true">→</span></a>
+      <p class="small">ou glisse ton fichier sur cette page<br>Gratuit · sans inscription · le fichier reste sur ton appareil</p>
+      <input type="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden aria-label="Lire mon scan">
+    </div>
   </div>
   <div class="art"><svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>
