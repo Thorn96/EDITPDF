@@ -100,10 +100,17 @@ function toolsEntries() {
     { label: 'Signets (table des matières)…', fn: openBookmarks, disabled: none },
     { label: 'Comparer avec un autre PDF…', fn: openCompare, disabled: none },
     { head: 'Convertir' },
-    { label: 'Exporter en Word (.docx)', fn: exportDocx, disabled: none },
+    // sans PDF ouvert, les conversions depuis un PDF commencent par le choisir
+    { label: 'PDF en Word (.docx)', fn: exportDocx },
+    { label: 'PDF en Excel (.xlsx)', fn: exportXlsx },
+    { label: 'PDF en image (JPG, PNG)…', fn: () => exportImages() },
+    { label: 'Word (.docx) en PDF…', fn: () => $('file').click() },
+    { label: 'Excel (.xlsx) en PDF…', fn: () => $('file').click() },
+    { label: 'Images (JPG, PNG) en PDF…', fn: () => $('file').click() },
     { label: 'Extraire le texte…', fn: openText, disabled: none },
-    { label: 'Ouvrir un document Word (.docx)…', fn: () => $('file').click() },
     { head: 'Plusieurs fichiers' },
+    // plusieurs PDF choisis d'un coup s'ouvrent en un seul document ; avec un document ouvert, ils s'ajoutent à la suite
+    { label: 'Fusionner des PDF…', fn: () => $(none ? 'file' : 'addfile').click() },
     { label: 'Traitement par lot…', fn: openBatch },
   ];
 }

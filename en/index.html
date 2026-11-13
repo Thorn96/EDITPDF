@@ -62,7 +62,7 @@
   <div class="doc">
     <label class="btn" title="Open a PDF or images (Ctrl+O)">
       <svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>
-      <span class="lbl">Open</span><input type="file" id="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+      <span class="lbl">Open</span><input type="file" id="file" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden>
     </label>
     <span id="fname">No file</span>
     <div id="tabbar" class="tabbar" hidden></div>
@@ -100,7 +100,7 @@
     <div class="side-actions">
       <label class="btn add" title="Append the pages of a PDF, or images as new pages">
         <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>PDF or images
-        <input type="file" id="addfile" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden>
+        <input type="file" id="addfile" accept="application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden>
       </label>
       <label class="btn add" for="scanfile" title="Photograph a sheet and add it as a page">
         <svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>Scan
@@ -139,12 +139,12 @@
             <strong>Drop your PDF here</strong>
             <span class="or">or</span>
             <span class="cta"><svg class="i" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/><path d="M4 19l2.6-7.2A1.5 1.5 0 0 1 8 11h12.6a1 1 0 0 1 .9 1.3L19.2 19z"/></svg>Choose a file</span>
-            <small>PDF, Word document or photos of a sheet. The file stays on your device.</small>
+            <small>PDF, Word, Excel or photos of a sheet. The file stays on your device.</small>
             <svg class="fly" viewBox="0 0 104 128" aria-hidden="true"><path d="M6 6h62l30 30v86H6z" fill="#fff" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M68 6v30h30" fill="none" stroke="#15151f" stroke-width="3" stroke-linejoin="round"/><path d="M18 50h58M18 62h40" stroke="#c9c3b4" stroke-width="5" stroke-linecap="round"/><rect x="18" y="80" width="46" height="22" rx="4" fill="#e2494f"/><text x="41" y="96" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="14" fill="#fff">PDF</text></svg>
           </label>
           <div class="here" aria-hidden="true"><svg viewBox="0 0 190 120"><path d="M8 96C60 110 130 90 170 28M170 28l-18 6M170 28l2 19"/></svg><span>right here!</span></div>
         </div>
-        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a PDF</a> · <a href="/en/fill-pdf/">fill in a PDF</a> · <a href="/en/edit-pdf-text/">edit PDF text</a> · <a href="/en/ocr-pdf/">OCR: read a scan</a> · <a href="/en/merge-pdf/">merge PDFs</a> · <a href="/en/compress-pdf/">compress a PDF</a> · <a href="/en/photos-to-pdf/">photos to PDF</a> · <a href="/en/pdf-to-word/">PDF to Word</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a PDF</a> · <a href="/en/annotate-pdf/">annotate a PDF</a> · <a href="/en/pdf-editor-no-upload/">no file upload</a></p>
+        <p class="guides">Guides: <a href="/en/sign-pdf/">sign a PDF</a> · <a href="/en/fill-pdf/">fill in a PDF</a> · <a href="/en/edit-pdf-text/">edit PDF text</a> · <a href="/en/ocr-pdf/">OCR: read a scan</a> · <a href="/en/merge-pdf/">merge PDFs</a> · <a href="/en/compress-pdf/">compress a PDF</a> · <a href="/en/photos-to-pdf/">photos to PDF</a> · <a href="/en/pdf-to-word/">PDF to Word</a> · <a href="/en/pdf-to-excel/">PDF to Excel</a> · <a href="/en/excel-to-pdf/">excel to PDF</a> · <a href="/en/word-to-pdf/">word to PDF</a> · <a href="/en/pdf-to-jpg/">PDF to JPG</a> · <a href="/en/rental-application-pdf/">rental application</a> · <a href="/en/redact-pdf/">redact a PDF</a> · <a href="/en/annotate-pdf/">annotate a PDF</a> · <a href="/en/pdf-editor-no-upload/">no file upload</a></p>
         <p class="legal"><a href="/en/pricing/">Rature Sync</a> · <a href="/en/legal-notice/">Legal notice</a> · <a href="/en/privacy/">Privacy</a> · <a href="/en/terms/">Terms</a><span class="tip"> · <a href="https://buymeacoffee.com/leonardguido" target="_blank" rel="noopener">Buy me a coffee ☕</a></span></p>
         <div id="resume" class="resume" hidden>
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -656,6 +656,6 @@
 <div id="toasts" aria-live="polite"></div>
 
 <!-- tout le code de l'éditeur en un fichier minifié (sources dans js/, fabriqué par node guides/build.js), exécuté une fois la page affichée ; les bibliothèques PDF sont chargées ensuite par core.js -->
-<script defer src="../js/rature.33b4a55666.min.js"></script>
+<script defer src="../js/rature.291c3f04ef.min.js"></script>
 </body>
 </html>

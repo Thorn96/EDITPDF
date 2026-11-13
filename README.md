@@ -37,7 +37,7 @@ Outil gratuit pour remplir, signer et corriger des PDF directement dans le navig
 - **Du téléphone à l'ordinateur** : un QR code affiché sur l'ordinateur relie le téléphone ; les pages photographiées arrivent directement sur l'écran (connexion directe chiffrée, PeerJS sert seulement à la mise en relation).
 - **Filigrane**, **numéros de page**, **en-tête et pied de page**.
 - **Extraire le texte**, **comparer deux PDF** (texte et image, page par page).
-- **Convertir** : PDF → Word (.docx) avec paragraphes et titres ; document Word (.docx) → PDF.
+- **Convertir** : PDF → Word (.docx) avec titres, listes, tableaux, images, colonnes, en-têtes et pieds de page, liens ; PDF (ou photo, lue par OCR) → Excel (.xlsx), une feuille par page, nombres et montants reconnus ; PDF → images JPG ou PNG (ZIP si plusieurs pages) ; Word (.docx) et Excel (.xlsx) → PDF, mis en page comme Word et Excel (styles, listes, tableaux, images, en-têtes, colonnes ; formats de nombres, dates, cases fusionnées). Tout se fait sur l'appareil.
 - **Traitement par lot** : filigrane, compression, format A4, mot de passe sur plusieurs PDF d'un coup.
 - **Téléchargement** : aperçu avant / après, choix des pages, format A4, réduction de la taille, mot de passe, partage direct. Les PDF protégés s'ouvrent aussi ; un PDF signé électroniquement est signalé.
 

@@ -60,10 +60,12 @@ async function openFiles(files, mode) {
   // copie AVANT toute attente : la liste d'un champ fichier se vide quand l'appelant remet le champ à zéro, et celle d'un
   // glisser-déposer quand l'événement se termine — sans cette copie, le fichier était perdu et rien ne s'ouvrait
   files = [...files];
+  const then = afterOpen.then, wasEmpty = !pages.length; // conversion choisie avant d'ouvrir le fichier : seulement pour cette ouverture
+  afterOpen.then = null;
   try { await libsReady(); } // bibliothèques PDF pas encore chargées (connexion coupée…) : on le dit au lieu de ne rien faire
   catch (e) { console.error(e); return toast('Les outils PDF n’ont pas pu se charger : vérifie ta connexion, puis réessaie.', 'error'); }
-  const pdfs = files.filter(f => isPdf(f) || isDocx(f)), imgs = files.filter(isImg);
-  if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word, ni une image.", 'error');
+  const pdfs = files.filter(f => isPdf(f) || isDocx(f) || isXlsx(f)), imgs = files.filter(isImg);
+  if (!pdfs.length && !imgs.length) return files.length && toast("Ce fichier n'est ni un PDF, ni un document Word ou Excel, ni une image.", 'error');
   if (!mode && pages.length) {
     if (!pdfs.length) { // des images alors qu'un document est ouvert
       mode = await ask({ title: 'Ajouter des images', text: 'Où mettre ces images ?', buttons: [
@@ -79,14 +81,17 @@ async function openFiles(files, mode) {
   try {
     for (const f of pdfs) {
       const bytes = new Uint8Array(await f.arrayBuffer());
-      if (!isDocx(f)) { list.push({ bytes, name: f.name }); continue; }
-      try { list.push({ bytes: await docxToPdf(bytes), name: baseName(f.name) + '.pdf', made: true }); } // document Word converti en PDF
-      catch (e) { console.error(e); toast(tr('« {name} » : document Word illisible.', { name: f.name }), 'error'); }
+      if (!isDocx(f) && !isXlsx(f)) { list.push({ bytes, name: f.name }); continue; }
+      // document Word ou classeur Excel converti en PDF
+      try { list.push({ bytes: await (isDocx(f) ? docxToPdf : xlsxToPdf)(bytes), name: baseName(f.name) + '.pdf', made: true }); }
+      catch (e) { console.error(e); toast(tr(isDocx(f) ? '« {name} » : document Word illisible.' : '« {name} » : classeur Excel illisible.', { name: f.name }), 'error'); }
     }
     if (imgs.length) list.push({ bytes: await imagesToPdf(imgs), name: (imgs.length === 1 ? baseName(imgs[0].name) : 'Images') + '.pdf', made: true });
   } catch (e) { return toast('Impossible de lire ces images.', 'error'); }
   if (!list.length) return;
-  return openSources(list, mode || 'replace');
+  const r = await openSources(list, mode || 'replace');
+  if (then && pages.length) { afterOpen.skip = wasEmpty; setTimeout(then, 650); } // après l'ouverture, sans visite guidée
+  return r;
 }
 // Ajoute des PDF (octets) au document : « replace » repart de zéro, « append » ajoute à la suite (annulable)
 async function openSources(list, mode, quiet, at) {
@@ -460,14 +465,7 @@ let scrollRaf;
 $('pages').addEventListener('scroll', () => { cancelAnimationFrame(scrollRaf); scrollRaf = requestAnimationFrame(curPage); });
 
 // Page → image PNG (avec toutes les modifications)
-async function pageToImage(pg) {
-  try {
-    toast("Préparation de l'image…");
-    const mupdf = await getMupdf(), doc = mupdf.Document.openDocument(await build([pg]), 'application/pdf');
-    const png = doc.loadPage(0).toPixmap(mupdf.Matrix.scale(2.5, 2.5), mupdf.ColorSpace.DeviceRGB, false, true).asPNG().slice();
-    download(new Blob([png], { type: 'image/png' }), `${baseName($('expname').value || 'page')} - page ${pages.indexOf(pg) + 1}.png`);
-  } catch (e) { console.error(e); toast("Impossible de créer l'image.", 'error'); }
-}
+const pageToImage = pg => exportImages('png', [pg]);
 
 // ---------- Zoom ----------
 let zoomT;
@@ -563,7 +561,11 @@ function setField(src, k, v, from) {
 // Premier document ouvert : action demandée par un guide (rature.app/?outil=…, une seule fois), sinon proposition de lire un scan, sinon visite guidée
 function afterOpen() {
   const act = !afterOpen.done && { sign: () => document.querySelector('#tools [data-a=sign]').click(), ocr: scanDocument, word: () => toast('Document prêt à convertir.', '', { label: 'Exporter en Word', fn: exportDocx }, 15000),
+                                   excel: () => toast('Document prêt à convertir.', '', { label: 'Exporter en Excel', fn: exportXlsx }, 15000),
+                                   image: () => toast('Document prêt à convertir.', '', { label: 'Enregistrer en images', fn: () => exportImages() }, 15000),
+                                   pdf: () => toast('Converti en PDF.', '', { label: 'Télécharger le PDF', fn: () => openExport() }, 15000),
                                    compress: () => { openExport(); $('expcompress').checked = true; } }[OUTIL];
+  if (afterOpen.skip) return void (afterOpen.skip = false);
   if (act) { afterOpen.done = true; return act(); }
   if (pages.some(p => p.wrap.classList.contains('scan') && !p.ocr))
     return toast('Ce PDF est scanné : son texte n’est pas encore modifiable.', '', { label: 'Lire le texte (OCR)', fn: scanDocument }, 12000);

@@ -8,6 +8,20 @@ const sheet = inner => `<svg viewBox="0 0 320 380" aria-hidden="true">
 <rect x="30" y="22" width="260" height="336" rx="6" fill="#15151f"/><rect x="20" y="12" width="260" height="336" rx="6" fill="#fff" stroke="#15151f" stroke-width="3"/>
 <path d="M48 58h150" stroke="#15151f" stroke-width="7" stroke-linecap="round"/>${inner}</svg>`;
 const lines = (ys, w = [200, 180, 205, 150]) => ys.map((y, i) => `<path d="M48 ${y}h${w[i % w.length]}" stroke="#d9d4c7" stroke-width="6" stroke-linecap="round"/>`).join('');
+// Conversion d'un format à l'autre : document de gauche → document de droite, chacun avec son badge (PDF, W, X, JPG)
+const BADGE = { pdf: ['PDF', '#e2494f'], word: ['W', '#1c2a8f'], excel: ['X', '#1d6f42'], jpg: ['JPG', '#7a4bb8'] };
+const docBody = (kind, x) => kind === 'grid'
+  ? `<path d="M${x} 94h84v24h-84z" fill="#e7f2ea"/><path d="M${x} 94h84v72h-84zM${x} 118h84M${x} 142h84M${x + 28} 94v72M${x + 56} 94v72" fill="none" stroke="#9fb9a7" stroke-width="2.5"/>`
+  : kind === 'photo'
+    ? `<rect x="${x}" y="92" width="84" height="76" rx="3" fill="#fbf8f0" stroke="#15151f" stroke-width="1.5"/><path d="M${x + 4} 164l24-30 18 20 12-12 22 22z" fill="#b3baec"/><circle cx="${x + 66}" cy="110" r="7" fill="#e2494f"/>`
+    : `<path d="M${x} 100h80M${x} 118h70M${x} 136h84M${x} 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>`;
+const badge = (k, x) => { const [t, c] = BADGE[k], w = t.length > 1 ? t.length * 10 + 14 : 30;
+  return `<rect x="${x}" y="188" width="${w}" height="24" rx="4" fill="${c}"/><text x="${x + w / 2}" y="205" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="${t.length > 1 ? 12 : 15}" fill="#fff">${t}</text>`; };
+const conv = (a, ka, b, kb, caption) => `<svg viewBox="0 0 320 380" aria-hidden="true">
+<rect x="20" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/>${docBody(ka, 38)}${badge(a, 38)}
+<path d="M148 150h26m-10-10 10 10-10 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="190" y="78" width="120" height="160" rx="5" fill="#15151f"/><rect x="182" y="70" width="120" height="160" rx="5" fill="#fff" stroke="#15151f" stroke-width="3"/>${docBody(kb, 200)}${badge(b, 200)}
+<text x="160" y="300" text-anchor="middle" font-family="Nothing You Could Do, cursive" font-size="23" fill="#e2494f">${caption}</text></svg>`;
 const ART = T => ({ // T : les quelques mots écrits sur les illustrations, dans la langue de la page
   sign: sheet(lines([98, 120, 142, 164, 186]) + `<path d="M48 290h170" stroke="#15151f" stroke-width="2" stroke-dasharray="5 5"/>
 <path d="M58 280c14-40 30-44 26-8-2 20 18-26 30-12 10 12 12 22 24 2 10-16 18 12 30 4 12-10 22-12 30 8 6 14 22-16 40-8" fill="none" stroke="#1c2a8f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -67,6 +81,8 @@ ${lines([266, 288])}`),
 <path d="M200 100h80M200 118h70M200 136h84M200 154h60" stroke="#d9d4c7" stroke-width="5" stroke-linecap="round"/>
 <rect x="200" y="188" width="30" height="24" rx="4" fill="#1c2a8f"/><text x="215" y="205" text-anchor="middle" font-family="Schibsted Grotesk, sans-serif" font-weight="700" font-size="15" fill="#fff">W</text>
 <text x="160" y="300" text-anchor="middle" font-family="Nothing You Could Do, cursive" font-size="23" fill="#e2494f">${T.word}</text></svg>`,
+  excel: conv('pdf', 'text', 'excel', 'grid', T.excel), xlsPdf: conv('excel', 'grid', 'pdf', 'text', T.xlsPdf),
+  wordPdf: conv('word', 'text', 'pdf', 'text', T.wordPdf), jpg: conv('pdf', 'text', 'jpg', 'photo', T.jpg),
   ocr: sheet(`<g opacity=".55">${lines([98, 120, 142])}</g><path d="M36 152v-14h14M264 138h14v14M278 204v14h-14M50 218H36v-14" fill="none" stroke="#e2494f" stroke-width="4" stroke-linecap="round"/>
 <text x="50" y="185" font-family="Schibsted Grotesk, sans-serif" font-size="18" fill="#15151f">${T.ocrLine}</text><g opacity=".55">${lines([246, 268, 290])}</g>
 <text x="60" y="334" font-family="Nothing You Could Do, cursive" font-size="21" fill="#e2494f">${T.ocrLbl}</text>`),
@@ -150,7 +166,7 @@ const PAGES = [
       { t: 'Télécharge', d: 'Clique sur « Télécharger » : un seul PDF, avec toutes tes pages.' }],
     body: [
       ['Ajouter un fichier en cours de route', 'Un document est déjà ouvert ? « PDF ou images », en bas du panneau des pages, ajoute d’autres fichiers à la suite. Tu peux aussi en glisser un sur la page : Rature te demande s’il faut remplacer, ajouter à la suite ou ouvrir un nouvel onglet.'],
-      ['Garder seulement certaines pages', 'Au téléchargement, choisis « Seulement » et indique les pages voulues (par exemple 1-3, 5). Pour faire l’inverse et couper un PDF en plusieurs fichiers : « Découper le PDF », dans « Plus d’outils ».'],
+      ['Garder seulement certaines pages', 'Au téléchargement, choisis « Seulement » et indique les pages voulues (par exemple 1-3, 5). Pour faire l’inverse et couper un PDF en plusieurs fichiers : « Découper le PDF », dans « Outils ».'],
       ['Tout reste sur ton appareil', 'Les fichiers ne sont envoyés nulle part : pratique pour réunir des pièces sensibles, comme un dossier de location ou des justificatifs.']],
     faq: [{ q: 'Combien de fichiers puis-je réunir ?', a: 'Autant que tu veux : la seule limite est la mémoire de ton appareil.' },
       { q: 'Puis-je mélanger PDF et photos ?', a: 'Oui : chaque photo devient une page, dans le sens de l’image.' },
@@ -188,17 +204,77 @@ const PAGES = [
 
   { slug: 'pdf-en-word', art: 'word', q: '?outil=word', short: 'PDF en Word',
     title: 'Convertir un PDF en Word (.docx) gratuitement · Rature',
-    desc: "Convertis un PDF en document Word modifiable, paragraphes et titres compris, même un scan grâce à l'OCR. Gratuit, sans inscription, le fichier n'est pas envoyé.",
+    desc: "Convertis un PDF en document Word modifiable : titres, tableaux, images et mise en page compris, même un scan grâce à l'OCR. Gratuit, sans inscription, le fichier n'est pas envoyé.",
     eyebrow: 'Pour retravailler le texte dans Word', h1: 'Convertir un PDF en Word',
-    lead: 'Récupère le texte d’un PDF dans un fichier Word, avec ses paragraphes, ses titres, le gras et l’italique.', cta: 'Convertir mon PDF',
+    lead: 'Récupère ton PDF dans un fichier Word modifiable, avec ses titres, ses listes, ses tableaux, ses images et sa mise en page.', cta: 'Convertir mon PDF',
     steps: [OPEN,
-      { t: 'Exporte en Word', d: 'Dans « Plus d’outils », choisis « Exporter en Word (.docx) ». Depuis ce guide, un bouton « Exporter en Word » apparaît dès l’ouverture.' },
+      { t: 'Exporte en Word', d: 'Dans « Outils », choisis « PDF en Word (.docx) ». Depuis ce guide, un bouton « Exporter en Word » apparaît dès l’ouverture.' },
       { t: 'Ouvre-le dans Word', d: 'Le fichier .docx s’ouvre dans Word, LibreOffice ou Google Docs.' }],
     body: [
-      ['Ce qui est gardé', 'Le texte, ses paragraphes, les titres, le gras, l’italique et la taille des caractères. Les images, les tableaux complexes et les mises en page en colonnes ne sont pas repris : pour garder l’apparence exacte, modifie plutôt le PDF directement avec « Corriger ».'],
-      ['Un PDF scanné ?', 'Lance d’abord le bouton « OCR » : le texte reconnu passe ensuite dans le fichier Word.'],
-      ['Et dans l’autre sens ?', 'Ouvre un document Word (.docx) dans Rature : il est converti en PDF, prêt à être rempli, signé ou envoyé.']],
+      ['Ce qui est gardé', 'Le texte avec sa police, sa taille, sa couleur, le gras et l’italique ; les titres (repris comme titres Word), les listes, les tabulations, les tableaux à bordures (cases fusionnées et fonds compris), les images, le texte en colonnes, les en-têtes et pieds de page avec le numéro de page, et les liens. Les dessins (graphiques, formes) ne sont pas repris : pour garder l’apparence exacte, modifie plutôt le PDF directement avec « Corriger ».'],
+      ['Un PDF scanné ?', 'Son texte est d’abord reconnu (OCR), automatiquement, puis il passe dans le fichier Word. Une photo de tableau peut aussi devenir un fichier Excel : « PDF en Excel (.xlsx) ».'],
+      ['Et dans l’autre sens ?', 'Ouvre un document Word (.docx) ou un classeur Excel (.xlsx) dans Rature : il est converti en PDF, mis en page comme dans Word ou Excel, prêt à être rempli, signé ou envoyé.']],
     faq: [{ q: 'Mes corrections sont-elles incluses ?', a: 'Oui : le fichier Word reprend le document avec tes modifications.' }, LOCAL, FREE] },
+
+  { slug: 'pdf-en-excel', art: 'excel', q: '?outil=excel', short: 'PDF en Excel',
+    title: 'Convertir un PDF en Excel (.xlsx) gratuitement · Rature',
+    desc: "Convertis un PDF ou la photo d'un tableau en fichier Excel : colonnes reconnues, montants et dates en vrais nombres, une feuille par page. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Factures, relevés, tableaux', h1: 'Convertir un PDF en Excel',
+    lead: 'Récupère les tableaux d’un PDF dans un fichier Excel : chaque colonne à sa place, et des nombres que tu peux additionner tout de suite.', cta: 'Convertir mon PDF',
+    steps: [{ t: 'Ouvre ton PDF ou ta photo', d: "Glisse-le sur cette page ou clique sur « Convertir mon PDF ». Une photo de tableau (JPG, PNG) marche aussi. Rien n'est envoyé." },
+      { t: 'Exporte en Excel', d: 'Dans « Outils », choisis « PDF en Excel (.xlsx) ». Depuis ce guide, un bouton « Exporter en Excel » apparaît dès l’ouverture.' },
+      { t: 'Ouvre-le dans Excel', d: 'Le fichier .xlsx s’ouvre dans Excel, LibreOffice Calc ou Google Sheets : une feuille par page du PDF.' }],
+    body: [
+      ['Des nombres, pas du texte', 'Les montants (« 1 250,50 € »), les pourcentages et les nombres deviennent de vrais nombres Excel, au format euro ou pourcentage : tu peux faire des sommes tout de suite. Les numéros de téléphone, codes postaux et numéros de compte restent du texte, pour ne rien abîmer.'],
+      ['Une photo ou un scan de tableau', 'Ouvre la photo ou le PDF scanné : Rature en lit d’abord le texte (OCR), automatiquement, puis range chaque mot dans sa colonne d’après sa place sur la feuille.'],
+      ['Comment les colonnes sont trouvées', 'Un tableau avec bordures est repris case par case. Sans bordures, ce sont les blancs entre les colonnes qui les séparent : un montant aligné à droite tombe quand même dans la bonne colonne.']],
+    faq: [{ q: 'Et un PDF de plusieurs pages ?', a: 'Chaque page devient une feuille du classeur, nommée « Page 1 », « Page 2 »…' },
+      { q: 'Et dans l’autre sens ?', a: 'Ouvre un classeur Excel (.xlsx) dans Rature : il est converti en PDF. Voir le guide <a href="/excel-en-pdf/">Excel en PDF</a>.' }, LOCAL, FREE] },
+
+  { slug: 'excel-en-pdf', art: 'xlsPdf', q: '?outil=pdf', short: 'Excel en PDF',
+    title: 'Convertir un fichier Excel en PDF gratuitement · Rature',
+    desc: "Convertis un classeur Excel (.xlsx) en PDF, mis en page comme Excel : formats des nombres, dates, couleurs, bordures, cases fusionnées. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Devis, factures, tableaux de suivi', h1: 'Convertir un fichier Excel en PDF',
+    lead: 'Ouvre ton classeur : chaque feuille devient une page à la largeur du papier, telle qu’Excel l’affiche. Tu peux ensuite la signer ou la compléter avant de l’envoyer.', cta: 'Choisir mon fichier Excel',
+    steps: [{ t: 'Ouvre ton fichier Excel', d: 'Glisse le fichier .xlsx sur cette page ou clique sur « Choisir mon fichier Excel ». Il est converti en PDF sur ton appareil.' },
+      { t: 'Complète si besoin', d: 'Ajoute une signature, un tampon ou du texte, comme sur n’importe quel PDF.' },
+      { t: 'Télécharge le PDF', d: 'Clique sur « Télécharger » : ton PDF est prêt à envoyer.' }],
+    body: [
+      ['Ce qui est repris', 'Les valeurs telles qu’Excel les affiche (montants en euros, pourcentages, dates), le gras, l’italique, les couleurs du texte et des cases, les bordures, l’alignement, le retour à la ligne dans les cases et les cases fusionnées. Les feuilles masquées sont laissées de côté.'],
+      ['Un tableau trop large ?', 'Une feuille large passe en paysage, puis elle est réduite pour tenir dans la largeur de la page : aucune colonne n’est coupée sur une autre page.'],
+      ['Plusieurs feuilles', 'Chaque feuille visible du classeur commence sur une nouvelle page, dans l’ordre des onglets.']],
+    faq: [{ q: 'Les formules sont-elles calculées ?', a: 'Rature reprend le résultat enregistré par Excel. Un fichier fabriqué par un autre programme sans résultat enregistré affiche des cases vides : ouvre-le et enregistre-le une fois dans Excel ou LibreOffice.' },
+      { q: 'Et les graphiques ?', a: 'Ils ne sont pas repris : seules les cases du tableau le sont.' }, LOCAL, FREE] },
+
+  { slug: 'word-en-pdf', art: 'wordPdf', q: '?outil=pdf', short: 'Word en PDF',
+    title: 'Convertir un document Word en PDF gratuitement · Rature',
+    desc: "Convertis un document Word (.docx) en PDF mis en page comme dans Word : styles, listes, tableaux, images, en-têtes et pieds de page. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'CV, lettres, contrats, rapports', h1: 'Convertir un Word en PDF',
+    lead: 'Ouvre ton fichier .docx : il devient un PDF fidèle à Word, en vrai texte que tu peux encore corriger, signer ou compléter.', cta: 'Choisir mon fichier Word',
+    steps: [{ t: 'Ouvre ton document Word', d: 'Glisse le fichier .docx sur cette page ou clique sur « Choisir mon fichier Word ». La conversion se fait sur ton appareil.' },
+      { t: 'Vérifie et complète', d: 'Le document s’affiche page par page. Ajoute une signature, ou corrige une ligne avec « Corriger ».' },
+      { t: 'Télécharge le PDF', d: 'Clique sur « Télécharger » : ton PDF est prêt à envoyer.' }],
+    body: [
+      ['Ce qui est repris', 'Les styles du document (titres, paragraphes, interlignes), les listes à puces et numérotées, les tabulations, les tableaux avec leurs bordures, leurs fonds et leurs cases fusionnées, les images (même celles placées devant le texte), les en-têtes et pieds de page avec le numéro de page, les colonnes et les liens.'],
+      ['Les polices', 'Calibri, Arial, Times New Roman et Courier New sont remplacées par des polices libres de mêmes largeurs : le texte tombe aux mêmes endroits que dans Word. Avec Cambria ou Aptos, une ligne peut se couper un mot plus tôt ou plus tard.'],
+      ['Plusieurs documents en un seul PDF', 'Choisis plusieurs fichiers Word ou PDF à la fois : ils sont réunis dans un seul PDF, que tu peux réorganiser avant de le télécharger.']],
+    faq: [{ q: 'Et les anciens fichiers .doc ?', a: 'Seul le format .docx (Word 2007 et plus récent) est lu. Ouvre le .doc dans Word ou LibreOffice et enregistre-le en .docx.' },
+      { q: 'Et dans l’autre sens ?', a: 'Voir le guide <a href="/pdf-en-word/">PDF en Word</a>.' }, LOCAL, FREE] },
+
+  { slug: 'pdf-en-jpg', art: 'jpg', q: '?outil=image', short: 'PDF en JPG',
+    title: 'Convertir un PDF en JPG ou PNG gratuitement · Rature',
+    desc: "Transforme chaque page d'un PDF en image JPG ou PNG de bonne qualité, toutes les pages d'un coup dans un fichier ZIP. Gratuit, sans inscription, rien n'est envoyé.",
+    eyebrow: 'Pour partager une page en image', h1: 'Convertir un PDF en JPG',
+    lead: 'Chaque page devient une image nette, en JPG (plus léger) ou en PNG (sans perte). Plusieurs pages ? Elles arrivent ensemble dans un fichier ZIP.', cta: 'Convertir mon PDF',
+    steps: [OPEN,
+      { t: 'Choisis JPG ou PNG', d: 'Dans « Outils », choisis « PDF en image (JPG, PNG) ». Depuis ce guide, un bouton « Enregistrer en images » apparaît dès l’ouverture.' },
+      { t: 'Récupère tes images', d: 'Une page : une image. Plusieurs pages : un fichier ZIP avec une image par page.' }],
+    body: [
+      ['JPG ou PNG ?', 'Le JPG est plus léger, idéal pour envoyer une page par message ou la publier. Le PNG garde chaque détail, mieux pour une page pleine de petit texte.'],
+      ['Quelle qualité ?', 'Les images sont faites à 180 points par pouce : de quoi imprimer une page A4 nette.'],
+      ['Une seule page', 'Clic droit sur la page voulue, puis « Enregistrer cette page en image ».']],
+    faq: [{ q: 'Mes modifications sont-elles incluses ?', a: 'Oui : les images montrent le document avec tes textes, signatures et corrections.' },
+      { q: 'Et dans l’autre sens ?', a: 'Voir le guide <a href="/photos-en-pdf/">Photos en PDF</a> : une image par page, dans un seul PDF.' }, LOCAL, FREE] },
 
   { slug: 'dossier-de-location-pdf', art: 'rent', q: '?outil=text', short: 'Dossier de location',
     title: 'Dossier de location en PDF : remplir, signer, protéger · Rature',
@@ -209,7 +285,7 @@ const PAGES = [
       { t: 'Remplis et signe', d: 'Complète les formulaires avec « Écrire », ajoute « Lu et approuvé » et ta signature.' },
       { t: 'Protège et télécharge', d: 'Ajoute un filigrane, réduis la taille si l’agence limite le poids des fichiers, puis télécharge un seul PDF.' }],
     body: [
-      ['Le filigrane, une protection simple', 'Un filigrane comme « Uniquement pour dossier de location » sur chaque page rend tes pièces bien moins réutilisables par un fraudeur. Dans Rature : « Plus d’outils », puis « Filigrane, numéros de page, en-tête ».'],
+      ['Le filigrane, une protection simple', 'Un filigrane comme « Uniquement pour dossier de location » sur chaque page rend tes pièces bien moins réutilisables par un fraudeur. Dans Rature : « Outils », puis « Filigrane, numéros de page, en-tête ».'],
       ['L’attestation de caution solidaire', 'Ton garant peut remplir et signer l’attestation directement sur le PDF. Vérifie avec le propriétaire ou l’agence si une mention doit être écrite par le garant lui-même : il peut alors l’écrire au doigt ou au stylet sur un téléphone ou une tablette.'],
       ['Cacher ce qui ne regarde pas l’agence', 'Sur un relevé ou un justificatif, tu peux masquer certaines informations avec « Caviarder » : elles sont effacées pour de bon du fichier, pas seulement recouvertes. Ne masque pas ce que l’agence a besoin de vérifier.'],
       ['Et DossierFacile ?', 'Le service public <a href="https://www.dossierfacile.logement.gouv.fr/">DossierFacile</a> permet de constituer un dossier vérifié à partager. Rature t’aide à préparer, signer et alléger les pièces que tu y déposes.']],
@@ -227,7 +303,7 @@ const PAGES = [
       { t: 'Télécharge', d: 'Au téléchargement, le texte et les images sous chaque zone sont supprimés du fichier.' }],
     body: [
       ['Pourquoi un simple rectangle noir est risqué', 'Un rectangle posé par-dessus dans un logiciel de dessin ou de traitement de texte cache le texte à l’écran, mais le texte reste souvent dans le fichier : on peut le sélectionner, le copier ou le retrouver avec une recherche. Rature retire réellement ce qui est sous la zone.'],
-      ['Caviardage automatique', '« Plus d’outils », puis « Caviarder automatiquement » repère dans le texte les e-mails, numéros de téléphone, IBAN, numéros de sécurité sociale et de carte bancaire. Tu coches ce qui doit disparaître, Rature pose les zones.'],
+      ['Caviardage automatique', '« Outils », puis « Caviarder automatiquement » repère dans le texte les e-mails, numéros de téléphone, IBAN, numéros de sécurité sociale et de carte bancaire. Tu coches ce qui doit disparaître, Rature pose les zones.'],
       ['Pour quels documents ?', 'Relevés bancaires, avis d’imposition, bulletins de salaire, pièces jointes à un dossier, documents partagés en ligne : tout ce que tu veux transmettre sans tout dévoiler.']],
     faq: [{ q: 'Le texte caviardé peut-il être récupéré ?', a: 'Non : il est retiré du fichier téléchargé, pas seulement recouvert. Garde l’original si tu en as encore besoin.' },
       { q: 'Ça marche sur un PDF scanné ?', a: 'Oui : la partie de l’image recouverte par la zone est effacée elle aussi.' }, LOCAL, FREE] },
@@ -273,12 +349,12 @@ const L = {
         open: 'Ouvrir l’éditeur', updated: 'Mis à jour le', drop: 'ou glisse ton fichier sur cette page', small: 'Gratuit · sans inscription · le fichier reste sur ton appareil', source: 'Code source', other: 'Read in English',
         footer: 'Rature, éditeur PDF gratuit qui n’envoie pas tes fichiers', coffee: 'Offrir un café ☕', coffeeTitle: 'Soutenir Rature',
         art: { approved: 'Lu et approuvé', name: 'Nom :', born: 'Né(e) le :', before: 'au titre de la', old: 'caution', new: 'garantie', form: 'Attestation de caution', wm: 'DOSSIER', erased: 'effacé pour de bon', local: 'rien ne sort d’ici',
-               merged: 'un seul PDF', lighter: 'plus léger', photos: 'photos → PDF', word: 'modifiable dans Word', ocrLine: 'Fait à Lyon, le 14 mars', ocrLbl: 'texte reconnu !' } },
+               merged: 'un seul PDF', lighter: 'plus léger', photos: 'photos → PDF', word: 'modifiable dans Word', excel: 'chiffres en colonnes', xlsPdf: 'mis en page', wordPdf: 'prêt à envoyer', jpg: 'une image par page', ocrLine: 'Fait à Lyon, le 14 mars', ocrLbl: 'texte reconnu !' } },
   en: { lang: 'en', root: '/en/', locale: 'en_GB', steps: 'In 3 steps', faq: 'Questions', ready: 'Ready? It takes a minute.', more: 'Other guides',
         open: 'Open the editor', updated: 'Last updated', drop: 'or drop your file on this page', small: 'Free · no sign-up · the file stays on your device', source: 'Source code', other: 'Lire en français',
         footer: 'Rature, the free PDF editor that doesn’t upload your files · cross it out, fill it in, sign it', coffee: 'Buy me a coffee ☕', coffeeTitle: 'Support Rature',
         art: { approved: 'Read and approved', name: 'Name:', born: 'Born:', before: 'paid as a', old: 'deposit', new: 'guarantee', form: 'Guarantor form', wm: 'RENTAL', erased: 'erased for good', local: 'nothing leaves here',
-               merged: 'one PDF', lighter: 'lighter', photos: 'photos → PDF', word: 'editable in Word', ocrLine: 'Signed on 14 March 2026', ocrLbl: 'text recognised!' } },
+               merged: 'one PDF', lighter: 'lighter', photos: 'photos → PDF', word: 'editable in Word', excel: 'numbers in columns', xlsPdf: 'laid out', wordPdf: 'ready to send', jpg: 'one image per page', ocrLine: 'Signed on 14 March 2026', ocrLbl: 'text recognised!' } },
 };
 PAGES.forEach((p, i) => { p.L = L.fr; p.twin = EN_PAGES[i]; EN_PAGES[i].L = L.en; EN_PAGES[i].twin = p; });
 const LEGAL = require('./legal.js'), SHORT = { fr: ['Rature Sync', 'Mentions légales', 'Confidentialité', 'CGV'], en: ['Rature Sync', 'Legal notice', 'Privacy', 'Terms'] };
@@ -306,7 +382,7 @@ const euros = s => s.replace(',', '.').match(/\d+(\.\d+)?/)[0];
 const ldPlans = p => ld([webPage(p), app(p.L, [FREE_OFFER, ...['month', 'year'].map(k => ({ '@type': 'Offer', name: `Rature Sync · ${p.plans[k].name}`, price: euros(p.plans[k].price),
   priceCurrency: 'EUR', url: SITE + url(p), priceSpecification: { '@type': 'UnitPriceSpecification', price: euros(p.plans[k].price), priceCurrency: 'EUR',
   valueAddedTaxIncluded: true, billingDuration: k === 'month' ? 'P1M' : 'P1Y' } }))])]);
-const ACCEPT = 'application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document'; // fichiers acceptés, comme l'éditeur
+const ACCEPT = 'application/pdf,.pdf,image/*,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; // fichiers acceptés, comme l'éditeur
 // en-tête commun (guides, tarif, pages légales) ; type : article ou website ; ld : données structurées éventuelles
 const head = (p, type, ld) => { const t = p.L; return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

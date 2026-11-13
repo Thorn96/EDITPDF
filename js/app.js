@@ -427,8 +427,15 @@ async function build(list, localFonts = []) {
       const f = await font(null);
       for (const r of p.ocr) {
         if (items.some(i => runsOf(i).includes(r))) continue;
-        const [x, y] = P(r.x, r.top + .85 * r.px);
-        try { page.drawText(r.str, { x, y, size: r.px, font: f, opacity: 0, rotate }); } catch {}
+        // chaque mot à sa place et à sa largeur sur la photo (resserré ou étiré) : colonnes d'un tableau photographié reconnues par
+        // Excel et Word, sélection exacte ; l'espace qui suit reste dans le texte
+        const words = r.words?.length ? r.words.map((w, k, a) => ({ s: w.t, sp: k < a.length - 1, x: w.b[0], w: w.b[2] - w.b[0] })) : [{ s: r.str, x: r.x, w: r.w }];
+        for (const w of words) {
+          const [x, y] = P(w.x, r.top + .85 * r.px), fw = f.widthOfTextAtSize(w.s, r.px);
+          page.pushOperators(PDFLib.setCharacterSqueeze(fw > 0 && w.w > 0 ? clamp(w.w / fw * 100, 20, 500) : 100));
+          try { page.drawText(w.s + (w.sp ? ' ' : ''), { x, y, size: r.px, font: f, opacity: 0, rotate }); } catch {}
+          page.pushOperators(PDFLib.setCharacterSqueeze(100));
+        }
       }
     }
     for (const it of items.filter(i => i.pg === p)) {
