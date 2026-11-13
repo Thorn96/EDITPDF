@@ -12,7 +12,10 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - name: Pages modifiées, envoyées une fois le site à jour
-        env: { KEY: 97677b73311161648c7bdfd6e94402c9, BEFORE: ${{ github.event.before }}, AFTER: ${{ github.sha }} }
+        env:
+          KEY: 97677b73311161648c7bdfd6e94402c9
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
         run: |
           sleep 180 # ponytail: attente fixe du déploiement Cloudflare Pages (1 à 2 min) ; interroger le déploiement s'il devient plus lent
           urls=$(git diff --name-only "$BEFORE" "$AFTER" -- '*index.html' | sed -e 's#index\.html$##' -e 's#^#https://rature.app/#' | jq -R . | jq -sc .)
