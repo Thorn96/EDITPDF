@@ -208,7 +208,7 @@ function planEdit(it) {
   const o = it.orig, f = normFont(it.font), olines = o.lines || [{ x: o.x, top: o.top, w: o.w, str: o.str }];
   const laid = it.text.trim() ? layoutLines(it) : [], last = s => s.split(' ').at(-1);
   const same = olines.every(l => l.str != null) && o.y0 != null && Math.abs(it.x - o.x) < .01 && Math.abs(it.y - o.y0) < .01 && Math.abs(it.size - o.h) < .01
-    && f.local && !f.touched && it.color === o.color && !it.rot && (it.op ?? 1) === 1 && !it.pg.rot && !it.pg.pdfPage.rotate;
+    && f.local && !f.touched && !f.underline && !f.strike && it.color === o.color && !it.rot && (it.op ?? 1) === 1 && !it.pg.rot && !it.pg.pdfPage.rotate;
   if (it.rich) return olines.map(line => ({ line, keep: same && JSON.stringify(it.segs) === o.segs, p: 0 })); // ligne mixte : intacte, ou réécrite entière
   return olines.map((l, i) => {
     const t = laid[i]?.t.trimEnd(), s = l.str.trimEnd();
@@ -377,6 +377,12 @@ async function build(list, localFonts = []) {
         page.drawText(txt, { x: X, y: Y, size, font: ff, color, opacity, rotate: degrees(pageRot - deg) });
         off += ff.widthOfTextAtSize(txt, size);
       }
+      return off;
+    };
+    // soulignement sous la ligne de base, barré à mi-hauteur des minuscules
+    const decorate = (f, x, y, w, size, color, opacity, c, deg) => {
+      for (const dy of [f?.underline && .15, f?.strike && -.28]) if (dy)
+        page.drawLine({ start: pt(...rotPt(x, y + dy * size, c, deg)), end: pt(...rotPt(x + w, y + dy * size, c, deg)), thickness: size * .07, color, opacity });
     };
     // Texte d'origine corrigé : écrit avec la police intégrée au PDF quand elle a les lettres voulues (rendu identique au reste,
     // ligatures comprises), sinon avec son équivalent, lettre par lettre ; même serrage et espacement des mots que la ligne d'origine
@@ -468,7 +474,10 @@ async function build(list, localFonts = []) {
           let x = it.x, row = 0;
           for (const s of it.segs) for (const [k, part] of s.t.split('\n').entries()) {
             if (k) { row++; x = it.x; }
-            if (part) x += await writeOrig(part, x, it.y + (row * lh + lh / 2 + BASE) * it.size, it, color, opacity, c, deg, undefined, s.f);
+            if (!part) continue;
+            const y = it.y + (row * lh + lh / 2 + BASE) * it.size, w = await writeOrig(part, x, y, it, color, opacity, c, deg, undefined, s.f);
+            decorate(s.f, x, y, w, it.size, color, opacity, c, deg);
+            x += w;
           }
           continue;
         }
@@ -487,8 +496,8 @@ async function build(list, localFonts = []) {
             measure.font = `${f.italic ? 'italic ' : ''}${f.bold ? '700' : '400'} ${it.size}px ${cssFamily(f)}`;
             ws = Math.max(0, (it.x + it.wrapW - x - textW(ln) - (it.ls || 0) * [...ln].length) / (ln.split(' ').length - 1));
           }
-          if (it.orig) await writeOrig(ln, x, y, it, color, opacity, c, deg, ws);
-          else await writeLine(ln, x, y, it.size, it.font, color, opacity, c, deg);
+          const w = it.orig ? await writeOrig(ln, x, y, it, color, opacity, c, deg, ws) : await writeLine(ln, x, y, it.size, it.font, color, opacity, c, deg);
+          decorate(it.font, x, y, w, it.size, color, opacity, c, deg);
         }
       } else if (it.type === 'mark') {
         const s = it.size, m = (dx, dy) => pt(it.x + dx * s, it.y + dy * s);

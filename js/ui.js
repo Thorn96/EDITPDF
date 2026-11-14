@@ -103,11 +103,13 @@ function restoreProps(it, s) {
   if (segs) setText(it, segs); else draw(it);
   if (it === current) reflect();
 }
+// Soulignement et barré : simples traits, la police ne change pas
+const decoOn = () => ({ underline: $('underline').classList.contains('on'), strike: $('strike').classList.contains('on') });
 // Police d'une ligne mixte : gras / italique sur la partie sélectionnée (ou toute la ligne) ; autre police : toute la ligne
 function richFont(it) {
   const nf = readFont(it.font), bold = $('bold').classList.contains('on'), italic = $('italic').classList.contains('on');
   if ($('font').value !== 'orig') styleRich(it, () => nf);
-  else styleRich(it, f => f.local ? { ...f, bold, italic, touched: f.touched || bold !== !!f.bold || italic !== !!f.italic } : { ...f, bold, italic });
+  else styleRich(it, f => f.local ? { ...f, bold, italic, ...decoOn(), touched: f.touched || bold !== !!f.bold || italic !== !!f.italic } : { ...f, bold, italic, ...decoOn() });
   it.font = it.segs[0].f;
 }
 const PROP_NAMES = { color: 'Couleur', size: 'Taille', width: 'Épaisseur', ewidth: 'Épaisseur', font: 'Police', kind: 'Symbole', fill: 'Remplissage', rot: 'Rotation', op: 'Opacité', field: 'Champ' };
@@ -212,14 +214,16 @@ function showFont(f) {
   $('font').value = f.local ? 'orig' : f.key;
   $('bold').classList.toggle('on', !!f.bold);
   $('italic').classList.toggle('on', !!f.italic);
+  $('underline').classList.toggle('on', !!f.underline);
+  $('strike').classList.toggle('on', !!f.strike);
 }
 function readFont(prev) {
   const v = $('font').value, bold = $('bold').classList.contains('on'), italic = $('italic').classList.contains('on');
-  if (v === 'orig' && prev?.local) return { ...prev, bold, italic, touched: prev.touched || bold !== !!prev.bold || italic !== !!prev.italic };
-  return { key: v === 'orig' ? normFont(prev).key : v, bold, italic };
+  if (v === 'orig' && prev?.local) return { ...prev, bold, italic, ...decoOn(), touched: prev.touched || bold !== !!prev.bold || italic !== !!prev.italic };
+  return { key: v === 'orig' ? normFont(prev).key : v, bold, italic, ...decoOn() };
 }
 $('font').onchange = () => applyProps('font');
-for (const id of ['bold', 'italic']) {
+for (const id of ['bold', 'italic', 'underline', 'strike']) {
   $(id).onpointerdown = keepFocus;
   $(id).onclick = () => { $(id).classList.toggle('on'); applyProps('font'); };
 }

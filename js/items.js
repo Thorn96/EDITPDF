@@ -108,13 +108,14 @@ function setText(it, t) {
   } else it.text = it.input.value = Array.isArray(t) ? t.map(s => s.t).join('') : t;
   draw(it);
 }
+const decoCss = f => [f?.underline && 'underline', f?.strike && 'line-through'].filter(Boolean).join(' ') || 'none';
 const segCss = (f, size) => { f = normFont(f); return `${f.italic ? 'italic ' : ''}${f.bold ? '700' : '400'} ${size}px ${cssFamily(f)}`; };
 function renderSegs(it) {
   it.input.replaceChildren(...it.segs.map(s => {
     const e = document.createElement('span'), f = normFont(s.f);
     e.textContent = s.t;
     e.f = s.f;
-    Object.assign(e.style, { fontFamily: cssFamily(f), fontWeight: f.bold ? '700' : '400', fontStyle: f.italic ? 'italic' : 'normal' });
+    Object.assign(e.style, { fontFamily: cssFamily(f), fontWeight: f.bold ? '700' : '400', fontStyle: f.italic ? 'italic' : 'normal', textDecoration: decoCss(f) });
     return e;
   }));
 }
@@ -369,7 +370,7 @@ function drawText(it) {
   Object.assign(it.el.style, { left: it.x - pad + 'px', top: it.y - pad + 'px', background: it.note ? NOTE_BG : '',
                                borderColor: it.frame ? it.color : '' });
   Object.assign(ta.style, { width: (it.wrapW || Math.max(natural, it.orig?.w || 0, it.size)) + 'px', fontSize: it.size + 'px',
-                            lineHeight: lh, fontFamily: fam, fontWeight: weight, fontStyle: style, color: it.color,
+                            lineHeight: lh, fontFamily: fam, fontWeight: weight, fontStyle: style, color: it.color, textDecoration: it.rich ? 'none' : decoCss(f),
                             background: it.orig ? 'transparent' : it.bg || 'transparent', whiteSpace: it.wrapW ? 'pre-wrap' : 'pre',
                             textAlign: it.justify ? 'justify' : '', transform: Math.abs(shift) > .01 ? `translateY(${shift}px)` : '',
                             letterSpacing: it.ls ? it.ls + 'px' : '', wordSpacing: it.ws ? it.ws + 'px' : '' });

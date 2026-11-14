@@ -502,7 +502,7 @@ function buildEnglishEditor() {
   const EN = new Function(`return ${src.slice(start, src.indexOf('\n});', start) + 2)}`)();
   const dec = s => s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
   const encText = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;'), encAttr = s => encText(s).replace(/"/g, '&quot;');
-  const missing = new Set(), SAME = new Set(['Rature', 'Rature Sync', 'B', 'I', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
+  const missing = new Set(), SAME = new Set(['Rature', 'Rature Sync', 'B', 'I', 'U', 'S', 'Rectangle']), hasLetters = s => /\p{L}/u.test(s); // SAME : identiques dans les deux langues
   const swap = (s, enc) => { const raw = dec(s), t = raw.trim(); if (!t) return s; if (EN[t] === undefined) { if (hasLetters(t) && !SAME.has(t)) missing.add(t); return s; } return enc(raw.replace(t, EN[t])); };
 
   let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/\r\n/g, '\n'); // fins de ligne Windows ou Unix

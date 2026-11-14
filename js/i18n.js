@@ -135,7 +135,7 @@ Object.assign(EN, {
   'Coche': 'Tick', 'Croix': 'Cross', 'Point': 'Dot', 'Date du jour': "Today's date", 'Date': 'Date', 'Lu et approuvé': 'Read and approved', 'Bon pour accord': 'Approved',
   'Fait à … le (date du jour)': "Signed at … on (today's date)", 'Fait à… le…': 'Signed at… on…', 'Fait à  le {d}': 'Signed at  on {d}',
   'Noir': 'Black', 'Bleu stylo': 'Pen blue', 'Rouge': 'Red', 'Vert': 'Green', 'Jaune fluo': 'Highlighter yellow', 'Autre couleur': 'Other colour',
-  'Police': 'Font', "Police d'origine": 'Original font', 'Gras': 'Bold', 'Italique': 'Italic', 'Taille': 'Size', 'Plus petit': 'Smaller', 'Plus grand': 'Larger',
+  'Police': 'Font', "Police d'origine": 'Original font', 'Gras': 'Bold', 'Italique': 'Italic', 'Souligné': 'Underline', 'Barré': 'Strikethrough', 'Taille': 'Size', 'Plus petit': 'Smaller', 'Plus grand': 'Larger',
   'Épaisseur': 'Thickness', 'Plus fin': 'Thinner', 'Plus épais': 'Thicker', 'Forme remplie de la couleur': 'Shape filled with the colour', '▮ Rempli': '▮ Filled',
   'Type de champ': 'Field type', 'Texte': 'Text', 'Texte sur plusieurs lignes': 'Multi-line text', 'Case à cocher': 'Checkbox', 'Liste de choix': 'Drop-down list',
   'Nom du champ': 'Field name', 'Choix séparés par des virgules': 'Choices separated by commas', 'Choix de la liste': 'List choices', 'Champ': 'Field', 'Choix 1': 'Choice 1', 'Choix 2': 'Choice 2',
