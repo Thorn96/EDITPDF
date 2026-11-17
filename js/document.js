@@ -199,7 +199,10 @@ async function buildPage(pg) {
   // que le PDF découpe souvent au milieu d'un mot (« fil » + « s Léonard »), sont réunis ; une tabulation sépare deux zones
   // Le style (gras, italique) n'est connu qu'une fois la page dessinée : refineRuns sépare alors les styles différents.
   const [tc, ops] = await Promise.all([pg.pdfPage.getTextContent(), pg.pdfPage.getOperatorList()]);
-  const O = pdfjsLib.OPS, imgOps = [O.paintImageXObject, O.paintJpegXObject, O.paintInlineImageXObject], hasImg = ops.fnArray.some(f => imgOps.includes(f));
+  // images, y compris les masques : un scan noir et blanc (1 bit, fax, photocopieur) est souvent un masque d'image
+  const O = pdfjsLib.OPS, imgOps = [O.paintImageXObject, O.paintJpegXObject, O.paintInlineImageXObject, O.paintInlineImageXObjectGroup, O.paintImageXObjectRepeat,
+                                    O.paintImageMaskXObject, O.paintImageMaskXObjectGroup, O.paintImageMaskXObjectRepeat, O.paintSolidColorImageMask],
+        hasImg = ops.fnArray.some(f => imgOps.includes(f));
   // Scan avec une couche de texte invisible (OCR de Google Drive, d'un scanner, d'un photocopieur) : ce texte n'a ni la police ni la place
   // exacte du texte visible de l'image, et le corriger laissait l'ancien texte de l'image dessous. La page est alors traitée comme un scan :
   // l'OCR de Rature mesure la police sur l'image et efface vraiment la ligne corrigée.
@@ -232,9 +235,10 @@ async function buildPage(pg) {
   }
   flush();
   pg.ocr?.forEach(r => addRun(pg, r));
-  // page « scannée » = sans texte visible mais avec une image (une page blanche n'en est pas une)
-  pg.hasImg = hasImg; // image possiblement pleine de texte même sur une page qui a du vrai texte : l'OCR la lit aussi
-  pg.wrap.classList.toggle('scan', !n && hasImg);
+  // page « scannée » = sans texte mais avec une image, ou avec du texte vectorisé (lettres en simples tracés) ; une page blanche n'en est pas une
+  // pg.ink : ce que l'OCR doit lire ; une image peut être pleine de texte même sur une page qui a du vrai texte, l'OCR la lit aussi
+  pg.ink = hasImg || (!n && ops.fnArray.includes(O.constructPath));
+  pg.wrap.classList.toggle('scan', !n && pg.ink);
   pg.wrap.classList.toggle('ocrdone', !!pg.ocr);
   await buildFields(pg);
   pg.built = true;

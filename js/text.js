@@ -147,7 +147,7 @@ async function ocrPage(pg, btn = document.createElement('button'), quiet, shared
     await pg.pdfPage.render({ canvasContext: c.getContext('2d'), viewport: vp, intent: 'print' }).promise;
     const { data } = await worker.recognize(c);
     if (!shared) await worker.terminate();
-    pg.ocr = [];
+    const found = [];
     // page mixte (vrai texte + image de texte) : les lignes lues sur le vrai texte, déjà modifiable, sont écartées
     // ponytail: test par ligne entière ; une ligne de l'image alignée avec du vrai texte peut être perdue, passer aux mots si ça arrive
     const real = [...pg.layer.querySelectorAll('.tl')].map(d => d.run).concat(items.filter(i => i.pg === pg).flatMap(runsOf)).filter(r => !r.scan);
@@ -160,12 +160,14 @@ async function ocrPage(pg, btn = document.createElement('button'), quiet, shared
       // hauteur des minuscules (estimée par Tesseract sur toute la ligne) : la mesure la plus stable de la taille du texte
       const ra = l.rowAttributes, xh = ra?.row_height ? (ra.row_height - ra.ascenders - ra.descenders) / k : 0;
       const px = clamp(xh > 1 ? xh / .48 : (bl - b.y0) / .72 / k, 4, 200);
-      pg.ocr.push({ str, px, xh, x: b.x0 / k, base: bl / k, top: bl / k - .85 * px, w: (b.x1 - b.x0) / k, scan: true, box: [b.x0 / k, b.y0 / k, b.x1 / k, b.y1 / k],
+      found.push({ str, px, xh, x: b.x0 / k, base: bl / k, top: bl / k - .85 * px, w: (b.x1 - b.x0) / k, scan: true, box: [b.x0 / k, b.y0 / k, b.x1 / k, b.y1 / k],
                     words: (l.words || []).filter(w => w.text.trim()).map(w => ({ t: w.text.trim(), b: [w.bbox.x0 / k, w.bbox.y0 / k, w.bbox.x1 / k, w.bbox.y1 / k] })) });
     }
-    pg.ocr.forEach(r => addRun(pg, r));
-    pg.wrap.classList.add('ocrdone');
-    if (!quiet) toast(pg.ocr.length ? plural(pg.ocr.length, '{n} ligne reconnue : clique dessus pour la corriger.', '{n} lignes reconnues : clique sur une ligne pour la corriger.') : 'Aucun texte reconnu sur cette page.', pg.ocr.length ? '' : 'error');
+    // rien trouvé : la page reste à lire (sinon un nouvel essai répondait « déjà reconnu » sans rien de cliquable)
+    pg.ocr = found.length ? found : null;
+    found.forEach(r => addRun(pg, r));
+    pg.wrap.classList.toggle('ocrdone', !!pg.ocr);
+    if (!quiet) toast(found.length ? plural(found.length, '{n} ligne reconnue : clique dessus pour la corriger.', '{n} lignes reconnues : clique sur une ligne pour la corriger.') : 'Aucun texte reconnu sur cette page.', found.length ? '' : 'error');
     changed();
   } catch (e) {
     console.error(e);
@@ -180,7 +182,7 @@ let scanning = false;
 async function scanDocument() {
   if (!pages.length) return toast("Ouvre d'abord un PDF.", 'error');
   if (scanning) return;
-  const list = pages.filter(p => p.hasImg && !p.ocr); // scans, et pages de vrai texte qui contiennent une image
+  const list = pages.filter(p => p.ink && !p.ocr); // scans, et pages de vrai texte qui contiennent une image
   if (!list.length) return toast(pages.some(p => p.ocr) ? 'Le texte de ce PDF est déjà reconnu : clique sur une ligne pour la corriger.' : 'Ce PDF contient déjà du vrai texte : choisis « Corriger » pour le modifier.');
   scanning = true;
   const btn = document.querySelector('#tools [data-a=ocr]'), label = btn.innerHTML, hint = $('hint').innerHTML;
@@ -198,7 +200,7 @@ async function scanDocument() {
       lines += pg.ocr?.length || 0;
     }
     setTool('edit');
-    toast(lines ? plural(lines, '{n} ligne reconnue : clique dessus pour la corriger.', '{n} lignes reconnues : clique sur une ligne pour la corriger.') : 'Aucun texte reconnu dans ce PDF.', lines ? '' : 'error');
+    toast(lines ? plural(lines, '{n} ligne reconnue : clique dessus pour la corriger.', '{n} lignes reconnues : clique sur une ligne pour la corriger.') : pages.some(p => p.ocr) ? 'Le texte de ce PDF est déjà reconnu : clique sur une ligne pour la corriger.' : 'Aucun texte reconnu dans ce PDF.', lines || pages.some(p => p.ocr) ? '' : 'error');
   } catch (e) {
     console.error(e);
     toast('La reconnaissance du texte a échoué.', 'error');
